@@ -15,7 +15,7 @@ import { GradientBG } from "./gradient-bg";
 const tabs: { name: "auth.ts" | "client.ts"; code: string }[] = [
 	{
 		name: "auth.ts",
-		code: `export const auth = betterAuth({
+		code: `export const auth = faireAuth({
 	database: new Pool({
 		connectionString: DATABASE_URL,
 	}),
@@ -92,14 +92,14 @@ export default function Hero() {
 										<p className=" relative inline tracking-tight opacity-90 md:text-sm text-xs dark:text-white font-mono text-black">
 											npm add{" "}
 											<span className="relative dark:text-fuchsia-100 text-fuchsia-950">
-												better-auth
+												faire-auth
 												<span className="absolute h-2 bg-gradient-to-tr from-white via-stone-200 to-stone-300 blur-3xl w-full top-0 left-2"></span>
 											</span>
 										</p>
 									</div>
 									<div className="flex gap-2 items-center">
 										<Link
-											href="https://www.npmjs.com/package/better-auth"
+											href="https://www.npmjs.com/package/faire-auth"
 											target="_blank"
 										>
 											<svg
@@ -119,7 +119,7 @@ export default function Hero() {
 											</svg>
 										</Link>
 										<Link
-											href="https://github.com/better-auth/better-auth"
+											href="https://github.com/igoforth/faire-auth"
 											target="_blank"
 										>
 											<svg
@@ -314,7 +314,7 @@ function CodePreview() {
 								</motion.div>
 								<motion.div layout className="self-end">
 									<Link
-										href="https://demo.better-auth.com"
+										href="https://demo.faire-auth.com"
 										target="_blank"
 										className="shadow-md  border shadow-primary-foreground mb-4 ml-auto mr-4 mt-auto flex cursor-pointer items-center gap-2 px-3 py-1 transition-all ease-in-out hover:opacity-70"
 									>

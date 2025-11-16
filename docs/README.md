@@ -1,6 +1,6 @@
-# Better Auth Docs
+# Faire Auth Docs
 
-This is the documentation site for Better Auth.
+This is the documentation site for Faire Auth.
 
 ## Contributing
 

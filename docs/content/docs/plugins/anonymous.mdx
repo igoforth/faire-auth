@@ -1,6 +1,6 @@
 ---
-title: Anonymous  
-description: Anonymous plugin for Better Auth.
+title: Anonymous
+description: Anonymous plugin for Faire Auth.
 ---
 
 The Anonymous plugin allows users to have an authenticated experience without requiring them to provide an email address, password, OAuth provider, or any other Personally Identifiable Information (PII). Users can later link an authentication method to their account when ready.
@@ -14,10 +14,10 @@ The Anonymous plugin allows users to have an authenticated experience without re
     To enable anonymous authentication, add the anonymous plugin to your authentication configuration.
 
     ```ts title="auth.ts"
-    import { betterAuth } from "better-auth"
-    import { anonymous } from "better-auth/plugins" // [!code highlight]
-    
-    export const auth = betterAuth({
+    import { faireAuth } from "faire-auth"
+    import { anonymous } from "faire-auth/plugins" // [!code highlight]
+
+    export const auth = faireAuth({
         // ... other config options
         plugins: [
             anonymous() // [!code highlight]
@@ -34,12 +34,12 @@ The Anonymous plugin allows users to have an authenticated experience without re
         <Tabs items={["migrate", "generate"]}>
             <Tab value="migrate">
             ```bash
-            npx @better-auth/cli migrate
+            npx @faire-auth/cli migrate
             ```
             </Tab>
             <Tab value="generate">
             ```bash
-            npx @better-auth/cli generate
+            npx @faire-auth/cli generate
             ```
             </Tab>
         </Tabs>
@@ -52,9 +52,9 @@ The Anonymous plugin allows users to have an authenticated experience without re
     Next, include the anonymous client plugin in your authentication client instance.
 
     ```ts title="auth-client.ts"
-    import { createAuthClient } from "better-auth/client"
-    import { anonymousClient } from "better-auth/client/plugins"
-    
+    import { createAuthClient } from "faire-auth/client"
+    import { anonymousClient } from "faire-auth/client/plugins"
+
     export const authClient = createAuthClient({
         plugins: [
             anonymousClient()
@@ -81,9 +81,9 @@ If a user is already signed in anonymously and tries to `signIn` or `signUp` wit
 To do that you first need to provide `onLinkAccount` callback to the plugin.
 
 ```ts title="auth.ts"
-import { betterAuth } from "better-auth"
+import { faireAuth } from "faire-auth"
 
-export const auth = betterAuth({
+export const auth = faireAuth({
     plugins: [
         anonymous({
             onLinkAccount: async ({ anonymousUser, newUser }) => {
@@ -106,9 +106,9 @@ const user = await authClient.signIn.email({
 - `emailDomainName`: The domain name to use when generating an email address for anonymous users. Defaults to the domain name of the current site.
 
 ```ts title="auth.ts"
-import { betterAuth } from "better-auth"
+import { faireAuth } from "faire-auth"
 
-export const auth = betterAuth({
+export const auth = faireAuth({
     plugins: [
         anonymous({
             emailDomainName: "example.com"

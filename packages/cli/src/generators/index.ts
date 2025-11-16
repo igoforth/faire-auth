@@ -1,4 +1,4 @@
-import { logger, type DBAdapter, type BetterAuthOptions } from "better-auth";
+import { logger, type DBAdapter, type FaireAuthOptions } from "faire-auth";
 import { generateDrizzleSchema } from "./drizzle";
 import { generatePrismaSchema } from "./prisma";
 import { generateMigrations } from "./kysely";
@@ -12,7 +12,7 @@ export const adapters = {
 export const generateSchema = (opts: {
 	adapter: DBAdapter;
 	file?: string;
-	options: BetterAuthOptions;
+	options: FaireAuthOptions;
 }) => {
 	const adapter = opts.adapter;
 	const generator =

@@ -1,38 +1,38 @@
-# Better Auth CLI
+# Faire Auth CLI
 
-Better Auth comes with a built-in CLI to help you manage the database schema needed for both core functionality and plugins.
+Faire Auth comes with a built-in CLI to help you manage the database schema needed for both core functionality and plugins.
 
 
 ### **Init**
 
-The CLI includes an `init` command to add Better Auth to your project.
+The CLI includes an `init` command to add Faire Auth to your project.
 
 ```bash title="terminal"
-npx @better-auth/cli@latest init
+npx @faire-auth/cli@latest init
 ```
 
 ### **Generate**
 
-The `generate` command creates the schema required by Better Auth. If you're using a database adapter like Prisma or Drizzle, this command will generate the right schema for your ORM. If you're using the built-in Kysely adapter, it will generate an SQL file you can run directly on your database.
+The `generate` command creates the schema required by Faire Auth. If you're using a database adapter like Prisma or Drizzle, this command will generate the right schema for your ORM. If you're using the built-in Kysely adapter, it will generate an SQL file you can run directly on your database.
 
 ```bash title="terminal"
-npx @better-auth/cli@latest generate
+npx @faire-auth/cli@latest generate
 ```
 
 ### **Migrate**
 
-The `migrate` command applies the Better Auth schema directly to your database. This is available if you’re using the built-in Kysely adapter. For other adapters, you'll need to apply the schema using your ORM's migration tool.
+The `migrate` command applies the Faire Auth schema directly to your database. This is available if you’re using the built-in Kysely adapter. For other adapters, you'll need to apply the schema using your ORM's migration tool.
 
 ```bash title="terminal"
-npx @better-auth/cli@latest migrate
+npx @faire-auth/cli@latest migrate
 ```
 
 ### **Secret**
 
-The CLI also provides a way to generate a secret key for your Better Auth instance.
+The CLI also provides a way to generate a secret key for your Faire Auth instance.
 
 ```bash title="terminal"
-npx @better-auth/cli@latest secret
+npx @faire-auth/cli@latest secret
 ```
 
 

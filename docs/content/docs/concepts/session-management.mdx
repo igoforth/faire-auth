@@ -1,9 +1,9 @@
 ---
 title: Session Management
-description: Better Auth session management.
+description: Faire Auth session management.
 ---
 
-Better Auth manages session using a traditional cookie-based session management. The session is stored in a cookie and is sent to the server on every request. The server then verifies the session and returns the user data if the session is valid.
+Faire Auth manages session using a traditional cookie-based session management. The session is stored in a cookie and is sent to the server on every request. The server then verifies the session and returns the user data if the session is valid.
 
 ## Session table
 
@@ -22,9 +22,9 @@ The session expires after 7 days by default. But whenever the session is used an
 You can change both the `expiresIn` and `updateAge` values by passing the `session` object to the `auth` configuration.
 
 ```ts title="auth.ts"
-import { betterAuth } from "better-auth"
+import { faireAuth } from "faire-auth"
 
-export const auth = betterAuth({
+export const auth = faireAuth({
     //... other config options
     session: {
         expiresIn: 60 * 60 * 24 * 7, // 7 days
@@ -38,9 +38,9 @@ export const auth = betterAuth({
 You can disable session refresh so that the session is not updated regardless of the `updateAge` option.
 
 ```ts title="auth.ts"
-import { betterAuth } from "better-auth"
+import { faireAuth } from "faire-auth"
 
-export const auth = betterAuth({
+export const auth = faireAuth({
     //... other config options
     session: {
         disableSessionRefresh: true
@@ -50,14 +50,14 @@ export const auth = betterAuth({
 
 ## Session Freshness
 
-Some endpoints in Better Auth require the session to be **fresh**. A session is considered fresh if its `createdAt` is within the `freshAge` limit. By default, the `freshAge` is set to **1 day** (60 * 60 * 24).  
+Some endpoints in Faire Auth require the session to be **fresh**. A session is considered fresh if its `createdAt` is within the `freshAge` limit. By default, the `freshAge` is set to **1 day** (60 * 60 * 24).
 
-You can customize the `freshAge` value by passing a `session` object in the `auth` configuration:  
+You can customize the `freshAge` value by passing a `session` object in the `auth` configuration:
 
 ```ts title="auth.ts"
-import { betterAuth } from "better-auth"
+import { faireAuth } from "faire-auth"
 
-export const auth = betterAuth({
+export const auth = faireAuth({
     //... other config options
     session: {
         freshAge: 60 * 5 // 5 minutes (the session is fresh if created within the last 5 minutes)
@@ -65,12 +65,12 @@ export const auth = betterAuth({
 })
 ```
 
-To **disable the freshness check**, set `freshAge` to `0`:  
+To **disable the freshness check**, set `freshAge` to `0`:
 
 ```ts title="auth.ts"
-import { betterAuth } from "better-auth"
+import { faireAuth } from "faire-auth"
 
-export const auth = betterAuth({
+export const auth = faireAuth({
     //... other config options
     session: {
         freshAge: 0 // Disable freshness check
@@ -79,7 +79,7 @@ export const auth = betterAuth({
 ```
 ## Session Management
 
-Better Auth provides a set of functions to manage sessions.
+Faire Auth provides a set of functions to manage sessions.
 
 ### Get Session
 
@@ -164,9 +164,9 @@ When cookie caching is enabled, the server can check session validity from the c
 To turn on cookie caching, just set `session.cookieCache` in your auth config:
 
 ```ts title="auth.ts"
-import { betterAuth } from "better-auth"
+import { faireAuth } from "faire-auth"
 
-export const auth = betterAuth({
+export const auth = faireAuth({
     session: {
         cookieCache: {
             enabled: true,
@@ -190,7 +190,7 @@ or on the server
 await auth.api.getSession({
     query: {
         disableCookieCache: true,
-    }, 
+    },
     headers: req.headers, // pass the headers
 });
 ```
@@ -201,9 +201,9 @@ await auth.api.getSession({
 When you call `getSession` or `useSession`, the session data is returned as a `user` and `session` object. You can customize this response using the `customSession` plugin.
 
 ```ts title="auth.ts"
-import { customSession } from "better-auth/plugins";
+import { customSession } from "faire-auth/plugins";
 
-export const auth = betterAuth({
+export const auth = faireAuth({
     plugins: [
         customSession(async ({ user, session }) => {
             const roles = findUserRoles(session.session.userId);
@@ -225,7 +225,7 @@ This will add `roles` and `user.newField` to the session response.
 **Infer on the Client**
 
 ```ts title="auth-client.ts"
-import { customSessionClient } from "better-auth/client/plugins";
+import { customSessionClient } from "faire-auth/client/plugins";
 import type { auth } from "@/lib/auth"; // Import the auth instance as a type
 
 const authClient = createAuthClient({
@@ -240,21 +240,21 @@ const { data: sessionData } = await authClient.getSession();
 
 ### Caveats on Customizing Session Response
 
-1. The passed `session` object to the callback does not infer fields added by plugins.  
+1. The passed `session` object to the callback does not infer fields added by plugins.
 
 However, as a workaround, you can pull up your auth options and pass it to the plugin to infer the fields.
 
 ```ts
-import { betterAuth, BetterAuthOptions } from "better-auth";
+import { faireAuth, FaireAuthOptions } from "faire-auth";
 
 const options = {
   //...config options
   plugins: [
-    //...plugins 
+    //...plugins
   ]
-} satisfies BetterAuthOptions;
+} satisfies FaireAuthOptions;
 
-export const auth = betterAuth({
+export const auth = faireAuth({
     ...options,
     plugins: [
         ...(options.plugins ?? []),
@@ -280,9 +280,9 @@ You can mutate the response of this endpoint by passing the `shouldMutateListDev
 By default, we do not mutate the response of this endpoint.
 
 ```ts title="auth.ts"
-import { customSession } from "better-auth/plugins";
+import { customSession } from "faire-auth/plugins";
 
-export const auth = betterAuth({
+export const auth = faireAuth({
     plugins: [
         customSession(async ({ user, session }, ctx) => {
             return {

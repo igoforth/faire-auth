@@ -1,10 +1,10 @@
 import { betterFetch } from "@better-fetch/fetch";
 import { decodeJwt } from "jose";
-import { BetterAuthError } from "../error";
+import { FaireAuthError } from "../error";
 import type { OAuthProvider, ProviderOptions } from "../oauth2";
 import { createAuthorizationURL, validateAuthorizationCode } from "../oauth2";
-import { logger } from "../env";
-import { refreshAccessToken } from "../oauth2";
+import { logger } from "../env/logger";
+import { refreshAccessToken } from "../oauth2/refresh-access-token";
 
 export interface GoogleProfile {
 	aud: string;
@@ -65,16 +65,17 @@ export const google = (options: GoogleOptions) => {
 				logger.error(
 					"Client Id and Client Secret is required for Google. Make sure to provide them in the options.",
 				);
-				throw new BetterAuthError("CLIENT_ID_AND_SECRET_REQUIRED");
+				throw new FaireAuthError("CLIENT_ID_AND_SECRET_REQUIRED");
 			}
-			if (!codeVerifier) {
-				throw new BetterAuthError("codeVerifier is required for Google");
-			}
-			const _scopes = options.disableDefaultScope
-				? []
-				: ["email", "profile", "openid"];
-			options.scope && _scopes.push(...options.scope);
-			scopes && _scopes.push(...scopes);
+			if (!codeVerifier)
+				throw new FaireAuthError("codeVerifier is required for Google");
+
+			const _scopes =
+				options.disableDefaultScope === true
+					? []
+					: ["email", "profile", "openid"];
+			if (options.scope) _scopes.push(...options.scope);
+			if (scopes) _scopes.push(...scopes);
 			const url = await createAuthorizationURL({
 				id: "google",
 				options,
@@ -164,5 +165,5 @@ export const google = (options: GoogleOptions) => {
 			};
 		},
 		options,
-	} satisfies OAuthProvider<GoogleProfile>;
+	} satisfies OAuthProvider;
 };

@@ -24,7 +24,7 @@ import { Callout } from "@/components/ui/callout";
 
 const metaTitle = "Changelogs";
 const metaDescription = "Latest changes , fixes and updates.";
-const ogImage = "https://better-auth.com/release-og/changelog-og.png";
+const ogImage = "https://faire-auth.com/release-og/changelog-og.png";
 
 export default async function Page({
 	params,
@@ -62,8 +62,8 @@ export default async function Page({
 					</p>
 					<hr className="mt-4" />
 					<p className="absolute bottom-10 text-[0.8125rem]/6 text-gray-500">
-						<IconLink href="https://x.com/better_auth" icon={XIcon} compact>
-							BETTER-AUTH.
+						<IconLink href="https://x.com/faire_auth" icon={XIcon} compact>
+							FAIRE-AUTH.
 						</IconLink>
 					</p>
 				</div>
@@ -131,7 +131,7 @@ export async function generateMetadata({
 	const { slug } = await params;
 	if (!slug) {
 		return {
-			metadataBase: new URL("https://better-auth.com/changelogs"),
+			metadataBase: new URL("https://faire-auth.com/changelogs"),
 			title: metaTitle,
 			description: metaDescription,
 			openGraph: {
@@ -142,7 +142,7 @@ export async function generateMetadata({
 						url: ogImage,
 					},
 				],
-				url: "https://better-auth.com/changelogs",
+				url: "https://faire-auth.com/changelogs",
 			},
 			twitter: {
 				card: "summary_large_image",

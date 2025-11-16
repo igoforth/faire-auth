@@ -48,7 +48,7 @@ export function Intro() {
 				<span className="">available here.</span>
 			</h1>
 			<p className="mt-4 text-sm text-gray-600 dark:text-gray-300">
-				Better Auth is comprehensive authentication library for TypeScript that
+				Faire Auth is comprehensive authentication library for TypeScript that
 				provides a wide range of features to make authentication easier and more
 				secure.
 			</p>
@@ -62,14 +62,14 @@ export function Intro() {
 					Documentation
 				</IconLink>
 				<IconLink
-					href="https://github.com/better-auth/better-auth"
+					href="https://github.com/igoforth/faire-auth"
 					icon={GitHubIcon}
 					className="flex-none text-gray-600 dark:text-gray-300"
 				>
 					GitHub
 				</IconLink>
 				<IconLink
-					href="https://discord.gg/better-auth"
+					href="https://discord.gg/faire-auth"
 					icon={DiscordLogoIcon}
 					className="flex-none text-gray-600 dark:text-gray-300"
 				>
@@ -85,7 +85,7 @@ export function IntroFooter() {
 		<p className="flex items-baseline gap-x-2 text-[0.8125rem]/6 text-gray-500">
 			Brought to you by{" "}
 			<IconLink href="#" icon={XIcon} compact>
-				BETTER-AUTH.
+				FAIRE-AUTH.
 			</IconLink>
 		</p>
 	);

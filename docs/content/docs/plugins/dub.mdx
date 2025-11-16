@@ -1,6 +1,6 @@
 ---
 title: Dub
-description: Better Auth Plugin for Lead Tracking using Dub links and OAuth Linking
+description: Faire Auth Plugin for Lead Tracking using Dub links and OAuth Linking
 ---
 
 [Dub](https://dub.co/) is an open source modern link management platform for entrepreneurs, creators, and growth teams.
@@ -15,7 +15,7 @@ This plugins allows you to track leads when a user signs up using a Dub link. It
         First, install the plugin:
 
         ```package-install
-        @dub/better-auth
+        @dub/faire-auth
         ```
     </Step>
     <Step>
@@ -33,11 +33,11 @@ This plugins allows you to track leads when a user signs up using a Dub link. It
         Add the plugin to your auth config:
 
         ```ts title="auth.ts"
-        import { betterAuth } from "better-auth"
-        import { dubAnalytics } from "@dub/better-auth"
+        import { faireAuth } from "faire-auth"
+        import { dubAnalytics } from "@dub/faire-auth"
         import { dub } from "dub"
 
-        export const auth = betterAuth({
+        export const auth = faireAuth({
             plugins: [
                 dubAnalytics({
                     dubClient: new Dub()
@@ -56,13 +56,13 @@ This plugins allows you to track leads when a user signs up using a Dub link. It
 By default, the plugin will track sign up events as leads. You can disable this by setting `disableLeadTracking` to `true`.
 
 ```ts
-import { dubAnalytics } from "@dub/better-auth";
-import { betterAuth } from "better-auth";
+import { dubAnalytics } from "@dub/faire-auth";
+import { faireAuth } from "faire-auth";
 import { Dub } from "dub";
 
 const dub = new Dub();
 
-const betterAuth = betterAuth({
+const faireAuth = faireAuth({
   plugins: [
     dubAnalytics({
       dubClient: dub,
@@ -93,8 +93,8 @@ dubAnalytics({
 And in the client, you need to use the `dubAnalyticsClient` plugin.
 
 ```ts
-import { createAuthClient } from "better-auth/client";
-import { dubAnalyticsClient } from "@dub/better-auth/client";
+import { createAuthClient } from "faire-auth/client";
+import { dubAnalyticsClient } from "@dub/faire-auth/client";
 
 const authClient = createAuthClient({
   plugins: [dubAnalyticsClient()],

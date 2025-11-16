@@ -1,82 +1,54 @@
+import type { Context, Env } from "hono";
 import type { Migration } from "kysely";
+import type { z } from "zod";
+import type { FaireAuthPluginDBSchema } from "../db";
 import type { AuthContext } from "./context";
-import type {
-	Endpoint,
-	EndpointContext,
-	InputContext,
-	Middleware,
-} from "better-call";
-import type { BetterAuthPluginDBSchema } from "../db";
-import type { LiteralString } from "./helper";
-import type { BetterAuthOptions } from "./init-options";
-import type { AuthMiddleware } from "../api";
+import type { ExK, LiteralString } from "./helper";
+import type { HookHandler } from "./hono";
+import type { FaireAuthOptions } from "./options";
 
-type Awaitable<T> = T | Promise<T>;
 type DeepPartial<T> = T extends Function
 	? T
 	: T extends object
 		? { [K in keyof T]?: DeepPartial<T[K]> }
 		: T;
 
-export type HookEndpointContext = Partial<
-	EndpointContext<string, any> & Omit<InputContext<string, any>, "method">
-> & {
-	path: string;
-	context: AuthContext & {
-		returned?: unknown;
-		responseHeaders?: Headers;
-	};
-	headers?: Headers | undefined;
-};
-
-export type BetterAuthPlugin = {
+export interface FaireAuthPlugin<E extends Env = any> {
 	id: LiteralString;
 	/**
 	 * The init function is called when the plugin is initialized.
 	 * You can return a new context or modify the existing context.
 	 */
-	init?: (ctx: AuthContext) =>
-		| Awaitable<{
-				context?: DeepPartial<Omit<AuthContext, "options">>;
-				options?: Partial<BetterAuthOptions>;
-		  }>
-		| void
-		| Promise<void>;
-	endpoints?: {
-		[key: string]: Endpoint;
-	};
-	middlewares?: {
-		path: string;
-		middleware: Middleware;
-	}[];
-	onRequest?: (
-		request: Request,
-		ctx: AuthContext,
-	) => Promise<
+	init?:
+		| ((ctx: AuthContext<E>) => {
+				context?: DeepPartial<ExK<AuthContext<E>, "options">>;
+				options?: Partial<FaireAuthOptions>;
+		  } | void)
+		| undefined;
+	/**
+	 * Zod schemas to allow users to create DTO of route returns.
+	 */
+	schemas?: Record<string, z.ZodType>;
+	/**
+	 * Handler called early for each request.
+	 */
+	onRequest?: (ctx: Context<E>) => Response | void;
+	/**
+	 * Handler called late for each response.
+	 */
+	onResponse?: (ctx: Context<E>) => Response | void;
+	hooks?:
 		| {
-				response: Response;
+				before?: {
+					matcher: (context: Context<E>) => boolean;
+					handler: (options: FaireAuthOptions) => HookHandler<E>;
+				}[];
+				after?: {
+					matcher: (context: Context<E>) => boolean;
+					handler: (options: FaireAuthOptions) => HookHandler<E>;
+				}[];
 		  }
-		| {
-				request: Request;
-		  }
-		| void
-	>;
-	onResponse?: (
-		response: Response,
-		ctx: AuthContext,
-	) => Promise<{
-		response: Response;
-	} | void>;
-	hooks?: {
-		before?: {
-			matcher: (context: HookEndpointContext) => boolean;
-			handler: AuthMiddleware;
-		}[];
-		after?: {
-			matcher: (context: HookEndpointContext) => boolean;
-			handler: AuthMiddleware;
-		}[];
-	};
+		| undefined;
 	/**
 	 * Schema the plugin needs
 	 *
@@ -104,15 +76,15 @@ export type BetterAuthPlugin = {
 	 * } as AuthPluginSchema
 	 * ```
 	 */
-	schema?: BetterAuthPluginDBSchema;
+	schema?: FaireAuthPluginDBSchema | undefined;
 	/**
 	 * The migrations of the plugin. If you define schema that will automatically create
 	 * migrations for you.
 	 *
-	 * ⚠️ Only uses this if you dont't want to use the schema option and you disabled migrations for
+	 * ! Only uses this if you dont't want to use the schema option and you disabled migrations for
 	 * the tables.
 	 */
-	migrations?: Record<string, Migration>;
+	migrations?: Record<string, Migration> | undefined;
 	/**
 	 * The options of the plugin
 	 */
@@ -120,17 +92,19 @@ export type BetterAuthPlugin = {
 	/**
 	 * types to be inferred
 	 */
-	$Infer?: Record<string, any>;
+	$Infer?: Record<string, any> | undefined;
 	/**
 	 * The rate limit rules to apply to specific paths.
 	 */
-	rateLimit?: {
-		window: number;
-		max: number;
-		pathMatcher: (path: string) => boolean;
-	}[];
+	rateLimit?:
+		| {
+				window: number;
+				max: number;
+				pathMatcher: (path: string) => boolean;
+		  }[]
+		| undefined;
 	/**
 	 * The error codes returned by the plugin
 	 */
-	$ERROR_CODES?: Record<string, string>;
-};
+	$ERROR_CODES?: Record<string, string> | undefined;
+}

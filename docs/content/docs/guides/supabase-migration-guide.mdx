@@ -1,9 +1,9 @@
 ---
-title: Migrating from Supabase Auth to Better Auth
-description: A step-by-step guide to transitioning from Supabase Auth to Better Auth.
+title: Migrating from Supabase Auth to Faire Auth
+description: A step-by-step guide to transitioning from Supabase Auth to Faire Auth.
 ---
 
-In this guide, we'll walk through the steps to migrate a project from Supabase Auth to Better Auth. 
+In this guide, we'll walk through the steps to migrate a project from Supabase Auth to Faire Auth.
 
 <Callout type="warn">
 This migration will invalidate all active sessions. While this guide doesn't currently cover migrating two-factor (2FA) or Row Level Security (RLS) configurations, both should be possible with additional steps.
@@ -12,7 +12,7 @@ This migration will invalidate all active sessions. While this guide doesn't cur
 
 ## Before You Begin
 
-Before starting the migration process, set up Better Auth in your project. Follow the [installation guide](/docs/installation) to get started.
+Before starting the migration process, set up Faire Auth in your project. Follow the [installation guide](/docs/installation) to get started.
 
 
 <Steps>
@@ -30,9 +30,9 @@ And then you can use the following code to connect to your database.
 ```ts title="auth.ts"
 import { Pool } from "pg";
 
-export const auth = betterAuth({
-    database: new Pool({ 
-        connectionString: process.env.DATABASE_URL 
+export const auth = faireAuth({
+    database: new Pool({
+        connectionString: process.env.DATABASE_URL
     }),
 })
 ```
@@ -43,11 +43,11 @@ export const auth = betterAuth({
 Enable the email and password in your auth config.
 
 ```ts title="auth.ts"
-import { admin, anonymous } from "better-auth/plugins";
+import { admin, anonymous } from "faire-auth/plugins";
 
-export const auth = betterAuth({
-    database: new Pool({ 
-        connectionString: process.env.DATABASE_URL 
+export const auth = faireAuth({
+    database: new Pool({
+        connectionString: process.env.DATABASE_URL
     }),
 	emailVerification: {
 		sendEmailVerification: async(user)=>{
@@ -67,13 +67,13 @@ export const auth = betterAuth({
 Add social providers you have enabled in your Supabase project in your auth config.
 
 ```ts title="auth.ts"
-import { admin, anonymous } from "better-auth/plugins";
+import { admin, anonymous } from "faire-auth/plugins";
 
-export const auth = betterAuth({
-    database: new Pool({ 
-        connectionString: process.env.DATABASE_URL 
+export const auth = faireAuth({
+    database: new Pool({
+        connectionString: process.env.DATABASE_URL
     }),
-    emailAndPassword: { 
+    emailAndPassword: {
         enabled: true,
     },
     socialProviders: { // [!code highlight]
@@ -91,13 +91,13 @@ export const auth = betterAuth({
 Add the [admin](/docs/plugins/admin) and [anonymous](/docs/plugins/anonymous) plugins to your auth config.
 
 ```ts title="auth.ts"
-import { admin, anonymous } from "better-auth/plugins";
+import { admin, anonymous } from "faire-auth/plugins";
 
-export const auth = betterAuth({
-    database: new Pool({ 
-        connectionString: process.env.DATABASE_URL 
+export const auth = faireAuth({
+    database: new Pool({
+        connectionString: process.env.DATABASE_URL
     }),
-    emailAndPassword: { 
+    emailAndPassword: {
         enabled: true,
     },
     socialProviders: {
@@ -116,7 +116,7 @@ export const auth = betterAuth({
 Run the migration to create the necessary tables in your database.
 
 ```bash title="Terminal"
-npx @better-auth/cli migrate
+npx @faire-auth/cli migrate
 ```
 
 This will create the following tables in your database:
@@ -131,7 +131,7 @@ This tables will be created on the `public` schema.
 <Step>
 ### Copy the migration script
 
-Now that we have the necessary tables in our database, we can run the migration script to migrate the users and accounts from Supabase to Better Auth.
+Now that we have the necessary tables in our database, we can run the migration script to migrate the users and accounts from Supabase to Faire Auth.
 
 Start by creating a `.ts` file in your project.
 
@@ -172,7 +172,7 @@ const migrateFromSupabase = async () => {
 	const db = ctx.options.database as Pool;
 	const users = await db
 		.query(`
-			SELECT 
+			SELECT
 				u.*,
 				COALESCE(
 					json_agg(
@@ -258,14 +258,14 @@ migrateFromSupabase();
 
 - `name`: the migration script will use the user's email as the name. You might want to customize it if you have the user display name in your database.
 - `socialProviderList`: the migration script will use the social providers you have enabled in your auth config. You might want to customize it if you have additional social providers that you haven't enabled in your auth config.
-- `role`: remove `role` if you're not using the `admin` plugin 
+- `role`: remove `role` if you're not using the `admin` plugin
 - `isAnonymous`: remove `isAnonymous` if you're not using the `anonymous` plugin.
 - update other tables that reference the `users` table to use the `id` field.
 </Step>
 <Step>
 ### Run the migration script
 
-Run the migration script to migrate the users and accounts from Supabase to Better Auth.
+Run the migration script to migrate the users and accounts from Supabase to Faire Auth.
 
 ```bash title="Terminal"
 bun migration.ts # or use node, ts-node, etc.
@@ -274,7 +274,7 @@ bun migration.ts # or use node, ts-node, etc.
 <Step>
  ### Change password hashing algorithm
 
- By default, Better Auth uses the `scrypt` algorithm to hash passwords. Since Supabase uses `bcrypt`, you'll need to configure Better Auth to use bcrypt for password verification.
+ By default, Faire Auth uses the `scrypt` algorithm to hash passwords. Since Supabase uses `bcrypt`, you'll need to configure Faire Auth to use bcrypt for password verification.
 
  First, install bcrypt:
 
@@ -286,10 +286,10 @@ bun migration.ts # or use node, ts-node, etc.
  Then update your auth configuration:
 
  ```ts title="auth.ts"
- import { betterAuth } from "better-auth";
+ import { faireAuth } from "faire-auth";
  import bcrypt from "bcrypt";
- 
- export const auth = betterAuth({
+
+ export const auth = faireAuth({
     emailAndPassword: {
         password: {
             hash: async (password) => {
@@ -306,9 +306,9 @@ bun migration.ts # or use node, ts-node, etc.
 <Step>
 ### Update your code
 
-Update your codebase from Supabase auth calls to Better Auth API.
+Update your codebase from Supabase auth calls to Faire Auth API.
 
-Here's a list of the Supabase auth API calls and their Better Auth counterparts.
+Here's a list of the Supabase auth API calls and their Faire Auth counterparts.
 
 - `supabase.auth.signUp` -> `authClient.signUp.email`
 - `supabase.auth.signInWithPassword` -> `authClient.signIn.email`
@@ -334,6 +334,6 @@ To protect routes with middleware, refer to the [Next.js middleware guide](/docs
 
 ## Wrapping Up
 
-Congratulations! You've successfully migrated from Supabase Auth to Better Auth.
+Congratulations! You've successfully migrated from Supabase Auth to Faire Auth.
 
-Better Auth offers greater flexibility and more features—be sure to explore the [documentation](/docs) to unlock its full potential.
+Faire Auth offers greater flexibility and more features—be sure to explore the [documentation](/docs) to unlock its full potential.

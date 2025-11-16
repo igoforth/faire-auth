@@ -1,11 +1,11 @@
 ---
 title: TanStack Start Integration
-description: Integrate Better Auth with TanStack Start.
+description: Integrate Faire Auth with TanStack Start.
 ---
 
 This integration guide is assuming you are using TanStack Start.
 
-Before you start, make sure you have a Better Auth instance configured. If you haven't done that yet, check out the [installation](/docs/installation).
+Before you start, make sure you have a Faire Auth instance configured. If you haven't done that yet, check out the [installation](/docs/installation).
 
 ### Mount the handler
 
@@ -47,13 +47,13 @@ export default createStartHandler({
 ### Usage tips
 
 - We recommend using the client SDK or `authClient` to handle authentication, rather than server actions with `auth.api`.
-- When you call functions that need to set cookies (like `signInEmail` or `signUpEmail`), you'll need to handle cookie setting for TanStack Start. Better Auth provides a `reactStartCookies` plugin to automatically handle this for you.
+- When you call functions that need to set cookies (like `signInEmail` or `signUpEmail`), you'll need to handle cookie setting for TanStack Start. Faire Auth provides a `reactStartCookies` plugin to automatically handle this for you.
 
 ```ts title="src/lib/auth.ts"
-import { betterAuth } from "better-auth";
-import { reactStartCookies } from "better-auth/react-start";
+import { faireAuth } from "faire-auth";
+import { reactStartCookies } from "faire-auth/react-start";
 
-export const auth = betterAuth({
+export const auth = faireAuth({
     //...your config
     plugins: [reactStartCookies()] // make sure this is the last plugin in the array
 })

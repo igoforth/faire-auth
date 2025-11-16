@@ -14,8 +14,8 @@ import { AnchorScroll } from "@/components/anchor-scroll-fix";
 
 export const metadata = createMetadata({
 	title: {
-		template: "%s | Better Auth",
-		default: "Better Auth",
+		template: "%s | Faire Auth",
+		default: "Faire Auth",
 	},
 	description: "The most comprehensive authentication library for TypeScript.",
 	metadataBase: baseUrl,

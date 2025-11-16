@@ -1,5 +1,5 @@
 import { betterFetch } from "@better-fetch/fetch";
-import { type OAuthProvider, type ProviderOptions } from "../oauth2";
+import type { OAuthProvider, ProviderOptions } from "../oauth2";
 import {
 	createAuthorizationURL,
 	validateAuthorizationCode,
@@ -20,12 +20,12 @@ export interface VkProfile {
 	};
 }
 
-export interface VkOption extends ProviderOptions {
+export interface VkOptions extends ProviderOptions<VkProfile> {
 	clientId: string;
 	scheme?: "light" | "dark";
 }
 
-export const vk = (options: VkOption) => {
+export const vk = (options: VkOptions) => {
 	return {
 		id: "vk",
 		name: "VK",
@@ -74,12 +74,9 @@ export const vk = (options: VkOption) => {
 					});
 				},
 		async getUserInfo(data) {
-			if (options.getUserInfo) {
-				return options.getUserInfo(data);
-			}
-			if (!data.accessToken) {
-				return null;
-			}
+			if (options.getUserInfo) return options.getUserInfo(data);
+			if (!data.accessToken) return null;
+
 			const formBody = new URLSearchParams({
 				access_token: data.accessToken,
 				client_id: options.clientId,
@@ -94,12 +91,8 @@ export const vk = (options: VkOption) => {
 					body: formBody,
 				},
 			);
-			if (error) {
-				return null;
-			}
-			if (!profile.user.email) {
-				return null;
-			}
+			if (error) return null;
+			if (!profile.user.email) return null;
 
 			const userMap = await options.mapProfileToUser?.(profile);
 
@@ -109,7 +102,7 @@ export const vk = (options: VkOption) => {
 					first_name: profile.user.first_name,
 					last_name: profile.user.last_name,
 					email: profile.user.email,
-					image: profile.user.avatar,
+					...(profile.user.avatar && { image: profile.user.avatar }),
 					/** @note VK does not provide emailVerified*/
 					emailVerified: !!profile.user.email,
 					birthday: profile.user.birthday,
@@ -121,5 +114,5 @@ export const vk = (options: VkOption) => {
 			};
 		},
 		options,
-	} satisfies OAuthProvider<VkProfile>;
+	} satisfies OAuthProvider;
 };

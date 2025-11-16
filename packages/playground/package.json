@@ -1,0 +1,40 @@
+{
+  "name": "@faire-auth/playground",
+  "version": "0.0.1",
+  "description": "",
+  "main": "dist/index.cjs",
+  "module": "dist/index.mjs",
+  "scripts": {
+    "typecheck": "tsc --project tsconfig.json"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "typesVersions": {
+    "*": {
+      "*": [
+        "./dist/index.d.ts"
+      ]
+    }
+  },
+  "keywords": [
+    "auth",
+    "typescript",
+    "faire-auth"
+  ],
+  "dependencies": {
+    "faire-auth": "workspace:*",
+    "@faire-auth/core": "workspace:*",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "tsdown": "catalog:"
+  },
+  "files": [
+    "dist"
+  ]
+}

@@ -1,8 +1,9 @@
-import type { BetterAuthClientPlugin, Store } from "better-auth/types";
+import type { FaireAuthClientPlugin, Store } from "faire-auth/types";
 import * as Linking from "expo-linking";
 import { Platform } from "react-native";
 import Constants from "expo-constants";
 import type { BetterFetchOption } from "@better-fetch/fetch";
+import { mergeHeaders } from "faire-auth";
 
 interface CookieAttributes {
 	value: string;
@@ -23,15 +24,15 @@ export function parseSetCookieHeader(
 	cookies.forEach((cookie) => {
 		const parts = cookie.split(";").map((p) => p.trim());
 		const [nameValue, ...attributes] = parts;
-		const [name, ...valueParts] = nameValue!.split("=");
+		const [name, ...valueParts] = nameValue.split("=");
 		const value = valueParts.join("=");
 		const cookieObj: CookieAttributes = { value };
 		attributes.forEach((attr) => {
 			const [attrName, ...attrValueParts] = attr.split("=");
 			const attrValue = attrValueParts.join("=");
-			cookieObj[attrName!.toLowerCase() as "value"] = attrValue;
+			cookieObj[attrName.toLowerCase() as "value"] = attrValue;
 		});
-		cookieMap.set(name!, cookieObj);
+		cookieMap.set(name, cookieObj);
 	});
 	return cookieMap;
 }
@@ -118,11 +119,9 @@ export function getCookie(cookie: string) {
 	try {
 		parsed = JSON.parse(cookie) as Record<string, StoredCookie>;
 	} catch (e) {}
-	const toSend = Object.entries(parsed).reduce((acc, [key, value]) => {
-		if (value.expires && new Date(value.expires) < new Date()) {
-			return acc;
-		}
-		return `${acc}; ${key}=${value.value}`;
+	const toSend = Object.entries(parsed).reduce((acc, [key, value], idx) => {
+		if (value.expires && new Date(value.expires) < new Date()) return acc;
+		return `${idx !== 0 ? `${acc}; ` : ""}${key}=${value.value}`;
 	}, "");
 	return toSend;
 }
@@ -132,22 +131,24 @@ function getOrigin(scheme: string) {
 	return schemeURI;
 }
 
-export const expoClient = (opts: ExpoClientOptions) => {
+export const expoClient = ({
+	storage,
+	disableCache,
+	scheme: rawScheme = Constants.expoConfig?.scheme ||
+		Constants.platform?.scheme,
+	storagePrefix = "faire-auth",
+}: ExpoClientOptions) => {
 	let store: Store | null = null;
-	const cookieName = `${opts?.storagePrefix || "better-auth"}_cookie`;
-	const localCacheName = `${opts?.storagePrefix || "better-auth"}_session_data`;
-	const storage = opts?.storage;
+	const cookieName = `${storagePrefix}_cookie`;
+	const localCacheName = `${storagePrefix}_session_data`;
 	const isWeb = Platform.OS === "web";
-
-	const rawScheme =
-		opts?.scheme || Constants.expoConfig?.scheme || Constants.platform?.scheme;
 	const scheme = Array.isArray(rawScheme) ? rawScheme[0] : rawScheme;
 
-	if (!scheme && !isWeb) {
+	if (!scheme && !isWeb)
 		throw new Error(
 			"Scheme not found in app.json. Please provide a scheme in the options.",
 		);
-	}
+
 	return {
 		id: "expo",
 		getActions(_, $store) {
@@ -194,21 +195,24 @@ export const expoClient = (opts: ExpoClientOptions) => {
 
 						if (
 							context.request.url.toString().includes("/get-session") &&
-							!opts?.disableCache
+							!disableCache &&
+							context.data?.data
 						) {
-							const data = context.data;
-							storage.setItem(localCacheName, JSON.stringify(data));
+							storage.setItem(
+								localCacheName,
+								JSON.stringify(context.data.data),
+							);
 						}
 
 						if (
-							context.data?.redirect &&
+							context.data?.data.redirect &&
 							(context.request.url.toString().includes("/sign-in") ||
 								context.request.url.toString().includes("/link-social")) &&
 							!context.request?.body.includes("idToken") // id token is used for silent sign-in
 						) {
 							const callbackURL = JSON.parse(context.request.body)?.callbackURL;
 							const to = callbackURL;
-							const signInURL = context.data?.url;
+							const signInURL = context.data?.data.url;
 							let Browser: typeof import("expo-web-browser") | undefined =
 								undefined;
 							try {
@@ -221,8 +225,7 @@ export const expoClient = (opts: ExpoClientOptions) => {
 									},
 								);
 							}
-							const proxyURL = `${context.request.baseURL}/expo-authorization-proxy?authorizationURL=${encodeURIComponent(signInURL)}`;
-							const result = await Browser.openAuthSessionAsync(proxyURL, to);
+							const result = await Browser.openAuthSessionAsync(signInURL, to);
 							if (result.type !== "success") return;
 							const url = new URL(result.url);
 							const cookie = String(url.searchParams.get("cookie"));
@@ -233,22 +236,21 @@ export const expoClient = (opts: ExpoClientOptions) => {
 					},
 				},
 				async init(url, options) {
-					if (isWeb) {
+					if (isWeb)
 						return {
 							url,
 							options: options as BetterFetchOption,
 						};
-					}
-					options = options || {};
+
+					options ||= {};
 					const storedCookie = storage.getItem(cookieName);
 					const cookie = getCookie(storedCookie || "{}");
 					options.credentials = "omit";
-					options.headers = {
-						...options.headers,
+					options.headers = mergeHeaders(options.headers, {
 						cookie,
 						"expo-origin": getOrigin(scheme!),
 						"x-skip-oauth-proxy": "true", // skip oauth proxy for expo
-					};
+					});
 					if (options.body?.callbackURL) {
 						if (options.body.callbackURL.startsWith("/")) {
 							const url = Linking.createURL(options.body.callbackURL, {
@@ -290,5 +292,5 @@ export const expoClient = (opts: ExpoClientOptions) => {
 				},
 			},
 		],
-	} satisfies BetterAuthClientPlugin;
+	} satisfies FaireAuthClientPlugin;
 };

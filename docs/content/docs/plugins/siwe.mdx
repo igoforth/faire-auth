@@ -1,6 +1,6 @@
 ---
 title: Sign In With Ethereum (SIWE)
-description: Sign in with Ethereum plugin for Better Auth
+description: Sign in with Ethereum plugin for Faire Auth
 ---
 
 The Sign in with Ethereum (SIWE) plugin allows users to authenticate using their Ethereum wallets following the [ERC-4361 standard](https://eips.ethereum.org/EIPS/eip-4361). This plugin provides flexibility by allowing you to implement your own message verification and nonce generation logic.
@@ -14,10 +14,10 @@ The Sign in with Ethereum (SIWE) plugin allows users to authenticate using their
         Add the SIWE plugin to your auth configuration:
 
         ```ts title="auth.ts"
-        import { betterAuth } from "better-auth";
-        import { siwe } from "better-auth/plugins";
+        import { faireAuth } from "faire-auth";
+        import { siwe } from "faire-auth/plugins";
 
-        export const auth = betterAuth({
+        export const auth = faireAuth({
             plugins: [
                 siwe({
                     domain: "example.com",
@@ -53,12 +53,12 @@ The Sign in with Ethereum (SIWE) plugin allows users to authenticate using their
         <Tabs items={["migrate", "generate"]}>
             <Tab value="migrate">
             ```bash
-            npx @better-auth/cli migrate
+            npx @faire-auth/cli migrate
             ```
             </Tab>
             <Tab value="generate">
             ```bash
-            npx @better-auth/cli generate
+            npx @faire-auth/cli generate
             ```
             </Tab>
         </Tabs>
@@ -69,8 +69,8 @@ The Sign in with Ethereum (SIWE) plugin allows users to authenticate using their
         ### Add the Client Plugin
 
         ```ts title="auth-client.ts"
-        import { createAuthClient } from "better-auth/client";
-        import { siweClient } from "better-auth/client/plugins";
+        import { createAuthClient } from "faire-auth/client";
+        import { siweClient } from "faire-auth/client/plugins";
 
         export const authClient = createAuthClient({
             plugins: [siweClient()],
@@ -181,8 +181,8 @@ The SIWE plugin accepts the following configuration options:
 The SIWE client plugin doesn't require any configuration options, but you can pass them if needed for future extensibility:
 
 ```ts title="auth-client.ts"
-import { createAuthClient } from "better-auth/client";
-import { siweClient } from "better-auth/client/plugins";
+import { createAuthClient } from "faire-auth/client";
+import { siweClient } from "faire-auth/client/plugins";
 
 export const authClient = createAuthClient({
   plugins: [
@@ -211,13 +211,13 @@ The SIWE plugin adds a `walletAddress` table to store user wallet associations:
 Here's a complete example showing how to implement SIWE authentication:
 
 ```ts title="auth.ts"
-import { betterAuth } from "better-auth";
-import { siwe } from "better-auth/plugins";
-import { generateRandomString } from "better-auth/crypto";
+import { faireAuth } from "faire-auth";
+import { siwe } from "faire-auth/plugins";
+import { generateRandomString } from "faire-auth/crypto";
 import { verifyMessage, createPublicClient, http } from "viem";
 import { mainnet } from "viem/chains";
 
-export const auth = betterAuth({
+export const auth = faireAuth({
   database: {
     // your database configuration
   },

@@ -1,11 +1,10 @@
 import { betterFetch } from "@better-fetch/fetch";
 import { decodeJwt, decodeProtectedHeader, importJWK, jwtVerify } from "jose";
-import { BetterAuthError } from "../error";
+import { FaireAuthError, APIError } from "../error";
 import type { OAuthProvider, ProviderOptions } from "../oauth2";
 import { createAuthorizationURL, validateAuthorizationCode } from "../oauth2";
-import { logger } from "../env";
-import { refreshAccessToken } from "../oauth2";
-import { APIError } from "better-call";
+import { logger } from "../env/logger";
+import { refreshAccessToken } from "../oauth2/refresh-access-token";
 
 export interface CognitoProfile {
 	sub: string;
@@ -46,7 +45,7 @@ export const cognito = (options: CognitoOptions) => {
 		logger.error(
 			"Domain, region and userPoolId are required for Amazon Cognito. Make sure to provide them in the options.",
 		);
-		throw new BetterAuthError("DOMAIN_AND_REGION_REQUIRED");
+		throw new FaireAuthError("DOMAIN_AND_REGION_REQUIRED");
 	}
 
 	const cleanDomain = options.domain.replace(/^https?:\/\//, "");
@@ -62,14 +61,14 @@ export const cognito = (options: CognitoOptions) => {
 				logger.error(
 					"ClientId is required for Amazon Cognito. Make sure to provide them in the options.",
 				);
-				throw new BetterAuthError("CLIENT_ID_AND_SECRET_REQUIRED");
+				throw new FaireAuthError("CLIENT_ID_AND_SECRET_REQUIRED");
 			}
 
 			if (options.requireClientSecret && !options.clientSecret) {
 				logger.error(
 					"Client Secret is required when requireClientSecret is true. Make sure to provide it in the options.",
 				);
-				throw new BetterAuthError("CLIENT_SECRET_REQUIRED");
+				throw new FaireAuthError("CLIENT_SECRET_REQUIRED");
 			}
 			const _scopes = options.disableDefaultScope
 				? []
@@ -117,12 +116,9 @@ export const cognito = (options: CognitoOptions) => {
 				},
 
 		async verifyIdToken(token, nonce) {
-			if (options.disableIdTokenSignIn) {
-				return false;
-			}
-			if (options.verifyIdToken) {
-				return options.verifyIdToken(token, nonce);
-			}
+			if (options.disableIdTokenSignIn) return false;
+
+			if (options.verifyIdToken) return options.verifyIdToken(token, nonce);
 
 			try {
 				const decodedHeader = decodeProtectedHeader(token);
@@ -143,9 +139,8 @@ export const cognito = (options: CognitoOptions) => {
 					maxTokenAge: "1h",
 				});
 
-				if (nonce && jwtClaims.nonce !== nonce) {
-					return false;
-				}
+				if (nonce && jwtClaims.nonce !== nonce) return false;
+
 				return true;
 			} catch (error) {
 				logger.error("Failed to verify ID token:", error);
@@ -154,16 +149,13 @@ export const cognito = (options: CognitoOptions) => {
 		},
 
 		async getUserInfo(token) {
-			if (options.getUserInfo) {
-				return options.getUserInfo(token);
-			}
+			if (options.getUserInfo) return options.getUserInfo(token);
 
 			if (token.idToken) {
 				try {
 					const profile = decodeJwt<CognitoProfile>(token.idToken);
-					if (!profile) {
-						return null;
-					}
+					if (!profile) return null;
+
 					const name =
 						profile.name ||
 						profile.given_name ||
@@ -178,9 +170,9 @@ export const cognito = (options: CognitoOptions) => {
 					return {
 						user: {
 							id: profile.sub,
-							name: enrichedProfile.name,
+							...(enrichedProfile.name && { name: enrichedProfile.name }),
 							email: profile.email,
-							image: profile.picture,
+							...(profile.picture && { image: profile.picture }),
 							emailVerified: profile.email_verified,
 							...userMap,
 						},
@@ -203,13 +195,18 @@ export const cognito = (options: CognitoOptions) => {
 					);
 
 					if (userInfo) {
+						const hasName =
+							!!userInfo.name || !!userInfo.given_name || !!userInfo.username;
 						const userMap = await options.mapProfileToUser?.(userInfo);
 						return {
 							user: {
 								id: userInfo.sub,
-								name: userInfo.name || userInfo.given_name || userInfo.username,
+								...(hasName && {
+									name:
+										userInfo.name || userInfo.given_name || userInfo.username,
+								}),
 								email: userInfo.email,
-								image: userInfo.picture,
+								...(userInfo.picture && { image: userInfo.picture }),
 								emailVerified: userInfo.email_verified,
 								...userMap,
 							},
@@ -225,7 +222,7 @@ export const cognito = (options: CognitoOptions) => {
 		},
 
 		options,
-	} satisfies OAuthProvider<CognitoProfile>;
+	} satisfies OAuthProvider;
 };
 
 export const getCognitoPublicKey = async (
@@ -247,16 +244,13 @@ export const getCognitoPublicKey = async (
 			}>;
 		}>(COGNITO_JWKS_URI);
 
-		if (!data?.keys) {
+		if (!data?.keys)
 			throw new APIError("BAD_REQUEST", {
 				message: "Keys not found",
 			});
-		}
 
 		const jwk = data.keys.find((key) => key.kid === kid);
-		if (!jwk) {
-			throw new Error(`JWK with kid ${kid} not found`);
-		}
+		if (!jwk) throw new Error(`JWK with kid ${kid} not found`);
 
 		return await importJWK(jwk, jwk.alg);
 	} catch (error) {

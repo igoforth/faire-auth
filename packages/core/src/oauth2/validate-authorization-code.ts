@@ -1,10 +1,10 @@
 import { betterFetch } from "@better-fetch/fetch";
 import { jwtVerify } from "jose";
-import type { ProviderOptions } from "./index";
-import { getOAuth2Tokens } from "./index";
-import { base64 } from "@better-auth/utils/base64";
+import { base64Url } from "../datatypes/base64";
+import type { ProviderOptions } from "./oauth-provider";
+import { getOAuth2Tokens } from "./utils";
 
-export function createAuthorizationCodeRequest({
+export const createAuthorizationCodeRequest = ({
 	code,
 	codeVerifier,
 	redirectURI,
@@ -18,18 +18,18 @@ export function createAuthorizationCodeRequest({
 	code: string;
 	redirectURI: string;
 	options: Partial<ProviderOptions>;
-	codeVerifier?: string;
-	deviceId?: string;
-	authentication?: "basic" | "post";
-	headers?: Record<string, string>;
-	additionalParams?: Record<string, string>;
-	resource?: string | string[];
-}) {
+	codeVerifier?: string | undefined;
+	deviceId?: string | undefined;
+	authentication?: "basic" | "post" | undefined;
+	headers?: Record<string, string> | undefined;
+	additionalParams?: Record<string, string> | undefined;
+	resource?: string | string[] | undefined;
+}) => {
 	const body = new URLSearchParams();
 	const requestHeaders: Record<string, any> = {
 		"content-type": "application/x-www-form-urlencoded",
 		accept: "application/json",
-		"user-agent": "better-auth",
+		"user-agent": "faire-auth",
 		...headers,
 	};
 	body.set("grant_type", "authorization_code");
@@ -39,13 +39,8 @@ export function createAuthorizationCodeRequest({
 	deviceId && body.set("device_id", deviceId);
 	body.set("redirect_uri", options.redirectURI || redirectURI);
 	if (resource) {
-		if (typeof resource === "string") {
-			body.append("resource", resource);
-		} else {
-			for (const _resource of resource) {
-				body.append("resource", _resource);
-			}
-		}
+		if (typeof resource === "string") body.append("resource", resource);
+		else for (const _resource of resource) body.append("resource", _resource);
 	}
 	// Use standard Base64 encoding for HTTP Basic Auth (OAuth2 spec, RFC 7617)
 	// Fixes compatibility with providers like Notion, Twitter, etc.
@@ -53,7 +48,7 @@ export function createAuthorizationCodeRequest({
 		const primaryClientId = Array.isArray(options.clientId)
 			? options.clientId[0]
 			: options.clientId;
-		const encodedCredentials = base64.encode(
+		const encodedCredentials = base64Url.encode(
 			`${primaryClientId}:${options.clientSecret ?? ""}`,
 		);
 		requestHeaders["authorization"] = `Basic ${encodedCredentials}`;
@@ -62,22 +57,19 @@ export function createAuthorizationCodeRequest({
 			? options.clientId[0]
 			: options.clientId;
 		body.set("client_id", primaryClientId);
-		if (options.clientSecret) {
-			body.set("client_secret", options.clientSecret);
-		}
+		if (options.clientSecret) body.set("client_secret", options.clientSecret);
 	}
 
-	for (const [key, value] of Object.entries(additionalParams)) {
+	for (const [key, value] of Object.entries(additionalParams))
 		if (!body.has(key)) body.append(key, value);
-	}
 
 	return {
 		body,
 		headers: requestHeaders,
 	};
-}
+};
 
-export async function validateAuthorizationCode({
+export const validateAuthorizationCode = async ({
 	code,
 	codeVerifier,
 	redirectURI,
@@ -92,14 +84,16 @@ export async function validateAuthorizationCode({
 	code: string;
 	redirectURI: string;
 	options: Partial<ProviderOptions>;
-	codeVerifier?: string;
-	deviceId?: string;
+	// TODO: maybe remove undefined union in future to assert no properties
+	// will ever be undefined
+	codeVerifier?: string | undefined;
+	deviceId?: string | undefined;
 	tokenEndpoint: string;
-	authentication?: "basic" | "post";
-	headers?: Record<string, string>;
-	additionalParams?: Record<string, string>;
-	resource?: string | string[];
-}) {
+	authentication?: "basic" | "post" | undefined;
+	headers?: Record<string, string> | undefined;
+	additionalParams?: Record<string, string> | undefined;
+	resource?: string | string[] | undefined;
+}) => {
 	const { body, headers: requestHeaders } = createAuthorizationCodeRequest({
 		code,
 		codeVerifier,
@@ -114,18 +108,17 @@ export async function validateAuthorizationCode({
 
 	const { data, error } = await betterFetch<object>(tokenEndpoint, {
 		method: "POST",
-		body: body,
+		body,
 		headers: requestHeaders,
 	});
 
-	if (error) {
-		throw error;
-	}
+	if (error) throw error;
+
 	const tokens = getOAuth2Tokens(data);
 	return tokens;
-}
+};
 
-export async function validateToken(token: string, jwksEndpoint: string) {
+export const validateToken = async (token: string, jwksEndpoint: string) => {
 	const { data, error } = await betterFetch<{
 		keys: {
 			kid: string;
@@ -137,20 +130,16 @@ export async function validateToken(token: string, jwksEndpoint: string) {
 		}[];
 	}>(jwksEndpoint, {
 		method: "GET",
-		headers: {
-			accept: "application/json",
-			"user-agent": "better-auth",
-		},
+		headers: { accept: "application/json", "user-agent": "faire-auth" },
 	});
-	if (error) {
-		throw error;
-	}
-	const keys = data["keys"];
-	const header = JSON.parse(atob(token.split(".")[0]!));
+	if (error) throw error;
+
+	const { keys } = data;
+	const [split] = token.split(".");
+	if (split == null) throw new Error("Invalid token");
+	const header = JSON.parse(atob(split)) as { kid: string };
 	const key = keys.find((key) => key.kid === header.kid);
-	if (!key) {
-		throw new Error("Key not found");
-	}
+	if (!key) throw new Error("Key not found");
 	const verified = await jwtVerify(token, key);
 	return verified;
-}
+};

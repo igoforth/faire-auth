@@ -1,10 +1,5 @@
-import type { BetterAuthPlugin } from "better-auth";
-import {
-	APIError,
-	createAuthEndpoint,
-	createAuthMiddleware,
-} from "better-auth/api";
-import { z } from "zod";
+import type { FaireAuthPlugin } from "faire-auth/types";
+import { createHook } from "faire-auth/plugins";
 
 export interface ExpoOptions {
 	/**
@@ -26,95 +21,48 @@ export const expo = (options?: ExpoOptions) => {
 				},
 			};
 		},
-		async onRequest(request, ctx) {
-			if (!options?.overrideOrigin || request.headers.get("origin")) {
-				return;
-			}
+		onRequest: (ctx) => {
+			if (!options?.overrideOrigin || ctx.req.header("origin")) return;
+
 			/**
 			 * To bypass origin check from expo, we need to set the origin header to the expo-origin header
 			 */
-			const expoOrigin = request.headers.get("expo-origin");
-			if (!expoOrigin) {
-				return;
-			}
-			const req = request.clone();
-			req.headers.set("origin", expoOrigin);
-			return {
-				request: req,
-			};
+			const expoOrigin = ctx.req.header("expo-origin");
+			if (!expoOrigin) return;
+
+			ctx.req.raw.headers.set("origin", expoOrigin);
 		},
 		hooks: {
 			after: [
 				{
-					matcher(context) {
-						return !!(
-							context.path?.startsWith("/callback") ||
-							context.path?.startsWith("/oauth2/callback")
-						);
-					},
-					handler: createAuthMiddleware(async (ctx) => {
-						const headers = ctx.context.responseHeaders;
-						const location = headers?.get("location");
-						if (!location) {
-							return;
-						}
-						const isProxyURL = location.includes("/oauth-proxy-callback");
-						if (isProxyURL) {
-							return;
-						}
-						const trustedOrigins = ctx.context.trustedOrigins.filter(
-							(origin: string) => !origin.startsWith("http"),
-						);
-						const isTrustedOrigin = trustedOrigins.some((origin: string) =>
-							location?.startsWith(origin),
-						);
-						if (!isTrustedOrigin) {
-							return;
-						}
-						const cookie = headers?.get("set-cookie");
-						if (!cookie) {
-							return;
-						}
-						const url = new URL(location);
-						url.searchParams.set("cookie", cookie);
-						ctx.setHeader("location", url.toString());
-					}),
+					matcher: (ctx) =>
+						ctx.req.path.startsWith("/callback") ||
+						ctx.req.path.startsWith("/oauth2/callback"),
+					handler: (_authOptions) =>
+						createHook()(async (ctx) => {
+							const location = ctx.res.headers.get("location");
+							if (!location) return;
+
+							const isProxyURL = location.includes("/oauth-proxy-callback");
+							if (isProxyURL) return;
+
+							const trustedOrigins = [
+								...ctx.get("context").trustedOrigins.values(),
+							].filter((origin: string) => !origin.startsWith("http"));
+							const isTrustedOrigin = trustedOrigins.some((origin: string) =>
+								location?.startsWith(origin),
+							);
+							if (!isTrustedOrigin) return;
+
+							const cookie = ctx.res.headers.get("set-cookie");
+							if (!cookie) return;
+
+							const url = new URL(location);
+							url.searchParams.set("cookie", cookie);
+							ctx.header("location", url.toString());
+						}),
 				},
 			],
 		},
-		endpoints: {
-			expoAuthorizationProxy: createAuthEndpoint(
-				"/expo-authorization-proxy",
-				{
-					method: "GET",
-					query: z.object({
-						authorizationURL: z.string(),
-					}),
-					metadata: {
-						isAction: false,
-					},
-				},
-				async (ctx) => {
-					const { authorizationURL } = ctx.query;
-					const url = new URL(authorizationURL);
-					const state = url.searchParams.get("state");
-					if (!state) {
-						throw new APIError("BAD_REQUEST", {
-							message: "Unexpected error",
-						});
-					}
-					const stateCookie = ctx.context.createAuthCookie("state", {
-						maxAge: 5 * 60 * 1000, // 5 minutes
-					});
-					await ctx.setSignedCookie(
-						stateCookie.name,
-						state,
-						ctx.context.secret,
-						stateCookie.attributes,
-					);
-					return ctx.redirect(ctx.query.authorizationURL);
-				},
-			),
-		},
-	} satisfies BetterAuthPlugin;
+	} satisfies FaireAuthPlugin;
 };

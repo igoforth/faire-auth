@@ -1,21 +1,21 @@
 ---
 title: API
-description: Better Auth API.
+description: Faire Auth API.
 ---
 
-When you create a new Better Auth instance, it provides you with an `api` object. This object exposes every endpoint that exists in your Better Auth instance. And you can use this to interact with Better Auth server side.
+When you create a new Faire Auth instance, it provides you with an `api` object. This object exposes every endpoint that exists in your Faire Auth instance. And you can use this to interact with Faire Auth server side.
 
-Any endpoint added to Better Auth, whether from plugins or the core, will be accessible through the `api` object.
+Any endpoint added to Faire Auth, whether from plugins or the core, will be accessible through the `api` object.
 
 ## Calling API Endpoints on the Server
 
 To call an API endpoint on the server, import your `auth` instance and call the endpoint using the `api` object.
 
 ```ts title="server.ts"
-import { betterAuth } from "better-auth";
+import { faireAuth } from "faire-auth";
 import { headers } from "next/headers";
 
-export const auth = betterAuth({
+export const auth = faireAuth({
     //...
 })
 
@@ -50,7 +50,7 @@ await auth.api.verifyEmail({
 ```
 
 <Callout>
-Better Auth API endpoints are built on top of [better-call](https://github.com/bekacru/better-call), a tiny web framework that lets you call REST API endpoints as if they were regular functions and allows us to easily infer client types from the server.
+Faire Auth API endpoints are built on top of [better-call](https://github.com/bekacru/better-call), a tiny web framework that lets you call REST API endpoints as if they were regular functions and allows us to easily infer client types from the server.
 </Callout>
 
 ### Getting `headers` and `Response` Object
@@ -100,7 +100,7 @@ const response = await auth.api.signInEmail({
 When you call an API endpoint on the server, it will throw an error if the request fails. You can catch the error and handle it as you see fit. The error instance is an instance of `APIError`.
 
 ```ts title="server.ts"
-import { APIError } from "better-auth/api";
+import { APIError } from "faire-auth/api";
 
 try {
     await auth.api.signInEmail({

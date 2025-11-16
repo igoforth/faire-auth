@@ -40,7 +40,7 @@ describe("Cloudflare Worker compatibly basic tests", () => {
 		);
 
 		expect(response.status).toBe(200);
-		expect(response.headers.get("set-cookie")).toContain("better-auth.session");
+		expect(response.headers.get("set-cookie")).toContain("faire-auth.session");
 
 		const token = response.headers.get("set-cookie")?.split(";")[0];
 		expect(token).toBeDefined();

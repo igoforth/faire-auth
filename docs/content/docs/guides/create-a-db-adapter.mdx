@@ -1,12 +1,12 @@
 ---
 title: Create a Database Adapter
-description: Learn how to create a custom database adapter for Better-Auth
+description: Learn how to create a custom database adapter for Faire Auth
 ---
 
-Learn how to create a custom database adapter for Better-Auth using `createAdapter`.
+Learn how to create a custom database adapter for Faire Auth using `createAdapter`.
 
 Our `createAdapter` function is designed to be very flexible, and we've done our best to make it easy to understand and use.
-Our hope is to allow you to focus on writing database logic, and not have to worry about how the adapter is working with Better-Auth.
+Our hope is to allow you to focus on writing database logic, and not have to worry about how the adapter is working with Faire Auth.
 
 Anything from custom schema configurations, custom ID generation, safe JSON parsing, and more is handled by the `createAdapter` function.
 All you need to do is provide the database logic, and the `createAdapter` function will handle the rest.
@@ -22,7 +22,7 @@ All you need to do is provide the database logic, and the `createAdapter` functi
 3. Create the adapter!
 
 ```ts
-import { createAdapter, type DBAdapterDebugLogOption } from "better-auth/adapters";
+import { createAdapter, type DBAdapterDebugLogOption } from "faire-auth/adapters";
 
 // Your custom adapter config options
 interface CustomAdapterConfig {
@@ -47,7 +47,7 @@ export const myAdapter = (config: CustomAdapterConfig = {}) =>
 <Step>
 ### Configure the adapter
 
-The `config` object is mostly used to provide information about the adapter to Better-Auth.
+The `config` object is mostly used to provide information about the adapter to Faire Auth.
 We try to minimize the amount of code you need to write in your adapter functions, and these `config` options are used to help us do that.
 
 ```ts
@@ -116,8 +116,8 @@ If you haven't already, check out the `options` object in the [config section](#
 
 Before we get into the adapter function, let's go over the parameters that are available to you.
 
-- `options`: The Better Auth options.
-- `schema`: The schema from the user's Better Auth instance.
+- `options`: The Faire Auth options.
+- `schema`: The schema from the user's Faire Auth instance.
 - `debugLog`: The debug log function.
 - `getField`: The get field function.
 - `getDefaultModelName`: The get default model name function.
@@ -152,7 +152,7 @@ The `create` method is used to create a new record in the database.
 
 <Callout>
 Note:
-If the user has enabled the `useNumberId` option, or if `generateId` is `false` in the user's Better Auth config,
+If the user has enabled the `useNumberId` option, or if `generateId` is `false` in the user's Faire Auth config,
 then it's expected that the `id` is provided in the `data` object. Otherwise, the `id` will be automatically generated.
 
 Additionally, it's possible to pass `forceAllowId` as a parameter to the `create` method, which allows `id` to be provided in the `data` object.
@@ -337,11 +337,11 @@ const myAdapter = (config: CustomAdapterConfig) =>
 
 ### `createSchema` (optional)
 
-The `createSchema` method allows the [Better Auth CLI](/docs/concepts/cli) to [generate](/docs/concepts/cli/#generate) a schema for the database.
+The `createSchema` method allows the [Faire Auth CLI](/docs/concepts/cli) to [generate](/docs/concepts/cli/#generate) a schema for the database.
 
 parameters:
 
-- `tables`: The tables from the user's Better-Auth instance schema; which is expected to be generated into the schema file.
+- `tables`: The tables from the user's Faire Auth instance schema; which is expected to be generated into the schema file.
 - `file`: The file the user may have passed in to the `generate` command as the expected schema file output path.
 
 ```ts title="Example"
@@ -356,7 +356,7 @@ We've provided a test suite that you can use to test your adapter. It requires y
 
 ```ts title="my-adapter.test.ts"
 import { expect, test, describe } from "vitest";
-import { runAdapterTest } from "better-auth/adapters/test";
+import { runAdapterTest } from "faire-auth/adapters/test";
 import { myAdapter } from "./my-adapter";
 
 describe("My Adapter Tests", async () => {
@@ -371,8 +371,8 @@ describe("My Adapter Tests", async () => {
   });
 
   runAdapterTest({
-    getAdapter: async (betterAuthOptions = {}) => {
-      return adapter(betterAuthOptions);
+    getAdapter: async (faireAuthOptions = {}) => {
+      return adapter(faireAuthOptions);
     },
   });
 });
@@ -384,7 +384,7 @@ If your database supports numeric IDs, then you should run this test as well:
 
 ```ts title="my-adapter.number-id.test.ts"
 import { expect, test, describe } from "vitest";
-import { runNumberIdAdapterTest } from "better-auth/adapters/test";
+import { runNumberIdAdapterTest } from "faire-auth/adapters/test";
 import { myAdapter } from "./my-adapter";
 
 describe("My Adapter Numeric ID Tests", async () => {
@@ -399,8 +399,8 @@ describe("My Adapter Numeric ID Tests", async () => {
   });
 
   runNumberIdAdapterTest({
-    getAdapter: async (betterAuthOptions = {}) => {
-      return adapter(betterAuthOptions);
+    getAdapter: async (faireAuthOptions = {}) => {
+      return adapter(faireAuthOptions);
     },
   });
 });
@@ -408,7 +408,7 @@ describe("My Adapter Numeric ID Tests", async () => {
 
 ## Config
 
-The `config` object is used to provide information about the adapter to Better-Auth.
+The `config` object is used to provide information about the adapter to Faire Auth.
 
 We **highly recommend** going through and reading each provided option below, as it will help you understand how to properly configure your adapter.
 
@@ -495,7 +495,7 @@ If your database only supports a specific custom ID generation, then you can use
 ### `mapKeysTransformInput`
 
 If your database uses a different key name for a given situation, you can use this option to map the keys. This is useful for databases that expect a different key name for a given situation.
-For example, MongoDB uses `_id` while in Better-Auth we use `id`.
+For example, MongoDB uses `_id` while in Faire Auth we use `id`.
 
 Each key in the returned object represents the old key to replace.
 The value represents the new key.
@@ -513,7 +513,7 @@ mapKeysTransformInput: () => {
 ### `mapKeysTransformOutput`
 
 If your database uses a different key name for a given situation, you can use this option to map the keys. This is useful for databases that use a different key name for a given situation.
-For example, MongoDB uses `_id` while in Better-Auth we use `id`.
+For example, MongoDB uses `_id` while in Faire Auth we use `id`.
 
 Each key in the returned object represents the old key to replace.
 The value represents the new key.
@@ -523,7 +523,7 @@ This can be a partial object that only transforms some keys.
 ```ts title="Example"
 mapKeysTransformOutput: () => {
   return {
-    _id: "id", // We want to replace `_id` (from MongoDB) to `id` (for Better-Auth)
+    _id: "id", // We want to replace `_id` (from MongoDB) to `id` (for Faire Auth)
   };
 },
 ```
@@ -545,7 +545,7 @@ The `customTransformInput` function receives the following arguments:
 - `select`: The `select` values which the query expects to return.
 - `model`: The model that is being transformed.
 - `schema`: The schema that is being transformed.
-- `options`: Better Auth options.
+- `options`: Faire Auth options.
 
 The `customTransformInput` function runs at every key in the data object of a given action.
 

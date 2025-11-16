@@ -1,6 +1,6 @@
 ---
 title: PostgreSQL
-description: Integrate Better Auth with PostgreSQL.
+description: Integrate Faire Auth with PostgreSQL.
 ---
 
 PostgreSQL is a powerful, open-source relational database management system known for its advanced features, extensibility, and support for complex queries and large datasets.
@@ -9,13 +9,13 @@ Read more [here](https://www.postgresql.org/).
 ## Example Usage
 
 Make sure you have PostgreSQL installed and configured.
-Then, you can connect it straight into Better Auth.
+Then, you can connect it straight into Faire Auth.
 
 ```ts title="auth.ts"
-import { betterAuth } from "better-auth";
+import { faireAuth } from "faire-auth";
 import { Pool } from "pg";
 
-export const auth = betterAuth({
+export const auth = faireAuth({
   database: new Pool({
     connectionString: "postgres://user:password@localhost:5432/database",
   }),
@@ -29,8 +29,8 @@ export const auth = betterAuth({
 
 ## Schema generation & migration
 
-The [Better Auth CLI](/docs/concepts/cli) allows you to generate or migrate
-your database schema based on your Better Auth configuration and plugins.
+The [Faire Auth CLI](/docs/concepts/cli) allows you to generate or migrate
+your database schema based on your Faire Auth configuration and plugins.
 
 <table>
   <thead>
@@ -52,16 +52,16 @@ your database schema based on your Better Auth configuration and plugins.
 </table>
 
 ```bash title="Schema Generation"
-npx @better-auth/cli@latest generate
+npx @faire-auth/cli@latest generate
 ```
 
 ```bash title="Schema Migration"
-npx @better-auth/cli@latest migrate
+npx @faire-auth/cli@latest migrate
 ```
 
 ## Use a non-default schema
 
-In most cases, the default schema is `public`. To have Better Auth use a
+In most cases, the default schema is `public`. To have Faire Auth use a
 non-default schema (e.g., `auth`) for its tables,
 set the PostgreSQL user's default schema before generating or migrating:
 
@@ -83,4 +83,3 @@ Ensure the target schema exists and the database user has the required permissio
 PostgreSQL is supported under the hood via the [Kysely](https://kysely.dev/) adapter, any database supported by Kysely would also be supported. (<Link href="/docs/adapters/other-relational-databases">Read more here</Link>)
 
 If you're looking for performance improvements or tips, take a look at our guide to <Link href="/docs/guides/optimizing-for-performance">performance optimizations</Link>.
-

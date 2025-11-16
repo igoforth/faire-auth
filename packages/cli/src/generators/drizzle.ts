@@ -1,9 +1,9 @@
 import {
 	getAuthTables,
-	type BetterAuthDBSchema,
+	type FaireAuthDBSchema,
 	type DBFieldAttribute,
-} from "better-auth/db";
-import type { BetterAuthOptions } from "better-auth/types";
+} from "faire-auth/db";
+import type { FaireAuthOptions } from "faire-auth/types";
 import { existsSync } from "fs";
 import type { SchemaGenerator } from "./types";
 import prettier from "prettier";
@@ -31,7 +31,7 @@ export const generateDrizzleSchema: SchemaGenerator = async ({
 
 	if (!databaseType) {
 		throw new Error(
-			`Database provider type is undefined during Drizzle schema generation. Please define a \`provider\` in the Drizzle adapter config. Read more at https://better-auth.com/docs/adapters/drizzle`,
+			`Database provider type is undefined during Drizzle schema generation. Please define a \`provider\` in the Drizzle adapter config. Read more at https://faire-auth.com/docs/adapters/drizzle`,
 		);
 	}
 	const fileExist = existsSync(filePath);
@@ -47,7 +47,7 @@ export const generateDrizzleSchema: SchemaGenerator = async ({
 			// Not possible to reach, it's here to make typescript happy
 			if (!databaseType) {
 				throw new Error(
-					`Database provider type is undefined during Drizzle schema generation. Please define a \`provider\` in the Drizzle adapter config. Read more at https://better-auth.com/docs/adapters/drizzle`,
+					`Database provider type is undefined during Drizzle schema generation. Please define a \`provider\` in the Drizzle adapter config. Read more at https://faire-auth.com/docs/adapters/drizzle`,
 				);
 			}
 			name = convertToSnakeCase(name, adapter.options?.camelCase);
@@ -69,20 +69,13 @@ export const generateDrizzleSchema: SchemaGenerator = async ({
 				}
 				return `text('${name}')`;
 			}
-			const type = field.type;
-			if (typeof type !== "string") {
-				if (Array.isArray(type) && type.every((x) => typeof x === "string")) {
-					return {
-						sqlite: `text({ enum: [${type.map((x) => `'${x}'`).join(", ")}] })`,
-						pg: `pgEnum('${name}', [${type.map((x) => `'${x}'`).join(", ")}])`,
-						mysql: `mysqlEnum([${type.map((x) => `'${x}'`).join(", ")}])`,
-					}[databaseType];
-				} else {
-					throw new TypeError(
-						`Invalid field type for field ${name} in model ${modelName}`,
-					);
-				}
-			}
+			const type = field.type as
+				| "string"
+				| "number"
+				| "boolean"
+				| "date"
+				| "json"
+				| `${"string" | "number"}[]`;
 			const typeMap: Record<
 				typeof type,
 				Record<typeof databaseType, string>
@@ -236,8 +229,8 @@ function generateImport({
 	options,
 }: {
 	databaseType: "sqlite" | "mysql" | "pg";
-	tables: BetterAuthDBSchema;
-	options: BetterAuthOptions;
+	tables: FaireAuthDBSchema;
+	options: FaireAuthOptions;
 }) {
 	const rootImports: string[] = [];
 	const coreImports: string[] = [];

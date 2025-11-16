@@ -39,7 +39,7 @@ export default function Stats({
 							<div className="flex items-end  w-full gap-2 mt-4 text-gray-400">
 								<Link
 									className="w-full"
-									href="https://discord.gg/better-auth"
+									href="https://discord.gg/faire-auth"
 									rel="noopener noreferrer"
 									target="_blank"
 								>
@@ -79,7 +79,7 @@ export default function Stats({
 							<div className="flex items-end w-full gap-2 mt-4 text-gray-400">
 								<Link
 									className="w-full"
-									href="https://reddit.com/r/better_auth"
+									href="https://reddit.com/r/faire_auth"
 									rel="noopener noreferrer"
 									target="_blank"
 								>
@@ -119,7 +119,7 @@ export default function Stats({
 							<div className="flex items-end w-full gap-2 mt-4 text-gray-400">
 								<Link
 									className="w-full"
-									href="https://x.com/better_auth"
+									href="https://x.com/faire_auth"
 									rel="noopener noreferrer"
 									target="_blank"
 								>
@@ -149,7 +149,7 @@ export default function Stats({
 							<div className="flex items-end w-full gap-2 mt-4 text-gray-400">
 								<Link
 									className="w-full"
-									href="https://www.npmjs.com/package/better-auth"
+									href="https://www.npmjs.com/package/faire-auth"
 									rel="noopener noreferrer"
 									target="_blank"
 								>
@@ -191,7 +191,7 @@ export default function Stats({
 							<div className="flex -p-8 items-end w-full gap-2 mt-4 text-gray-400">
 								<Link
 									className="w-full"
-									href="https://github.com/better-auth/better-auth"
+									href="https://github.com/igoforth/faire-auth"
 									rel="noopener noreferrer"
 									target="_blank"
 								>

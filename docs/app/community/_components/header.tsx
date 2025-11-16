@@ -7,7 +7,7 @@ export default function CommunityHeader() {
 						Open Source Community
 					</h1>
 					<p className="dark:text-gray-400 max-w-md mx-auto text-stone-800">
-						join <span className="italic font-bold">better-auth</span> community
+						join <span className="italic font-bold">faire-auth</span> community
 						to get help, share ideas, and stay up to date.
 					</p>
 				</div>

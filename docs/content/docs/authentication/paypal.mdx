@@ -42,9 +42,9 @@ description: Paypal provider setup and usage.
         To configure the provider, you need to import the provider and pass it to the `socialProviders` option of the auth instance.
 
         ```ts title="auth.ts"
-        import { betterAuth } from "better-auth"
+        import { faireAuth } from "faire-auth"
 
-        export const auth = betterAuth({
+        export const auth = faireAuth({
             socialProviders: {
                 paypal: { // [!code highlight]
                     clientId: process.env.PAYPAL_CLIENT_ID as string, // [!code highlight]
@@ -56,12 +56,12 @@ description: Paypal provider setup and usage.
         ```
         #### Options
         The PayPal provider accepts the following options:
-    
+
         - `environment`: `'sandbox' | 'live'` - PayPal environment to use (default: `'sandbox'`)
         - `requestShippingAddress`: `boolean` - Whether to request shipping address information (default: `false`)
-    
+
         ```ts title="auth.ts"
-        export const auth = betterAuth({
+        export const auth = faireAuth({
             socialProviders: {
                 paypal: {
                     clientId: process.env.PAYPAL_CLIENT_ID as string,
@@ -79,7 +79,7 @@ description: Paypal provider setup and usage.
         - `provider`: The provider to use. It should be set to `paypal`.
 
         ```ts title="auth-client.ts"
-        import { createAuthClient } from "better-auth/client"
+        import { createAuthClient } from "faire-auth/client"
         const authClient =  createAuthClient()
 
         const signIn = async () => {
@@ -101,7 +101,7 @@ description: Paypal provider setup and usage.
         - `mapProfileToUser`: Custom function to map PayPal profile data to user object.
         - `getUserInfo`: Custom function to retrieve user information.
         For more details refer to the [User Reference](https://developer.paypal.com/docs/api/identity/v1/#userinfo_get)
-        - `verifyIdToken`: Custom ID token verification function.   
+        - `verifyIdToken`: Custom ID token verification function.
     </Step>
 
 </Steps>

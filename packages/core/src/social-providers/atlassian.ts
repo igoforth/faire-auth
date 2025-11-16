@@ -1,9 +1,9 @@
 import { betterFetch } from "@better-fetch/fetch";
-import { BetterAuthError } from "../error";
+import { FaireAuthError } from "../error";
 import type { OAuthProvider, ProviderOptions } from "../oauth2";
 import { createAuthorizationURL, validateAuthorizationCode } from "../oauth2";
-import { logger } from "../env";
-import { refreshAccessToken } from "../oauth2";
+import { logger } from "../env/logger";
+import { refreshAccessToken } from "../oauth2/refresh-access-token";
 
 export interface AtlassianProfile {
 	account_type?: string;
@@ -32,11 +32,10 @@ export const atlassian = (options: AtlassianOptions) => {
 		async createAuthorizationURL({ state, scopes, codeVerifier, redirectURI }) {
 			if (!options.clientId || !options.clientSecret) {
 				logger.error("Client Id and Secret are required for Atlassian");
-				throw new BetterAuthError("CLIENT_ID_AND_SECRET_REQUIRED");
+				throw new FaireAuthError("CLIENT_ID_AND_SECRET_REQUIRED");
 			}
-			if (!codeVerifier) {
-				throw new BetterAuthError("codeVerifier is required for Atlassian");
-			}
+			if (!codeVerifier)
+				throw new FaireAuthError("codeVerifier is required for Atlassian");
 
 			const _scopes = options.disableDefaultScope
 				? []
@@ -83,13 +82,8 @@ export const atlassian = (options: AtlassianOptions) => {
 				},
 
 		async getUserInfo(token) {
-			if (options.getUserInfo) {
-				return options.getUserInfo(token);
-			}
-
-			if (!token.accessToken) {
-				return null;
-			}
+			if (options.getUserInfo) return options.getUserInfo(token);
+			if (!token.accessToken) return null;
 
 			try {
 				const { data: profile } = await betterFetch<{
@@ -100,7 +94,6 @@ export const atlassian = (options: AtlassianOptions) => {
 				}>("https://api.atlassian.com/me", {
 					headers: { Authorization: `Bearer ${token.accessToken}` },
 				});
-
 				if (!profile) return null;
 
 				const userMap = await options.mapProfileToUser?.(profile);
@@ -109,8 +102,8 @@ export const atlassian = (options: AtlassianOptions) => {
 					user: {
 						id: profile.account_id,
 						name: profile.name,
-						email: profile.email,
-						image: profile.picture,
+						...(profile.email && { email: profile.email }),
+						...(profile.picture && { image: profile.picture }),
 						emailVerified: false,
 						...userMap,
 					},
@@ -123,5 +116,5 @@ export const atlassian = (options: AtlassianOptions) => {
 		},
 
 		options,
-	} satisfies OAuthProvider<AtlassianProfile>;
+	} satisfies OAuthProvider;
 };

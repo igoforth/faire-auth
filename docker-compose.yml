@@ -1,14 +1,16 @@
-version: '3.8'
-
 services:
   mongodb:
     image: mongo:latest
     container_name: mongodb
     ports:
-      - "27017:27017"
+      - "127.0.0.1:27017:27017"
     volumes:
       - mongodb_data:/data/db
-  
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 3s
+      retries: 5
+
   # drizzle
   postgres:
     image: postgres:latest
@@ -16,11 +18,15 @@ services:
     environment:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
-      POSTGRES_DB: better_auth
+      POSTGRES_DB: faire_auth
     ports:
-      - "5432:5432"
+      - "127.0.0.1:5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d faire_auth"]
+      interval: 3s
+      retries: 5
 
   postgres-kysely:
     image: postgres:latest
@@ -28,11 +34,15 @@ services:
     environment:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
-      POSTGRES_DB: better_auth
+      POSTGRES_DB: faire_auth
     ports:
-      - "5433:5432"
+      - "127.0.0.1:5434:5432"
     volumes:
       - postgres-kysely_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d faire_auth"]
+      interval: 3s
+      retries: 5
 
   postgres-prisma:
     image: postgres:latest
@@ -40,11 +50,15 @@ services:
     environment:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
-      POSTGRES_DB: better_auth
+      POSTGRES_DB: faire_auth
     ports:
-      - "5434:5432"
+      - "127.0.0.1:5435:5432"
     volumes:
       - postgres-prisma_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d faire_auth"]
+      interval: 3s
+      retries: 5
 
   # Drizzle tests
   mysql:
@@ -52,52 +66,66 @@ services:
     container_name: mysql
     environment:
       MYSQL_ROOT_PASSWORD: root_password
-      MYSQL_DATABASE: better_auth
+      MYSQL_DATABASE: faire_auth
       MYSQL_USER: user
       MYSQL_PASSWORD: password
     ports:
-      - "3306:3306"
+      - "127.0.0.1:3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
-
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot"]
+      interval: 3s
+      retries: 5
 
   mysql-kysely:
     image: mysql:latest
     container_name: mysql-kysely
     environment:
       MYSQL_ROOT_PASSWORD: root_password
-      MYSQL_DATABASE: better_auth
+      MYSQL_DATABASE: faire_auth
       MYSQL_USER: user
       MYSQL_PASSWORD: password
     ports:
-      - "3307:3306"
+      - "127.0.0.1:3307:3306"
     volumes:
       - mysql-kysely_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot"]
+      interval: 3s
+      retries: 5
 
   mysql-prisma:
     image: mysql:latest
     container_name: mysql-prisma
     environment:
       MYSQL_ROOT_PASSWORD: root_password
-      MYSQL_DATABASE: better_auth
+      MYSQL_DATABASE: faire_auth
       MYSQL_USER: user
       MYSQL_PASSWORD: password
     ports:
-      - "3308:3306"
+      - "127.0.0.1:3308:3306"
     volumes:
       - mysql-prisma_data:/var/lib/mysql
-
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot"]
+      interval: 3s
+      retries: 5
 
   mssql:
     image: mcr.microsoft.com/mssql/server:latest
     container_name: mssql
     environment:
-      SA_PASSWORD: "Password123!"
+      MSSQL_SA_PASSWORD: "Password123!"
       ACCEPT_EULA: "Y"
     ports:
-      - "1433:1433"
+      - "127.0.0.1:1433:1433"
     volumes:
       - mssql_data:/var/opt/mssql
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -C -S localhost -U sa -P 'Password123!' -Q 'SELECT 1'"]
+      interval: 5s
+      retries: 10
 
 volumes:
   mongodb_data:
@@ -107,4 +135,4 @@ volumes:
   mysql_data:
   mssql_data:
   mysql-kysely_data:
-  mysql-prisma_data: 
+  mysql-prisma_data:

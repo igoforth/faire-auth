@@ -96,7 +96,7 @@ const optionVariants = cva(
 );
 
 export function ViewOptions(props: { markdownUrl: string; githubUrl: string }) {
-	const markdownUrl = new URL(props.markdownUrl, "https://better-auth.com");
+	const markdownUrl = new URL(props.markdownUrl, "https://faire-auth.com");
 	const q = `Read ${markdownUrl}, I want to ask questions about it.`;
 
 	const claude = `https://claude.ai/new?${new URLSearchParams({

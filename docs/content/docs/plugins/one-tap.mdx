@@ -1,6 +1,6 @@
 ---
 title: One Tap
-description: One Tap plugin for Better Auth
+description: One Tap plugin for Faire Auth
 ---
 
 The One Tap plugin allows users to log in with a single tap using Google's One Tap API. The plugin
@@ -13,10 +13,10 @@ provides a simple way to integrate One Tap into your application, handling the c
 Add the One Tap plugin to your auth configuration:
 
 ```ts title="auth.ts"
-import { betterAuth } from "better-auth";
-import { oneTap } from "better-auth/plugins"; // [!code highlight]
+import { faireAuth } from "faire-auth";
+import { oneTap } from "faire-auth/plugins"; // [!code highlight]
 
-export const auth = betterAuth({
+export const auth = faireAuth({
     plugins: [ // [!code highlight]
         oneTap(), // Add the One Tap server plugin  // [!code highlight]
     ] // [!code highlight]
@@ -29,8 +29,8 @@ Add the client plugin and specify where the user should be redirected after sign
 
 
 ```ts
-import { createAuthClient } from "better-auth/client";
-import { oneTapClient } from "better-auth/client/plugins";
+import { createAuthClient } from "faire-auth/client";
+import { oneTapClient } from "faire-auth/client/plugins";
 
 export const authClient = createAuthClient({
   plugins: [
@@ -120,4 +120,3 @@ await authClient.oneTap({
 
 - **disableSignUp**:  Disable the sign-up option, allowing only existing users to sign in. Default is `false`.
 - **ClientId**: Optionally, pass a client ID here if it is not provided in your social provider configuration.
-

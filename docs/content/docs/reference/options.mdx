@@ -1,41 +1,41 @@
 ---
 title: Options
-description: Better Auth configuration options reference.
+description: Faire Auth configuration options reference.
 ---
 
-List of all the available options for configuring Better Auth. See [Better Auth Options](https://github.com/better-auth/better-auth/blob/main/packages/better-auth/src/types/options.ts#L13).
+List of all the available options for configuring Faire Auth. See [Faire Auth Options](https://github.com/igoforth/faire-auth/blob/main/packages/faire-auth/src/types/options.ts#L13).
 
 ## `appName`
 
 The name of the application.
 
 ```ts
-import { betterAuth } from "better-auth";
-export const auth = betterAuth({
+import { faireAuth } from "faire-auth";
+export const auth = faireAuth({
 	appName: "My App",
 })
 ```
 
 ## `baseURL`
 
-Base URL for Better Auth. This is typically the root URL where your application server is hosted. Note: If you include a path in the baseURL, it will take precedence over the default path.
+Base URL for Faire Auth. This is typically the root URL where your application server is hosted. Note: If you include a path in the baseURL, it will take precedence over the default path.
 
 ```ts
-import { betterAuth } from "better-auth";
-export const auth = betterAuth({
+import { faireAuth } from "faire-auth";
+export const auth = faireAuth({
 	baseURL: "https://example.com",
 })
 ```
 
-If not explicitly set, the system will check for the environment variable `process.env.BETTER_AUTH_URL`
+If not explicitly set, the system will check for the environment variable `process.env.FAIRE_AUTH_URL`
 
 ## `basePath`
 
-Base path for Better Auth. This is typically the path where the Better Auth routes are mounted. It will be overridden if there is a path component within `baseURL`.
+Base path for Faire Auth. This is typically the path where the Faire Auth routes are mounted. It will be overridden if there is a path component within `baseURL`.
 
 ```ts
-import { betterAuth } from "better-auth";
-export const auth = betterAuth({
+import { faireAuth } from "faire-auth";
+export const auth = faireAuth({
 	basePath: "/api/auth",
 })
 ```
@@ -51,8 +51,8 @@ List of trusted origins. You can provide a static array of origins, a function t
 You can provide a static array of origins:
 
 ```ts
-import { betterAuth } from "better-auth";
-export const auth = betterAuth({
+import { faireAuth } from "faire-auth";
+export const auth = faireAuth({
 	trustedOrigins: ["http://localhost:3000", "https://example.com"],
 })
 ```
@@ -62,7 +62,7 @@ export const auth = betterAuth({
 You can provide a function that returns origins dynamically:
 
 ```ts
-export const auth = betterAuth({
+export const auth = faireAuth({
 	trustedOrigins: async (request: Request) => {
 		// Return an array of trusted origins based on the request
 		return ["https://dynamic-origin.com"];
@@ -75,7 +75,7 @@ export const auth = betterAuth({
 You can use wildcard patterns in trusted origins:
 
 ```ts
-export const auth = betterAuth({
+export const auth = faireAuth({
 	trustedOrigins: [
 		"*.example.com",             // Trust all subdomains of example.com
 		"https://*.example.com",     // Trust only HTTPS subdomains
@@ -89,17 +89,17 @@ export const auth = betterAuth({
 The secret used for encryption, signing, and hashing.
 
 ```ts
-import { betterAuth } from "better-auth";
-export const auth = betterAuth({
+import { faireAuth } from "faire-auth";
+export const auth = faireAuth({
 	secret: "your-secret-key",
 })
 ```
 
-By default, Better Auth will look for the following environment variables:
-- `process.env.BETTER_AUTH_SECRET`
+By default, Faire Auth will look for the following environment variables:
+- `process.env.FAIRE_AUTH_SECRET`
 - `process.env.AUTH_SECRET`
 
-If none of these environment variables are set, it will default to `"better-auth-secret-123456789"`. In production, if it's not set, it will throw an error.
+If none of these environment variables are set, it will default to `"faire-auth-secret-123456789"`. In production, if it's not set, it will throw an error.
 
 You can generate a good secret using the following command:
 
@@ -109,11 +109,11 @@ openssl rand -base64 32
 
 ## `database`
 
-Database configuration for Better Auth.
+Database configuration for Faire Auth.
 
 ```ts
-import { betterAuth } from "better-auth";
-export const auth = betterAuth({
+import { faireAuth } from "faire-auth";
+export const auth = faireAuth({
 	database: {
 		dialect: "postgres",
 		type: "postgres",
@@ -122,7 +122,7 @@ export const auth = betterAuth({
 })
 ```
 
-Better Auth supports various database configurations including [PostgreSQL](/docs/adapters/postgresql), [MySQL](/docs/adapters/mysql), and [SQLite](/docs/adapters/sqlite).
+Faire Auth supports various database configurations including [PostgreSQL](/docs/adapters/postgresql), [MySQL](/docs/adapters/mysql), and [SQLite](/docs/adapters/sqlite).
 
 Read more about databases [here](/docs/concepts/database).
 
@@ -131,9 +131,9 @@ Read more about databases [here](/docs/concepts/database).
 Secondary storage configuration used to store session and rate limit data.
 
 ```ts
-import { betterAuth } from "better-auth";
+import { faireAuth } from "faire-auth";
 
-export const auth = betterAuth({
+export const auth = faireAuth({
 	// ... other options
     secondaryStorage: {
     	// Your implementation here
@@ -148,8 +148,8 @@ Read more about secondary storage [here](/docs/concepts/database#secondary-stora
 Email verification configuration.
 
 ```ts
-import { betterAuth } from "better-auth";
-export const auth = betterAuth({
+import { faireAuth } from "faire-auth";
+export const auth = faireAuth({
 	emailVerification: {
 		sendVerificationEmail: async ({ user, url, token }) => {
 			// Send verification email to user
@@ -172,8 +172,8 @@ export const auth = betterAuth({
 Email and password authentication configuration.
 
 ```ts
-import { betterAuth } from "better-auth";
-export const auth = betterAuth({
+import { faireAuth } from "faire-auth";
+export const auth = faireAuth({
 	emailAndPassword: {
 		enabled: true,
 		disableSignUp: false,
@@ -214,8 +214,8 @@ export const auth = betterAuth({
 Configure social login providers.
 
 ```ts
-import { betterAuth } from "better-auth";
-export const auth = betterAuth({
+import { faireAuth } from "faire-auth";
+export const auth = faireAuth({
 	socialProviders: {
 		google: {
 			clientId: "your-client-id",
@@ -233,13 +233,13 @@ export const auth = betterAuth({
 
 ## `plugins`
 
-List of Better Auth plugins.
+List of Faire Auth plugins.
 
 ```ts
-import { betterAuth } from "better-auth";
-import { emailOTP } from "better-auth/plugins";
+import { faireAuth } from "faire-auth";
+import { emailOTP } from "faire-auth/plugins";
 
-export const auth = betterAuth({
+export const auth = faireAuth({
 	plugins: [
 		emailOTP({
 			sendVerificationOTP: async ({ email, otp, type }) => {
@@ -255,8 +255,8 @@ export const auth = betterAuth({
 User configuration options.
 
 ```ts
-import { betterAuth } from "better-auth";
-export const auth = betterAuth({
+import { faireAuth } from "faire-auth";
+export const auth = faireAuth({
 	user: {
 		modelName: "users",
 		fields: {
@@ -301,8 +301,8 @@ export const auth = betterAuth({
 Session configuration options.
 
 ```ts
-import { betterAuth } from "better-auth";
-export const auth = betterAuth({
+import { faireAuth } from "faire-auth";
+export const auth = faireAuth({
 	session: {
 		modelName: "sessions",
 		fields: {
@@ -319,7 +319,7 @@ export const auth = betterAuth({
 		storeSessionInDatabase: true, // Store session in database when secondary storage is provided (default: `false`)
 		preserveSessionInDatabase: false, // Preserve session records in database when deleted from secondary storage (default: `false`)
 		cookieCache: {
-			enabled: true, // Enable caching session in cookie (default: `false`)	
+			enabled: true, // Enable caching session in cookie (default: `false`)
 			maxAge: 300 // 5 minutes
 		}
 	},
@@ -340,8 +340,8 @@ export const auth = betterAuth({
 Account configuration options.
 
 ```ts
-import { betterAuth } from "better-auth";
-export const auth = betterAuth({
+import { faireAuth } from "faire-auth";
+export const auth = faireAuth({
 	account: {
 		modelName: "accounts",
 		fields: {
@@ -383,8 +383,8 @@ Configuration for account linking.
 Verification configuration options.
 
 ```ts
-import { betterAuth } from "better-auth";
-export const auth = betterAuth({
+import { faireAuth } from "faire-auth";
+export const auth = faireAuth({
 	verification: {
 		modelName: "verifications",
 		fields: {
@@ -404,8 +404,8 @@ export const auth = betterAuth({
 Rate limiting configuration.
 
 ```ts
-import { betterAuth } from "better-auth";
-export const auth = betterAuth({
+import { faireAuth } from "faire-auth";
+export const auth = faireAuth({
 	rateLimit: {
 		enabled: true,
 		window: 10,
@@ -435,8 +435,8 @@ export const auth = betterAuth({
 Advanced configuration options.
 
 ```ts
-import { betterAuth } from "better-auth";
-export const auth = betterAuth({
+import { faireAuth } from "faire-auth";
+export const auth = faireAuth({
 	advanced: {
 		ipAddress: {
 			ipAddressHeaders: ["x-client-ip", "x-forwarded-for"],
@@ -490,11 +490,11 @@ export const auth = betterAuth({
 
 ## `logger`
 
-Logger configuration for Better Auth.
+Logger configuration for Faire Auth.
 
 ```ts
-import { betterAuth } from "better-auth";
-export const auth = betterAuth({
+import { faireAuth } from "faire-auth";
+export const auth = faireAuth({
 	logger: {
 		disabled: false,
 		disableColors: false,
@@ -507,7 +507,7 @@ export const auth = betterAuth({
 })
 ```
 
-The logger configuration allows you to customize how Better Auth handles logging. It supports the following options:
+The logger configuration allows you to customize how Faire Auth handles logging. It supports the following options:
 
 - `disabled`: Disable all logging when set to `true` (default: `false`)
 - `disableColors`: Disable colors in the default logger implementation (default: determined by the terminal's color support)
@@ -524,8 +524,8 @@ The logger configuration allows you to customize how Better Auth handles logging
 Example with custom logging:
 
 ```ts
-import { betterAuth } from "better-auth";
-export const auth = betterAuth({
+import { faireAuth } from "faire-auth";
+export const auth = faireAuth({
 	logger: {
 		level: "info",
 		log: (level, message, ...args) => {
@@ -546,8 +546,8 @@ export const auth = betterAuth({
 Database lifecycle hooks for core operations.
 
 ```ts
-import { betterAuth } from "better-auth";
-export const auth = betterAuth({
+import { faireAuth } from "faire-auth";
+export const auth = faireAuth({
 	databaseHooks: {
 		user: {
 			create: {
@@ -587,8 +587,8 @@ export const auth = betterAuth({
 API error handling configuration.
 
 ```ts
-import { betterAuth } from "better-auth";
-export const auth = betterAuth({
+import { faireAuth } from "faire-auth";
+export const auth = faireAuth({
 	onAPIError: {
 		throw: true,
 		onError: (error, ctx) => {
@@ -609,10 +609,10 @@ export const auth = betterAuth({
 Request lifecycle hooks.
 
 ```ts
-import { betterAuth } from "better-auth";
-import { createAuthMiddleware } from "better-auth/api";
+import { faireAuth } from "faire-auth";
+import { createAuthMiddleware } from "faire-auth/api";
 
-export const auth = betterAuth({
+export const auth = faireAuth({
 	hooks: {
 		before: createAuthMiddleware(async (ctx) => {
 			// Execute before processing the request
@@ -633,19 +633,19 @@ For more details and examples, see the [Hooks documentation](/docs/concepts/hook
 Disable specific auth paths.
 
 ```ts
-import { betterAuth } from "better-auth";
-export const auth = betterAuth({
+import { faireAuth } from "faire-auth";
+export const auth = faireAuth({
 	disabledPaths: ["/sign-up/email", "/sign-in/email"],
 })
 ```
 
 ## `telemetry`
 
-Enable or disable Better Auth's telemetry collection. (default: `false`)
+Enable or disable Faire Auth's telemetry collection. (default: `false`)
 
 ```ts
-import { betterAuth } from "better-auth";
-export const auth = betterAuth({
+import { faireAuth } from "faire-auth";
+export const auth = faireAuth({
   telemetry: {
     enabled: false,
   }

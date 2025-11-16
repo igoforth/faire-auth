@@ -1,10 +1,10 @@
-import { Command } from "commander";
-import { execSync } from "child_process";
-import * as os from "os";
-import * as fs from "fs";
-import * as path from "path";
+import { base64 } from "@faire-auth/core/datatypes";
 import chalk from "chalk";
-import { base64 } from "@better-auth/utils/base64";
+import { execSync } from "child_process";
+import { Command } from "commander";
+import * as fs from "fs";
+import * as os from "os";
+import * as path from "path";
 
 interface MCPOptions {
 	cursor?: boolean;
@@ -14,8 +14,8 @@ interface MCPOptions {
 }
 
 export async function mcpAction(options: MCPOptions) {
-	const mcpUrl = "https://mcp.chonkie.ai/better-auth/better-auth-builder/mcp";
-	const mcpName = "Better Auth";
+	const mcpUrl = "https://mcp.chonkie.ai/igoforth/faire-auth-builder/mcp";
+	const mcpName = "Faire Auth";
 
 	if (options.cursor) {
 		await handleCursorAction(mcpUrl, mcpName);
@@ -40,7 +40,7 @@ async function handleCursorAction(mcpUrl: string, mcpName: string) {
 	);
 	const deeplinkUrl = `cursor://anysphere.cursor-deeplink/mcp/install?name=${encodeURIComponent(mcpName)}&config=${encodedConfig}`;
 
-	console.log(chalk.bold.blue("🚀 Adding Better Auth MCP to Cursor..."));
+	console.log(chalk.bold.blue("🚀 Adding Faire Auth MCP to Cursor..."));
 
 	try {
 		const platform = os.platform();
@@ -65,7 +65,7 @@ async function handleCursorAction(mcpUrl: string, mcpName: string) {
 	} catch (error) {
 		console.log(
 			chalk.yellow(
-				"\n⚠ Could not automatically open Cursor. Please copy the deeplink URL above and open it manually.",
+				"\n! Could not automatically open Cursor. Please copy the deeplink URL above and open it manually.",
 			),
 		);
 		console.log(
@@ -81,14 +81,14 @@ async function handleCursorAction(mcpUrl: string, mcpName: string) {
 		chalk.gray("• The MCP server will be added to your Cursor configuration"),
 	);
 	console.log(
-		chalk.gray("• You can now use Better Auth features directly in Cursor"),
+		chalk.gray("• You can now use Faire Auth features directly in Cursor"),
 	);
 }
 
 function handleClaudeCodeAction(mcpUrl: string) {
-	console.log(chalk.bold.blue("🤖 Adding Better Auth MCP to Claude Code..."));
+	console.log(chalk.bold.blue("🤖 Adding Faire Auth MCP to Claude Code..."));
 
-	const command = `claude mcp add --transport http better-auth ${mcpUrl}`;
+	const command = `claude mcp add --transport http faire-auth ${mcpUrl}`;
 
 	try {
 		execSync(command, { stdio: "inherit" });
@@ -96,7 +96,7 @@ function handleClaudeCodeAction(mcpUrl: string) {
 	} catch (error) {
 		console.log(
 			chalk.yellow(
-				"\n⚠ Could not automatically add to Claude Code. Please run this command manually:",
+				"\n! Could not automatically add to Claude Code. Please run this command manually:",
 			),
 		);
 		console.log(chalk.cyan(command));
@@ -109,19 +109,17 @@ function handleClaudeCodeAction(mcpUrl: string) {
 		),
 	);
 	console.log(
-		chalk.gray(
-			"• You can now use Better Auth features directly in Claude Code",
-		),
+		chalk.gray("• You can now use Faire Auth features directly in Claude Code"),
 	);
 }
 
 function handleOpenCodeAction(mcpUrl: string) {
-	console.log(chalk.bold.blue("🔧 Adding Better Auth MCP to Open Code..."));
+	console.log(chalk.bold.blue("🔧 Adding Faire Auth MCP to Open Code..."));
 
 	const openCodeConfig = {
 		$schema: "https://opencode.ai/config.json",
 		mcp: {
-			"Better Auth": {
+			"Faire Auth": {
 				type: "remote",
 				url: mcpUrl,
 				enabled: true,
@@ -154,11 +152,11 @@ function handleOpenCodeAction(mcpUrl: string) {
 		console.log(
 			chalk.green(`\n✓ Open Code configuration written to ${configPath}`),
 		);
-		console.log(chalk.green("✓ Better Auth MCP added successfully!"));
+		console.log(chalk.green("✓ Faire Auth MCP added successfully!"));
 	} catch (error) {
 		console.log(
 			chalk.yellow(
-				"\n⚠ Could not automatically write opencode.json. Please add this configuration manually:",
+				"\n! Could not automatically write opencode.json. Please add this configuration manually:",
 			),
 		);
 		console.log(chalk.cyan(JSON.stringify(openCodeConfig, null, 2)));
@@ -167,12 +165,12 @@ function handleOpenCodeAction(mcpUrl: string) {
 	console.log(chalk.bold.white("\n✨ Next Steps:"));
 	console.log(chalk.gray("• Restart Open Code to load the new MCP server"));
 	console.log(
-		chalk.gray("• You can now use Better Auth features directly in Open Code"),
+		chalk.gray("• You can now use Faire Auth features directly in Open Code"),
 	);
 }
 
 function handleManualAction(mcpUrl: string, mcpName: string) {
-	console.log(chalk.bold.blue("📝 Adding Better Auth MCP Configuration..."));
+	console.log(chalk.bold.blue("📝 Adding Faire Auth MCP Configuration..."));
 
 	const manualConfig = {
 		[mcpName]: {
@@ -196,11 +194,11 @@ function handleManualAction(mcpUrl: string, mcpName: string) {
 
 		fs.writeFileSync(configPath, JSON.stringify(mergedConfig, null, 2));
 		console.log(chalk.green(`\n✓ MCP configuration written to ${configPath}`));
-		console.log(chalk.green("✓ Better Auth MCP added successfully!"));
+		console.log(chalk.green("✓ Faire Auth MCP added successfully!"));
 	} catch (error) {
 		console.log(
 			chalk.yellow(
-				"\n⚠ Could not automatically write mcp.json. Please add this configuration manually:",
+				"\n! Could not automatically write mcp.json. Please add this configuration manually:",
 			),
 		);
 		console.log(chalk.cyan(JSON.stringify(manualConfig, null, 2)));
@@ -210,13 +208,13 @@ function handleManualAction(mcpUrl: string, mcpName: string) {
 	console.log(chalk.gray("• Restart your MCP client to load the new server"));
 	console.log(
 		chalk.gray(
-			"• You can now use Better Auth features directly in your MCP client",
+			"• You can now use Faire Auth features directly in your MCP client",
 		),
 	);
 }
 
 function showAllOptions(mcpUrl: string, mcpName: string) {
-	console.log(chalk.bold.blue("🔌 Better Auth MCP Server"));
+	console.log(chalk.bold.blue("🔌 Faire Auth MCP Server"));
 	console.log(chalk.gray("Choose your MCP client to get started:"));
 	console.log();
 
@@ -233,7 +231,7 @@ function showAllOptions(mcpUrl: string, mcpName: string) {
 }
 
 export const mcp = new Command("mcp")
-	.description("Add Better Auth MCP server to MCP Clients")
+	.description("Add Faire Auth MCP server to MCP Clients")
 	.option("--cursor", "Automatically open Cursor with the MCP configuration")
 	.option("--claude-code", "Show Claude Code MCP configuration command")
 	.option("--open-code", "Show Open Code MCP configuration")

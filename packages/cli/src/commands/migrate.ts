@@ -1,12 +1,12 @@
+import chalk from "chalk";
 import { Command } from "commander";
-import * as z from "zod/v4";
+import { createTelemetry, getTelemetryAuthConfig, logger } from "faire-auth";
+import { getAdapter, getMigrations } from "faire-auth/db";
 import { existsSync } from "fs";
 import path from "path";
-import yoctoSpinner from "yocto-spinner";
-import chalk from "chalk";
 import prompts from "prompts";
-import { logger, createTelemetry, getTelemetryAuthConfig } from "better-auth";
-import { getAdapter, getMigrations } from "better-auth/db";
+import yoctoSpinner from "yocto-spinner";
+import * as z from "zod";
 import { getConfig } from "../utils/get-config";
 
 export async function migrateAction(opts: any) {
@@ -27,7 +27,7 @@ export async function migrateAction(opts: any) {
 
 	const config = await getConfig({
 		cwd,
-		configPath: options.config,
+		...(options.config && { configPath: options.config }),
 	});
 	if (!config) {
 		logger.error(
@@ -36,7 +36,7 @@ export async function migrateAction(opts: any) {
 		return;
 	}
 
-	const db = await getAdapter(config);
+	const db = getAdapter(config);
 
 	if (!db) {
 		logger.error(
@@ -48,10 +48,10 @@ export async function migrateAction(opts: any) {
 	if (db.id !== "kysely") {
 		if (db.id === "prisma") {
 			logger.error(
-				"The migrate command only works with the built-in Kysely adapter. For Prisma, run `npx @better-auth/cli generate` to create the schema, then use Prisma’s migrate or push to apply it.",
+				"The migrate command only works with the built-in Kysely adapter. For Prisma, run `npx @faire-auth/cli generate` to create the schema, then use Prisma’s migrate or push to apply it.",
 			);
 			try {
-				const telemetry = await createTelemetry(config);
+				const telemetry = createTelemetry(config);
 				await telemetry.publish({
 					type: "cli_migrate",
 					payload: {
@@ -65,10 +65,10 @@ export async function migrateAction(opts: any) {
 		}
 		if (db.id === "drizzle") {
 			logger.error(
-				"The migrate command only works with the built-in Kysely adapter. For Drizzle, run `npx @better-auth/cli generate` to create the schema, then use Drizzle’s migrate or push to apply it.",
+				"The migrate command only works with the built-in Kysely adapter. For Drizzle, run `npx @faire-auth/cli generate` to create the schema, then use Drizzle’s migrate or push to apply it.",
 			);
 			try {
-				const telemetry = await createTelemetry(config);
+				const telemetry = createTelemetry(config);
 				await telemetry.publish({
 					type: "cli_migrate",
 					payload: {
@@ -82,7 +82,7 @@ export async function migrateAction(opts: any) {
 		}
 		logger.error("Migrate command isn't supported for this adapter.");
 		try {
-			const telemetry = await createTelemetry(config);
+			const telemetry = createTelemetry(config);
 			await telemetry.publish({
 				type: "cli_migrate",
 				payload: {
@@ -103,7 +103,7 @@ export async function migrateAction(opts: any) {
 		spinner.stop();
 		logger.info("🚀 No migrations needed.");
 		try {
-			const telemetry = await createTelemetry(config);
+			const telemetry = createTelemetry(config);
 			await telemetry.publish({
 				type: "cli_migrate",
 				payload: {
@@ -147,7 +147,7 @@ export async function migrateAction(opts: any) {
 	if (!migrate) {
 		logger.info("Migration cancelled.");
 		try {
-			const telemetry = await createTelemetry(config);
+			const telemetry = createTelemetry(config);
 			await telemetry.publish({
 				type: "cli_migrate",
 				payload: { outcome: "aborted", config: getTelemetryAuthConfig(config) },
@@ -161,7 +161,7 @@ export async function migrateAction(opts: any) {
 	spinner.stop();
 	logger.info("🚀 migration was completed successfully!");
 	try {
-		const telemetry = await createTelemetry(config);
+		const telemetry = createTelemetry(config);
 		await telemetry.publish({
 			type: "cli_migrate",
 			payload: { outcome: "migrated", config: getTelemetryAuthConfig(config) },

@@ -1,13 +1,3 @@
-import { parse } from "dotenv";
-import semver from "semver";
-import { format as prettierFormat } from "prettier";
-import { Command } from "commander";
-import * as z from "zod/v4";
-import { existsSync } from "fs";
-import path from "path";
-import fs from "fs/promises";
-import { getPackageInfo } from "../utils/get-package-info";
-import chalk from "chalk";
 import {
 	cancel,
 	confirm,
@@ -20,15 +10,25 @@ import {
 	spinner,
 	text,
 } from "@clack/prompts";
-import { installDependencies } from "../utils/install-dependencies";
+import chalk from "chalk";
+import { Command } from "commander";
+import { parse } from "dotenv";
+import { existsSync } from "fs";
+import fs from "fs/promises";
+import path from "path";
+import { format as prettierFormat } from "prettier";
+import semver from "semver";
+import * as z from "zod";
+import { generateAuthConfig } from "../generators/auth-config";
 import { checkPackageManagers } from "../utils/check-package-managers";
 import { formatMilliseconds } from "../utils/format-ms";
-import { generateSecretHash } from "./secret";
-import { generateAuthConfig } from "../generators/auth-config";
+import { getPackageInfo } from "../utils/get-package-info";
 import { getTsconfigInfo } from "../utils/get-tsconfig-info";
+import { installDependencies } from "../utils/install-dependencies";
+import { generateSecretHash } from "./secret";
 
 /**
- * Should only use any database that is core DBs, and supports the Better Auth CLI generate functionality.
+ * Should only use any database that is core DBs, and supports the Faire Auth CLI generate functionality.
  */
 const supportedDatabases = [
 	// Built-in kysely
@@ -51,146 +51,146 @@ const supportedDatabases = [
 export type SupportedDatabases = (typeof supportedDatabases)[number];
 
 export const supportedPlugins = [
-	{
-		id: "two-factor",
-		name: "twoFactor",
-		path: `better-auth/plugins`,
-		clientName: "twoFactorClient",
-		clientPath: "better-auth/client/plugins",
-	},
-	{
-		id: "username",
-		name: "username",
-		clientName: "usernameClient",
-		path: `better-auth/plugins`,
-		clientPath: "better-auth/client/plugins",
-	},
-	{
-		id: "anonymous",
-		name: "anonymous",
-		clientName: "anonymousClient",
-		path: `better-auth/plugins`,
-		clientPath: "better-auth/client/plugins",
-	},
-	{
-		id: "phone-number",
-		name: "phoneNumber",
-		clientName: "phoneNumberClient",
-		path: `better-auth/plugins`,
-		clientPath: "better-auth/client/plugins",
-	},
-	{
-		id: "magic-link",
-		name: "magicLink",
-		clientName: "magicLinkClient",
-		clientPath: "better-auth/client/plugins",
-		path: `better-auth/plugins`,
-	},
-	{
-		id: "email-otp",
-		name: "emailOTP",
-		clientName: "emailOTPClient",
-		path: `better-auth/plugins`,
-		clientPath: "better-auth/client/plugins",
-	},
-	{
-		id: "passkey",
-		name: "passkey",
-		clientName: "passkeyClient",
-		path: `better-auth/plugins/passkey`,
-		clientPath: "better-auth/client/plugins",
-	},
-	{
-		id: "generic-oauth",
-		name: "genericOAuth",
-		clientName: "genericOAuthClient",
-		path: `better-auth/plugins`,
-		clientPath: "better-auth/client/plugins",
-	},
-	{
-		id: "one-tap",
-		name: "oneTap",
-		clientName: "oneTapClient",
-		path: `better-auth/plugins`,
-		clientPath: "better-auth/client/plugins",
-	},
-	{
-		id: "api-key",
-		name: "apiKey",
-		clientName: "apiKeyClient",
-		path: `better-auth/plugins`,
-		clientPath: "better-auth/client/plugins",
-	},
-	{
-		id: "admin",
-		name: "admin",
-		clientName: "adminClient",
-		path: `better-auth/plugins`,
-		clientPath: "better-auth/client/plugins",
-	},
-	{
-		id: "organization",
-		name: "organization",
-		clientName: "organizationClient",
-		path: `better-auth/plugins`,
-		clientPath: "better-auth/client/plugins",
-	},
-	{
-		id: "oidc",
-		name: "oidcProvider",
-		clientName: "oidcClient",
-		path: `better-auth/plugins`,
-		clientPath: "better-auth/client/plugins",
-	},
-	{
-		id: "sso",
-		name: "sso",
-		clientName: "ssoClient",
-		path: `@better-auth/sso`,
-		clientPath: "@better-auth/sso/client",
-	},
+	// {
+	// 	id: "two-factor",
+	// 	name: "twoFactor",
+	// 	path: `faire-auth/plugins`,
+	// 	clientName: "twoFactorClient",
+	// 	clientPath: "faire-auth/client/plugins",
+	// },
+	// {
+	// 	id: "username",
+	// 	name: "username",
+	// 	clientName: "usernameClient",
+	// 	path: `faire-auth/plugins`,
+	// 	clientPath: "faire-auth/client/plugins",
+	// },
+	// {
+	// 	id: "anonymous",
+	// 	name: "anonymous",
+	// 	clientName: "anonymousClient",
+	// 	path: `faire-auth/plugins`,
+	// 	clientPath: "faire-auth/client/plugins",
+	// },
+	// {
+	// 	id: "phone-number",
+	// 	name: "phoneNumber",
+	// 	clientName: "phoneNumberClient",
+	// 	path: `faire-auth/plugins`,
+	// 	clientPath: "faire-auth/client/plugins",
+	// },
+	// {
+	// 	id: "magic-link",
+	// 	name: "magicLink",
+	// 	clientName: "magicLinkClient",
+	// 	clientPath: "faire-auth/client/plugins",
+	// 	path: `faire-auth/plugins`,
+	// },
+	// {
+	// 	id: "email-otp",
+	// 	name: "emailOTP",
+	// 	clientName: "emailOTPClient",
+	// 	path: `faire-auth/plugins`,
+	// 	clientPath: "faire-auth/client/plugins",
+	// },
+	// {
+	// 	id: "passkey",
+	// 	name: "passkey",
+	// 	clientName: "passkeyClient",
+	// 	path: `faire-auth/plugins/passkey`,
+	// 	clientPath: "faire-auth/client/plugins",
+	// },
+	// {
+	// 	id: "generic-oauth",
+	// 	name: "genericOAuth",
+	// 	clientName: "genericOAuthClient",
+	// 	path: `faire-auth/plugins`,
+	// 	clientPath: "faire-auth/client/plugins",
+	// },
+	// {
+	// 	id: "one-tap",
+	// 	name: "oneTap",
+	// 	clientName: "oneTapClient",
+	// 	path: `faire-auth/plugins`,
+	// 	clientPath: "faire-auth/client/plugins",
+	// },
+	// {
+	// 	id: "api-key",
+	// 	name: "apiKey",
+	// 	clientName: "apiKeyClient",
+	// 	path: `faire-auth/plugins`,
+	// 	clientPath: "faire-auth/client/plugins",
+	// },
+	// {
+	// 	id: "admin",
+	// 	name: "admin",
+	// 	clientName: "adminClient",
+	// 	path: `faire-auth/plugins`,
+	// 	clientPath: "faire-auth/client/plugins",
+	// },
+	// {
+	// 	id: "organization",
+	// 	name: "organization",
+	// 	clientName: "organizationClient",
+	// 	path: `faire-auth/plugins`,
+	// 	clientPath: "faire-auth/client/plugins",
+	// },
+	// {
+	// 	id: "oidc",
+	// 	name: "oidcProvider",
+	// 	clientName: "oidcClient",
+	// 	path: `faire-auth/plugins`,
+	// 	clientPath: "faire-auth/client/plugins",
+	// },
+	// {
+	// 	id: "sso",
+	// 	name: "sso",
+	// 	clientName: "ssoClient",
+	// 	path: `faire-auth/plugins/sso`,
+	// 	clientPath: "faire-auth/client/plugins",
+	// },
 	{
 		id: "bearer",
 		name: "bearer",
 		clientName: undefined,
-		path: `better-auth/plugins`,
+		path: `faire-auth/plugins`,
 		clientPath: undefined,
 	},
-	{
-		id: "multi-session",
-		name: "multiSession",
-		clientName: "multiSessionClient",
-		path: `better-auth/plugins`,
-		clientPath: "better-auth/client/plugins",
-	},
-	{
-		id: "oauth-proxy",
-		name: "oAuthProxy",
-		clientName: undefined,
-		path: `better-auth/plugins`,
-		clientPath: undefined,
-	},
-	{
-		id: "open-api",
-		name: "openAPI",
-		clientName: undefined,
-		path: `better-auth/plugins`,
-		clientPath: undefined,
-	},
-	{
-		id: "jwt",
-		name: "jwt",
-		clientName: undefined,
-		clientPath: undefined,
-		path: `better-auth/plugins`,
-	},
-	{
-		id: "next-cookies",
-		name: "nextCookies",
-		clientPath: undefined,
-		clientName: undefined,
-		path: `better-auth/next-js`,
-	},
+	// {
+	// 	id: "multi-session",
+	// 	name: "multiSession",
+	// 	clientName: "multiSessionClient",
+	// 	path: `faire-auth/plugins`,
+	// 	clientPath: "faire-auth/client/plugins",
+	// },
+	// {
+	// 	id: "oauth-proxy",
+	// 	name: "oAuthProxy",
+	// 	clientName: undefined,
+	// 	path: `faire-auth/plugins`,
+	// 	clientPath: undefined,
+	// },
+	// {
+	// 	id: "open-api",
+	// 	name: "openAPI",
+	// 	clientName: undefined,
+	// 	path: `faire-auth/plugins`,
+	// 	clientPath: undefined,
+	// },
+	// {
+	// 	id: "jwt",
+	// 	name: "jwt",
+	// 	clientName: undefined,
+	// 	clientPath: undefined,
+	// 	path: `faire-auth/plugins`,
+	// },
+	// {
+	// 	id: "next-cookies",
+	// 	name: "nextCookies",
+	// 	clientPath: undefined,
+	// 	clientName: undefined,
+	// 	path: `faire-auth/next-js`,
+	// },
 ] as const;
 
 export type SupportedPlugin = (typeof supportedPlugins)[number];
@@ -204,9 +204,9 @@ const defaultFormatOptions = {
 const getDefaultAuthConfig = async ({ appName }: { appName?: string }) =>
 	await prettierFormat(
 		[
-			"import { betterAuth } from 'better-auth';",
+			"import { faireAuth } from 'faire-auth';",
 			"",
-			"export const auth = betterAuth({",
+			"export const auth = faireAuth({",
 			appName ? `appName: "${appName}",` : "",
 			"plugins: [],",
 			"});",
@@ -249,7 +249,7 @@ const getDefaultAuthClientConfig = async ({
 	function groupImportVariables(): Import[] {
 		const result: Import[] = [
 			{
-				path: "better-auth/client/plugins",
+				path: "faire-auth/client/plugins",
 				variables: [{ name: "inferAdditionalFields" }],
 			},
 		];
@@ -317,7 +317,7 @@ const getDefaultAuthClientConfig = async ({
 
 	return await prettierFormat(
 		[
-			`import { createAuthClient } from "better-auth/${
+			`import { createAuthClient } from "faire-auth/${
 				framework === "nextjs"
 					? "react"
 					: framework === "vanilla"
@@ -355,7 +355,7 @@ const outroText = `🥳 All Done, Happy Hacking!`;
 
 export async function initAction(opts: any) {
 	console.log();
-	intro("👋 Initializing Better Auth");
+	intro("👋 Initializing Faire Auth");
 
 	const options = optionsSchema.parse(opts);
 
@@ -418,7 +418,7 @@ export async function initAction(opts: any) {
 		)
 	) {
 		log.warn(
-			`Better Auth requires your tsconfig.json to have "compilerOptions.strict" set to true.`,
+			`Faire Auth requires your tsconfig.json to have "compilerOptions.strict" set to true.`,
 		);
 		const shouldAdd = await confirm({
 			message: `Would you like us to set ${chalk.bold(
@@ -456,102 +456,102 @@ export async function initAction(opts: any) {
 		}
 	}
 
-	// ===== install better-auth =====
+	// ===== install faire-auth =====
 	const s = spinner({ indicator: "dots" });
-	s.start(`Checking better-auth installation`);
+	s.start(`Checking faire-auth installation`);
 
 	let latest_betterauth_version: string;
 	try {
-		latest_betterauth_version = await getLatestNpmVersion("better-auth");
+		latest_betterauth_version = await getLatestNpmVersion("faire-auth");
 	} catch (error) {
-		log.error(`❌ Couldn't get latest version of better-auth.`);
+		log.error(`❌ Couldn't get latest version of faire-auth.`);
 		console.error(error);
 		process.exit(1);
 	}
 
 	if (
 		!packageInfo.dependencies ||
-		!Object.keys(packageInfo.dependencies).includes("better-auth")
+		!Object.keys(packageInfo.dependencies).includes("faire-auth")
 	) {
-		s.stop("Finished fetching latest version of better-auth.");
+		s.stop("Finished fetching latest version of faire-auth.");
 		const s2 = spinner({ indicator: "dots" });
-		const shouldInstallBetterAuthDep = await confirm({
-			message: `Would you like to install Better Auth?`,
+		const shouldInstallFaireAuthDep = await confirm({
+			message: `Would you like to install Faire Auth?`,
 		});
-		if (isCancel(shouldInstallBetterAuthDep)) {
+		if (isCancel(shouldInstallFaireAuthDep)) {
 			cancel(`✋ Operation cancelled.`);
 			process.exit(0);
 		}
 		if (packageManagerPreference === undefined) {
 			packageManagerPreference = await getPackageManager();
 		}
-		if (shouldInstallBetterAuthDep) {
+		if (shouldInstallFaireAuthDep) {
 			s2.start(
-				`Installing Better Auth using ${chalk.bold(packageManagerPreference)}`,
+				`Installing Faire Auth using ${chalk.bold(packageManagerPreference)}`,
 			);
 			try {
 				const start = Date.now();
 				await installDependencies({
-					dependencies: ["better-auth@latest"],
+					dependencies: ["faire-auth@latest"],
 					packageManager: packageManagerPreference,
 					cwd: cwd,
 				});
 				s2.stop(
-					`Better Auth installed ${chalk.greenBright(
+					`Faire Auth installed ${chalk.greenBright(
 						`successfully`,
 					)}! ${chalk.gray(`(${formatMilliseconds(Date.now() - start)})`)}`,
 				);
 			} catch (error: any) {
-				s2.stop(`Failed to install Better Auth:`);
+				s2.stop(`Failed to install Faire Auth:`);
 				console.error(error);
 				process.exit(1);
 			}
 		}
 	} else if (
-		packageInfo.dependencies["better-auth"] !== "workspace:*" &&
+		packageInfo.dependencies["faire-auth"] !== "workspace:*" &&
 		semver.lt(
-			semver.coerce(packageInfo.dependencies["better-auth"])?.toString()!,
+			semver.coerce(packageInfo.dependencies["faire-auth"])?.toString()!,
 			semver.clean(latest_betterauth_version)!,
 		)
 	) {
-		s.stop("Finished fetching latest version of better-auth.");
-		const shouldInstallBetterAuthDep = await confirm({
-			message: `Your current Better Auth dependency is out-of-date. Would you like to update it? (${chalk.bold(
-				packageInfo.dependencies["better-auth"],
+		s.stop("Finished fetching latest version of faire-auth.");
+		const shouldInstallFaireAuthDep = await confirm({
+			message: `Your current Faire Auth dependency is out-of-date. Would you like to update it? (${chalk.bold(
+				packageInfo.dependencies["faire-auth"],
 			)} → ${chalk.bold(`v${latest_betterauth_version}`)})`,
 		});
-		if (isCancel(shouldInstallBetterAuthDep)) {
+		if (isCancel(shouldInstallFaireAuthDep)) {
 			cancel(`✋ Operation cancelled.`);
 			process.exit(0);
 		}
-		if (shouldInstallBetterAuthDep) {
+		if (shouldInstallFaireAuthDep) {
 			if (packageManagerPreference === undefined) {
 				packageManagerPreference = await getPackageManager();
 			}
 			const s = spinner({ indicator: "dots" });
 			s.start(
-				`Updating Better Auth using ${chalk.bold(packageManagerPreference)}`,
+				`Updating Faire Auth using ${chalk.bold(packageManagerPreference)}`,
 			);
 			try {
 				const start = Date.now();
 				await installDependencies({
-					dependencies: ["better-auth@latest"],
+					dependencies: ["faire-auth@latest"],
 					packageManager: packageManagerPreference,
 					cwd: cwd,
 				});
 				s.stop(
-					`Better Auth updated ${chalk.greenBright(
+					`Faire Auth updated ${chalk.greenBright(
 						`successfully`,
 					)}! ${chalk.gray(`(${formatMilliseconds(Date.now() - start)})`)}`,
 				);
 			} catch (error: any) {
-				s.stop(`Failed to update Better Auth:`);
+				s.stop(`Failed to update Faire Auth:`);
 				log.error(error.message);
 				process.exit(1);
 			}
 		}
 	} else {
-		s.stop(`Better Auth dependencies are ${chalk.greenBright(`up to date`)}!`);
+		s.stop(`Faire Auth dependencies are ${chalk.greenBright(`up to date`)}!`);
 	}
 
 	// ===== appName =====
@@ -885,7 +885,7 @@ export async function initAction(opts: any) {
 								name: plugin.clientName!,
 								imports: [
 									{
-										path: "better-auth/client/plugins",
+										path: "faire-auth/client/plugins",
 										variables: [{ name: plugin.clientName! }],
 									},
 								],
@@ -922,19 +922,19 @@ export async function initAction(opts: any) {
 			const parsed = parse(fileContents);
 			let isMissingSecret = false;
 			let isMissingUrl = false;
-			if (parsed.BETTER_AUTH_SECRET === undefined) isMissingSecret = true;
-			if (parsed.BETTER_AUTH_URL === undefined) isMissingUrl = true;
+			if (parsed.FAIRE_AUTH_SECRET === undefined) isMissingSecret = true;
+			if (parsed.FAIRE_AUTH_URL === undefined) isMissingUrl = true;
 			if (isMissingSecret || isMissingUrl) {
 				let txt = "";
 				if (isMissingSecret && !isMissingUrl)
-					txt = chalk.bold(`BETTER_AUTH_SECRET`);
+					txt = chalk.bold(`FAIRE_AUTH_SECRET`);
 				else if (!isMissingSecret && isMissingUrl)
-					txt = chalk.bold(`BETTER_AUTH_URL`);
+					txt = chalk.bold(`FAIRE_AUTH_URL`);
 				else
 					txt =
-						chalk.bold.underline(`BETTER_AUTH_SECRET`) +
+						chalk.bold.underline(`FAIRE_AUTH_SECRET`) +
 						` and ` +
-						chalk.bold.underline(`BETTER_AUTH_URL`);
+						chalk.bold.underline(`FAIRE_AUTH_URL`);
 				log.warn(`Missing ${txt} in ${targetEnvFile}`);
 
 				const shouldAdd = await select({
@@ -951,10 +951,10 @@ export async function initAction(opts: any) {
 				}
 				let envs: string[] = [];
 				if (isMissingSecret) {
-					envs.push("BETTER_AUTH_SECRET");
+					envs.push("FAIRE_AUTH_SECRET");
 				}
 				if (isMissingUrl) {
-					envs.push("BETTER_AUTH_URL");
+					envs.push("FAIRE_AUTH_URL");
 				}
 				if (shouldAdd === "yes") {
 					try {
@@ -971,7 +971,7 @@ export async function initAction(opts: any) {
 					log.success(`🚀 ENV variables successfully added!`);
 					if (isMissingUrl) {
 						log.info(
-							`Be sure to update your BETTER_AUTH_URL according to your app's needs.`,
+							`Be sure to update your FAIRE_AUTH_URL according to your app's needs.`,
 						);
 					}
 				} else if (shouldAdd === "no") {
@@ -1149,12 +1149,12 @@ async function updateEnvs({
 		if (env === "DATABASE_URL") {
 			return `"The URL of your database"`;
 		}
-		if (env === "BETTER_AUTH_SECRET") {
+		if (env === "FAIRE_AUTH_SECRET") {
 			previouslyGeneratedSecret =
 				previouslyGeneratedSecret ?? generateSecretHash();
 			return `"${previouslyGeneratedSecret}"`;
 		}
-		if (env === "BETTER_AUTH_URL") {
+		if (env === "FAIRE_AUTH_URL") {
 			return `"http://localhost:3000" # Your APP URL`;
 		}
 	}

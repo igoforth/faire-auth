@@ -141,12 +141,12 @@ export default function SignIn() {
 						<p className="text-center text-xs text-neutral-500">
 							built with{" "}
 							<Link
-								href="https://better-auth.com"
+								href="https://faire-auth.com"
 								className="underline"
 								target="_blank"
 							>
 								<span className="dark:text-white/70 cursor-pointer">
-									better-auth.
+									faire-auth.
 								</span>
 							</Link>
 						</p>
@@ -411,12 +411,12 @@ export default function SignIn() {
             <p className="text-center text-xs text-neutral-500">
              built with{" "}
               <Link
-                href="https://better-auth.com"
+                href="https://faire-auth.com"
                 className="underline"
                 target="_blank"
               >
                 <span className="dark:text-white/70 cursor-pointer">
-									better-auth.
+									faire-auth.
 								</span>
               </Link>
             </p>

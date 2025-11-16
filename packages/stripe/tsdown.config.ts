@@ -1,8 +1,16 @@
 import { defineConfig } from "tsdown";
 
 export default defineConfig({
-	dts: true,
+	dts: { build: true, incremental: true },
 	format: ["esm", "cjs"],
 	entry: ["./src/index.ts", "./src/client.ts"],
-	external: ["better-auth", "better-call", "@better-fetch/fetch", "stripe"],
+	external: [
+		"faire-auth",
+		"better-call",
+		"@better-fetch/fetch",
+		"stripe",
+		"hono",
+	],
+	nodeProtocol: true,
+	publint: true,
 });

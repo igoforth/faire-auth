@@ -92,7 +92,7 @@ export const APIMethod = ({
 	isClientOnly?: boolean;
 	/**
 	 * The `ts` codeblock which describes the API method.
-	 * I recommend checking other parts of the Better-Auth docs which is using this component to get an idea of how to
+	 * I recommend checking other parts of the Faire Auth docs which is using this component to get an idea of how to
 	 * write out the children.
 	 */
 	children: JSX.Element;

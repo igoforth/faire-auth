@@ -46,17 +46,21 @@ function toBoolean(val: boolean | string | undefined) {
 	return val ? val !== "false" : false;
 }
 
-export const nodeENV =
+export const nodeENV = () =>
 	(typeof process !== "undefined" && process.env && process.env.NODE_ENV) || "";
 
+/** Detect if `CI` environment variable is set */
+export const isCI = () => toBoolean(env.CI);
+
 /** Detect if `NODE_ENV` environment variable is `production` */
-export const isProduction = nodeENV === "production";
+export const isProduction = () => nodeENV() === "production";
 
 /** Detect if `NODE_ENV` environment variable is `dev` or `development` */
-export const isDevelopment = nodeENV === "dev" || nodeENV === "development";
+export const isDevelopment = () =>
+	nodeENV() === "dev" || nodeENV() === "development";
 
 /** Detect if `NODE_ENV` environment variable is `test` */
-export const isTest = () => nodeENV === "test" || toBoolean(env.TEST);
+export const isTest = () => nodeENV() === "test" || toBoolean(env.TEST);
 
 /**
  * Get environment variable with fallback
@@ -93,20 +97,20 @@ export function getBooleanEnvVar(key: string, fallback = true): boolean {
 }
 
 /**
- * Common environment variables used in Better Auth
+ * Common environment variables used in Faire Auth
  */
 export const ENV = Object.freeze({
-	get BETTER_AUTH_SECRET() {
-		return getEnvVar("BETTER_AUTH_SECRET");
+	get FAIRE_AUTH_SECRET() {
+		return getEnvVar("FAIRE_AUTH_SECRET");
 	},
 	get AUTH_SECRET() {
 		return getEnvVar("AUTH_SECRET");
 	},
-	get BETTER_AUTH_TELEMETRY() {
-		return getEnvVar("BETTER_AUTH_TELEMETRY");
+	get FAIRE_AUTH_TELEMETRY() {
+		return getEnvVar("FAIRE_AUTH_TELEMETRY");
 	},
-	get BETTER_AUTH_TELEMETRY_ID() {
-		return getEnvVar("BETTER_AUTH_TELEMETRY_ID");
+	get FAIRE_AUTH_TELEMETRY_ID() {
+		return getEnvVar("FAIRE_AUTH_TELEMETRY_ID");
 	},
 	get NODE_ENV() {
 		return getEnvVar("NODE_ENV", "development");
@@ -114,10 +118,10 @@ export const ENV = Object.freeze({
 	get PACKAGE_VERSION() {
 		return getEnvVar("PACKAGE_VERSION", "0.0.0");
 	},
-	get BETTER_AUTH_TELEMETRY_ENDPOINT() {
+	get FAIRE_AUTH_TELEMETRY_ENDPOINT() {
 		return getEnvVar(
-			"BETTER_AUTH_TELEMETRY_ENDPOINT",
-			"https://telemetry.better-auth.com/v1/track",
+			"FAIRE_AUTH_TELEMETRY_ENDPOINT",
+			"https://telemetry.faire-auth.com/v1/track",
 		);
 	},
 });

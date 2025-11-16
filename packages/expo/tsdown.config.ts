@@ -1,11 +1,11 @@
 import { defineConfig } from "tsdown";
 
 export default defineConfig({
-	dts: true,
+	dts: { build: true, incremental: true },
 	format: ["esm", "cjs"],
 	entry: ["./src/index.ts", "./src/client.ts"],
 	external: [
-		"better-auth",
+		"faire-auth",
 		"better-call",
 		"@better-fetch/fetch",
 		"react-native",
@@ -14,4 +14,6 @@ export default defineConfig({
 		"expo-constants",
 	],
 	treeshake: true,
+	nodeProtocol: true,
+	publint: true,
 });

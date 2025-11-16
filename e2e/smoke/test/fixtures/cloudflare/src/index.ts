@@ -1,15 +1,15 @@
 import { Hono } from "hono";
 
-import { betterAuth } from "better-auth";
+import { faireAuth } from "faire-auth";
 import { createDrizzle } from "./db";
-import { drizzleAdapter } from "better-auth/adapters/drizzle";
+import { drizzleAdapter } from "faire-auth/adapters/drizzle";
 
 interface CloudflareBindings {
 	DB: D1Database;
 }
 
 const createAuth = (env: CloudflareBindings) =>
-	betterAuth({
+	faireAuth({
 		baseURL: "http://localhost:4000",
 		database: drizzleAdapter(createDrizzle(env.DB), { provider: "sqlite" }),
 		emailAndPassword: {
@@ -22,27 +22,23 @@ const createAuth = (env: CloudflareBindings) =>
 
 type Auth = ReturnType<typeof createAuth>;
 
-const app = new Hono<{
+export default new Hono<{
 	Bindings: CloudflareBindings;
-	Variables: {
-		auth: Auth;
-	};
-}>();
-
-app.use("*", async (c, next) => {
-	const auth = createAuth(c.env);
-	c.set("auth", auth);
-	await next();
-});
-
-app.on(["POST", "GET"], "/api/auth/*", (c) => c.var.auth.handler(c.req.raw));
-
-app.get("/", async (c) => {
-	const session = await c.var.auth.api.getSession({
-		headers: c.req.raw.headers,
-	});
-	if (session) return c.text("Hello " + session.user.name);
-	return c.text("Not logged in");
-});
-
-export default app satisfies ExportedHandler<CloudflareBindings>;
+	Variables: { auth: Auth };
+}>()
+	.use(async (c, next) => {
+		const auth = createAuth(c.env);
+		c.set("auth", auth);
+		await next();
+	})
+	.on(["POST", "GET"], "/api/auth/*", (c) => c.get("auth").handler(c.req.raw))
+	.get("/", async (c) => {
+		const session = await c.get("auth").api.getSession(
+			{ query: {} },
+			{
+				headers: c.req.raw.headers,
+			},
+		);
+		if (session.success) return c.text("Hello " + session.data.user.name);
+		return c.text("Not logged in");
+	}) satisfies ExportedHandler<CloudflareBindings>;

@@ -4,11 +4,7 @@
   "tasks": {
     "build": {
       "env": [
-        "GITHUB_TOKEN",
-        "ORAMA_PRIVATE_API_KEY",
-        "ORAMA_INDEX_ID",
-        "NEXT_PUBLIC_ORAMA_PUBLIC_API_KEY",
-        "NEXT_PUBLIC_ORAMA_ENDPOINT"
+        "GITHUB_TOKEN"
       ]
     }
   }

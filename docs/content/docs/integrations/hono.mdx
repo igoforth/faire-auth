@@ -1,9 +1,9 @@
 ---
 title: Hono Integration
-description: Integrate Better Auth with Hono.
+description: Integrate Faire Auth with Hono.
 ---
 
-Before you start, make sure you have a Better Auth instance configured. If you haven't done that yet, check out the [installation](/docs/installation).
+Before you start, make sure you have a Faire Auth instance configured. If you haven't done that yet, check out the [installation](/docs/installation).
 
 ### Mount the handler
 
@@ -32,7 +32,7 @@ import { Hono } from "hono";
 import { auth } from "./auth";
 import { serve } from "@hono/node-server";
 import { cors } from "hono/cors";
- 
+
 const app = new Hono();
 
 app.use(
@@ -65,7 +65,7 @@ import { Hono } from "hono";
 import { auth } from "./auth";
 import { serve } from "@hono/node-server";
 import { cors } from "hono/cors";
- 
+
 const app = new Hono<{
 	Variables: {
 		user: typeof auth.$Infer.Session.user | null;
@@ -101,7 +101,7 @@ This will allow you to access the `user` and `session` object in all of your rou
 app.get("/session", (c) => {
 	const session = c.get("session")
 	const user = c.get("user")
-	
+
 	if(!user) return c.body(null, 401);
 
   	return c.json({
@@ -113,7 +113,7 @@ app.get("/session", (c) => {
 
 ### Cross-Domain Cookies
 
-By default, all Better Auth cookies are set with `SameSite=Lax`. If you need to use cookies across different domains, you’ll need to set `SameSite=None` and `Secure=true`. However, we recommend using subdomains whenever possible, as this allows you to keep `SameSite=Lax`. To enable cross-subdomain cookies, simply turn on `crossSubDomainCookies` in your auth config.
+By default, all Faire Auth cookies are set with `SameSite=Lax`. If you need to use cookies across different domains, you’ll need to set `SameSite=None` and `Secure=true`. However, we recommend using subdomains whenever possible, as this allows you to keep `SameSite=Lax`. To enable cross-subdomain cookies, simply turn on `crossSubDomainCookies` in your auth config.
 
 ```ts title="auth.ts"
 export const auth = createAuth({
@@ -159,7 +159,7 @@ export const auth = createAuth({
 
 ### Client-Side Configuration
 
-When using the Hono client (`@hono/client`) to make requests to your Better Auth-protected endpoints, you need to configure it to send credentials (cookies) with cross-origin requests.
+When using the Hono client (`@hono/client`) to make requests to your Faire Auth-protected endpoints, you need to configure it to send credentials (cookies) with cross-origin requests.
 
 ```ts title="api.ts"
 import { hc } from "hono/client";

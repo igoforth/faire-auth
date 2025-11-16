@@ -11,11 +11,11 @@ The username plugin is a lightweight plugin that adds username support to the em
     <Step>
         ### Add Plugin to the server
 
-        ```ts title="auth.ts" 
-        import { betterAuth } from "better-auth"
-        import { username } from "better-auth/plugins"
+        ```ts title="auth.ts"
+        import { faireAuth } from "faire-auth"
+        import { username } from "faire-auth/plugins"
 
-        export const auth = betterAuth({
+        export const auth = faireAuth({
             plugins: [ // [!code highlight]
                 username() // [!code highlight]
             ] // [!code highlight]
@@ -30,12 +30,12 @@ The username plugin is a lightweight plugin that adds username support to the em
         <Tabs items={["migrate", "generate"]}>
             <Tab value="migrate">
             ```bash
-            npx @better-auth/cli migrate
+            npx @faire-auth/cli migrate
             ```
             </Tab>
             <Tab value="generate">
             ```bash
-            npx @better-auth/cli generate
+            npx @faire-auth/cli generate
             ```
             </Tab>
         </Tabs>
@@ -43,11 +43,11 @@ The username plugin is a lightweight plugin that adds username support to the em
     </Step>
     <Step>
         ### Add the client plugin
-        
+
         ```ts title="auth-client.ts"
-        import { createAuthClient } from "better-auth/client"
-        import { usernameClient } from "better-auth/client/plugins"
-        
+        import { createAuthClient } from "faire-auth/client"
+        import { usernameClient } from "faire-auth/client/plugins"
+
         export const authClient = createAuthClient({
             plugins: [ // [!code highlight]
                 usernameClient() // [!code highlight]
@@ -158,10 +158,10 @@ if(response?.available) {
 The minimum length of the username. Default is `3`.
 
 ```ts title="auth.ts"
-import { betterAuth } from "better-auth"
-import { username } from "better-auth/plugins"
+import { faireAuth } from "faire-auth"
+import { username } from "faire-auth/plugins"
 
-const auth = betterAuth({
+const auth = faireAuth({
     plugins: [
         username({
             minUsernameLength: 5
@@ -175,10 +175,10 @@ const auth = betterAuth({
 The maximum length of the username. Default is `30`.
 
 ```ts title="auth.ts"
-import { betterAuth } from "better-auth"
-import { username } from "better-auth/plugins"
+import { faireAuth } from "faire-auth"
+import { username } from "faire-auth/plugins"
 
-const auth = betterAuth({
+const auth = faireAuth({
     plugins: [
         username({
             maxUsernameLength: 100
@@ -192,10 +192,10 @@ const auth = betterAuth({
 A function that validates the username. The function should return false if the username is invalid. By default, the username should only contain alphanumeric characters, underscores, and dots.
 
 ```ts title="auth.ts"
-import { betterAuth } from "better-auth"
-import { username } from "better-auth/plugins"
+import { faireAuth } from "faire-auth"
+import { username } from "faire-auth/plugins"
 
-const auth = betterAuth({
+const auth = faireAuth({
     plugins: [
         username({
             usernameValidator: (username) => {
@@ -214,10 +214,10 @@ const auth = betterAuth({
 A function that validates the display username. The function should return false if the display username is invalid. By default, no validation is applied to display username.
 
 ```ts title="auth.ts"
-import { betterAuth } from "better-auth"
-import { username } from "better-auth/plugins"
+import { faireAuth } from "faire-auth"
+import { username } from "faire-auth/plugins"
 
-const auth = betterAuth({
+const auth = faireAuth({
     plugins: [
         username({
             displayUsernameValidator: (displayUsername) => {
@@ -236,10 +236,10 @@ A function that normalizes the username, or `false` if you want to disable norma
 By default, usernames are normalized to lowercase, so "TestUser" and "testuser", for example, are considered the same username. The `username` field will contain the normalized (lower case) username, while `displayUsername` will contain the original `username`.
 
 ```ts title="auth.ts"
-import { betterAuth } from "better-auth"
-import { username } from "better-auth/plugins"
+import { faireAuth } from "faire-auth"
+import { username } from "faire-auth/plugins"
 
-const auth = betterAuth({
+const auth = faireAuth({
     plugins: [
         username({
             usernameNormalization: (username) => {
@@ -260,15 +260,15 @@ A function that normalizes the display username, or `false` to disable normaliza
 By default, display usernames are not normalized. When only `username` is provided during signup or update, the `displayUsername` will be set to match the original `username` value (before normalization). You can also explicitly set a `displayUsername` which will be preserved as-is. For custom normalization, provide a function that takes the display username as input and returns the normalized version.
 
 ```ts title="auth.ts"
-import { betterAuth } from "better-auth"
-import { username } from "better-auth/plugins"
+import { faireAuth } from "faire-auth"
+import { username } from "faire-auth/plugins"
 
-const auth = betterAuth({
+const auth = faireAuth({
     plugins: [
         username({
             displayUsernameNormalization: (displayUsername) => displayUsername.toLowerCase(),
         })
-    ]   
+    ]
 })
 ```
 
@@ -277,10 +277,10 @@ const auth = betterAuth({
 By default, username and display username are validated before normalization. You can change this behavior by setting `validationOrder` to `post-normalization`.
 
 ```ts title="auth.ts"
-import { betterAuth } from "better-auth"
-import { username } from "better-auth/plugins"
+import { faireAuth } from "faire-auth"
+import { username } from "faire-auth/plugins"
 
-const auth = betterAuth({
+const auth = faireAuth({
     plugins: [
         username({
             validationOrder: {
@@ -298,15 +298,15 @@ The plugin requires 2 fields to be added to the user table:
 
 <DatabaseTable
     fields={[
-        { 
-            name: "username", 
-            type: "string", 
+        {
+            name: "username",
+            type: "string",
             description: "The username of the user",
             isUnique: true
         },
-        { 
-            name: "displayUsername", 
-            type: "string", 
+        {
+            name: "displayUsername",
+            type: "string",
             description: "Non normalized username of the user",
             isUnique: true
         },

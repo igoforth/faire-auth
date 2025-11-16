@@ -9,20 +9,20 @@ The Device Authorization plugin implements the OAuth 2.0 Device Authorization Gr
 
 ## Try It Out
 
-You can test the device authorization flow right now using the Better Auth CLI:
+You can test the device authorization flow right now using the Faire Auth CLI:
 
 ```bash
-npx @better-auth/cli login
+npx @faire-auth/cli login
 ```
 
 This will demonstrate the complete device authorization flow by:
-1. Requesting a device code from the Better Auth demo server
+1. Requesting a device code from the Faire Auth demo server
 2. Displaying a user code for you to enter
 3. Opening your browser to the verification page
 4. Polling for authorization completion
 
 <Callout type="info">
-  The CLI login command is a demo feature that connects to the Better Auth demo server to showcase the device authorization flow in action.
+  The CLI login command is a demo feature that connects to the Faire Auth demo server to showcase the device authorization flow in action.
 </Callout>
 
 ## Installation
@@ -30,14 +30,14 @@ This will demonstrate the complete device authorization flow by:
 <Steps>
     <Step>
         ### Add the plugin to your auth config
-        
+
         Add the device authorization plugin to your server configuration.
 
         ```ts title="auth.ts"
-        import { betterAuth } from "better-auth";
-        import { deviceAuthorization } from "better-auth/plugins"; // [!code highlight]
+        import { faireAuth } from "faire-auth";
+        import { deviceAuthorization } from "faire-auth/plugins"; // [!code highlight]
 
-        export const auth = betterAuth({
+        export const auth = faireAuth({
           // ... other config
           plugins: [ // [!code highlight]
             deviceAuthorization({ // [!code highlight]
@@ -49,21 +49,21 @@ This will demonstrate the complete device authorization flow by:
         });
         ```
     </Step>
-    
+
     <Step>
         ### Migrate the database
-        
+
         Run the migration or generate the schema to add the necessary tables to the database.
-        
+
         <Tabs items={["migrate", "generate"]}>
             <Tab value="migrate">
             ```bash
-            npx @better-auth/cli migrate
+            npx @faire-auth/cli migrate
             ```
             </Tab>
             <Tab value="generate">
             ```bash
-            npx @better-auth/cli generate
+            npx @faire-auth/cli generate
             ```
             </Tab>
         </Tabs>
@@ -72,12 +72,12 @@ This will demonstrate the complete device authorization flow by:
 
     <Step>
         ### Add the client plugin
-        
+
         Add the device authorization plugin to your client.
 
         ```ts title="auth-client.ts"
-        import { createAuthClient } from "better-auth/client";
-        import { deviceAuthorizationClient } from "better-auth/client/plugins"; // [!code highlight]
+        import { createAuthClient } from "faire-auth/client";
+        import { deviceAuthorizationClient } from "faire-auth/client/plugins"; // [!code highlight]
 
         export const authClient = createAuthClient({
           plugins: [ // [!code highlight]
@@ -218,10 +218,10 @@ Create a page where users can enter their code:
 export default function DeviceAuthorizationPage() {
   const [userCode, setUserCode] = useState("");
   const [error, setError] = useState(null);
-  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     try {
       // Format the code: remove dashes and convert to uppercase
       const formattedCode = userCode.trim().replace(/-/g, "").toUpperCase();
@@ -230,7 +230,7 @@ export default function DeviceAuthorizationPage() {
       const response = await authClient.device({
         query: { user_code: formattedCode },
       });
-      
+
       if (response.data) {
         // Redirect to approval page
         window.location.href = `/device/approve?user_code=${formattedCode}`;
@@ -239,7 +239,7 @@ export default function DeviceAuthorizationPage() {
       setError("Invalid or expired code");
     }
   };
-  
+
   return (
     <form onSubmit={handleSubmit}>
       <input
@@ -302,7 +302,7 @@ export default function DeviceApprovalPage() {
   const searchParams = useSearchParams();
   const userCode = searchParams.get("userCode");
   const [isProcessing, setIsProcessing] = useState(false);
-  
+
   const handleApprove = async () => {
     setIsProcessing(true);
     try {
@@ -317,7 +317,7 @@ export default function DeviceApprovalPage() {
     }
     setIsProcessing(false);
   };
-  
+
   const handleDeny = async () => {
     setIsProcessing(true);
     try {
@@ -337,13 +337,13 @@ export default function DeviceApprovalPage() {
     window.location.href = `/login?redirect=/device/approve?user_code=${userCode}`;
     return null;
   }
-  
+
   return (
     <div>
       <h2>Device Authorization Request</h2>
       <p>A device is requesting access to your account.</p>
       <p>Code: {userCode}</p>
-      
+
       <button onClick={handleApprove} disabled={isProcessing}>
         Approve
       </button>
@@ -368,7 +368,7 @@ deviceAuthorization({
     const client = await db.oauth_clients.findOne({ id: clientId });
     return client && client.allowDeviceFlow;
   },
-  
+
   onDeviceAuthRequest: async (clientId, scope) => {
     // Log device authorization requests
     await logDeviceAuthRequest(clientId, scope);
@@ -386,7 +386,7 @@ deviceAuthorization({
     // Custom device code generation
     return crypto.randomBytes(32).toString("hex");
   },
-  
+
   generateUserCode: async () => {
     // Custom user code generation
     // Default uses: ABCDEFGHJKLMNPQRSTUVWXYZ23456789
@@ -418,8 +418,8 @@ The device flow defines specific error codes:
 Here's a complete example for a CLI application based on the actual demo:
 
 ```ts title="cli-auth.ts"
-import { createAuthClient } from "better-auth/client";
-import { deviceAuthorizationClient } from "better-auth/client/plugins";
+import { createAuthClient } from "faire-auth/client";
+import { deviceAuthorizationClient } from "faire-auth/client/plugins";
 import open from "open";
 
 const authClient = createAuthClient({
@@ -428,21 +428,21 @@ const authClient = createAuthClient({
 });
 
 async function authenticateCLI() {
-  console.log("🔐 Better Auth Device Authorization Demo");
+  console.log("🔐 Faire Auth Device Authorization Demo");
   console.log("⏳ Requesting device authorization...");
-  
+
   try {
     // Request device code
     const { data, error } = await authClient.device.code({
       client_id: "demo-cli",
       scope: "openid profile email",
     });
-    
+
     if (error || !data) {
       console.error("❌ Error:", error?.error_description);
       process.exit(1);
     }
-    
+
     const {
       device_code,
       user_code,
@@ -450,20 +450,20 @@ async function authenticateCLI() {
       verification_uri_complete,
       interval = 5,
     } = data;
-    
+
     console.log("\n📱 Device Authorization in Progress");
     console.log(`Please visit: ${verification_uri}`);
     console.log(`Enter code: ${user_code}\n`);
-    
+
     // Open browser with the complete URL
     const urlToOpen = verification_uri_complete || verification_uri;
     if (urlToOpen) {
       console.log("🌐 Opening browser...");
       await open(urlToOpen);
     }
-    
+
     console.log(`⏳ Waiting for authorization... (polling every ${interval}s)`);
-    
+
     // Poll for token
     await pollForToken(device_code, interval);
   } catch (err) {
@@ -474,7 +474,7 @@ async function authenticateCLI() {
 
 async function pollForToken(deviceCode: string, interval: number) {
   let pollingInterval = interval;
-  
+
   return new Promise<void>((resolve) => {
     const poll = async () => {
       try {
@@ -483,11 +483,11 @@ async function pollForToken(deviceCode: string, interval: number) {
           device_code: deviceCode,
           client_id: "demo-cli",
         });
-        
+
         if (data?.access_token) {
           console.log("\nAuthorization Successful!");
           console.log("Access token received!");
-          
+
           // Get user session
           const { data: session } = await authClient.getSession({
             fetchOptions: {
@@ -496,7 +496,7 @@ async function pollForToken(deviceCode: string, interval: number) {
               },
             },
           });
-          
+
           console.log(`Hello, ${session?.user?.name || "User"}!`);
           resolve();
           process.exit(0);
@@ -526,11 +526,11 @@ async function pollForToken(deviceCode: string, interval: number) {
         console.error("❌ Network error:", err.message);
         process.exit(1);
       }
-      
+
       // Schedule next poll
       setTimeout(poll, pollingInterval * 1000);
     };
-    
+
     // Start polling
     setTimeout(poll, pollingInterval * 1000);
   });
@@ -578,7 +578,7 @@ No client-specific configuration options. The plugin adds the following methods:
 
 - **device()**: Verify user code validity
 - **device.code()**: Request device and user codes
-- **device.token()**: Poll for access token  
+- **device.token()**: Poll for access token
 - **device.approve()**: Approve device (requires authentication)
 - **device.deny()**: Deny device (requires authentication)
 
@@ -590,9 +590,9 @@ Table Name: `deviceCode`
 
 <DatabaseTable
     fields={[
-        { 
-            name: "id", 
-            type: "string", 
+        {
+            name: "id",
+            type: "string",
             description: "Unique identifier for the device authorization request",
             isPrimaryKey: true
         },
@@ -606,9 +606,9 @@ Table Name: `deviceCode`
             type: "string",
             description: "The user-friendly code for verification",
         },
-        { 
-            name: "userId", 
-            type: "string", 
+        {
+            name: "userId",
+            type: "string",
             description: "The ID of the user who approved/denied",
             isOptional: true,
             isForeignKey: true

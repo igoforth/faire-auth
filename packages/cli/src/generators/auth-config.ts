@@ -1,5 +1,5 @@
 import { type spinner as clackSpinner } from "@clack/prompts";
-import { logger } from "better-auth";
+import { logger } from "faire-auth";
 import {
 	type SupportedDatabases,
 	type SupportedPlugin,
@@ -55,7 +55,7 @@ export async function generateAuthConfig({
 	let _start_of_plugins_common_index = {
 		START_OF_PLUGINS: {
 			type: "regex",
-			regex: /betterAuth\([\w\W]*plugins:[\W]*\[()/m,
+			regex: /faireAuth\([\w\W]*plugins:[\W]*\[()/m,
 			getIndex: ({ matchIndex, match }) => {
 				return matchIndex + match[0].length;
 			},
@@ -78,9 +78,9 @@ export async function generateAuthConfig({
 		} satisfies CommonIndexConfig<{ start_of_plugins: number }>,
 		START_OF_BETTERAUTH: {
 			type: "regex",
-			regex: /betterAuth\({()/m,
+			regex: /faireAuth\({()/m,
 			getIndex: ({ matchIndex }) => {
-				return matchIndex + "betterAuth({".length;
+				return matchIndex + "faireAuth({".length;
 			},
 		} satisfies CommonIndexConfig<{}>,
 	};
@@ -206,31 +206,31 @@ export async function generateAuthConfig({
 				dependencies,
 				envs,
 				imports,
-				code_before_betterAuth,
+				code_before_faireAuth,
 			}: {
 				imports: Import[];
 				db_code: string;
 				envs: string[];
 				dependencies: string[];
 				/**
-				 * Any code you want to put before the betterAuth export
+				 * Any code you want to put before the faireAuth export
 				 */
-				code_before_betterAuth?: string;
+				code_before_faireAuth?: string;
 			}) {
-				if (code_before_betterAuth) {
+				if (code_before_faireAuth) {
 					let start_of_betterauth = getGroupInfo(
 						opts.config,
 						common_indexes.START_OF_BETTERAUTH,
 						{},
 					);
 					if (!start_of_betterauth) {
-						throw new Error("Couldn't find start of betterAuth() function.");
+						throw new Error("Couldn't find start of faireAuth() function.");
 					}
 					opts.config = insertContent({
 						line: start_of_betterauth.line - 1,
 						character: 0,
 						content: opts.config,
-						insert_content: `\n${code_before_betterAuth}\n`,
+						insert_content: `\n${code_before_faireAuth}\n`,
 					});
 				}
 
@@ -322,7 +322,7 @@ export async function generateAuthConfig({
 						},
 					})`;
 				await add_db({
-					code_before_betterAuth: dialectCode,
+					code_before_faireAuth: dialectCode,
 					db_code: `dialect`,
 					dependencies: ["tedious", "tarn", "kysely"],
 					envs: ["DATABASE_URL"],
@@ -365,7 +365,7 @@ export async function generateAuthConfig({
 					envs: [],
 					imports: [
 						{
-							path: "better-auth/adapters/drizzle",
+							path: "faire-auth/adapters/drizzle",
 							variables: [
 								{
 									name: "drizzleAdapter",
@@ -394,10 +394,10 @@ export async function generateAuthConfig({
 					)}",\n})`,
 					dependencies: [`@prisma/client`],
 					envs: [],
-					code_before_betterAuth: "const client = new PrismaClient();",
+					code_before_faireAuth: "const client = new PrismaClient();",
 					imports: [
 						{
-							path: "better-auth/adapters/prisma",
+							path: "faire-auth/adapters/prisma",
 							variables: [
 								{
 									name: "prismaAdapter",
@@ -419,13 +419,13 @@ export async function generateAuthConfig({
 					db_code: `mongodbAdapter(db)`,
 					dependencies: ["mongodb"],
 					envs: [`DATABASE_URL`],
-					code_before_betterAuth: [
+					code_before_faireAuth: [
 						`const client = new MongoClient(process.env.DATABASE_URL || "mongodb://localhost:27017/database");`,
 						`const db = client.db();`,
 					].join("\n"),
 					imports: [
 						{
-							path: "better-auth/adapters/mongodb",
+							path: "faire-auth/adapters/mongodb",
 							variables: [
 								{
 									name: "mongodbAdapter",
@@ -450,7 +450,7 @@ export async function generateAuthConfig({
 				{},
 			);
 			if (!start_of_betterauth) {
-				throw new Error("Couldn't find start of betterAuth() function.");
+				throw new Error("Couldn't find start of faireAuth() function.");
 			}
 			let new_content: string;
 			new_content = insertContent({

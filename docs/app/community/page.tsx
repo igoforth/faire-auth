@@ -9,7 +9,7 @@ type NpmPackageResp = {
 };
 async function getNPMPackageDownloads() {
 	const res = await fetch(
-		`https://api.npmjs.org/downloads/point/last-year/better-auth`,
+		`https://api.npmjs.org/downloads/point/last-year/faire-auth`,
 		{
 			next: { revalidate: 60 },
 		},
@@ -21,7 +21,7 @@ async function getNPMPackageDownloads() {
 async function getGitHubStars() {
 	try {
 		const response = await fetch(
-			"https://api.github.com/repos/better-auth/better-auth",
+			"https://api.github.com/repos/igoforth/faire-auth",
 			{
 				next: {
 					revalidate: 60,

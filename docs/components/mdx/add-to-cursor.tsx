@@ -9,7 +9,7 @@ export const AddToCursor = () => {
 			>
 				<img
 					src="https://cursor.com/deeplink/mcp-install-dark.svg"
-					alt="Add Better Auth MCP to Cursor"
+					alt="Add Faire Auth MCP to Cursor"
 					height="32"
 				/>
 			</Link>
@@ -20,7 +20,7 @@ export const AddToCursor = () => {
 			>
 				<img
 					src="https://cursor.com/deeplink/mcp-install-light.svg"
-					alt="Add Better Auth MCP to Cursor"
+					alt="Add Faire Auth MCP to Cursor"
 					height="32"
 				/>
 			</Link>

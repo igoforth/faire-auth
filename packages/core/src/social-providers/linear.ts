@@ -67,9 +67,7 @@ export const linear = (options: LinearOptions) => {
 					});
 				},
 		async getUserInfo(token) {
-			if (options.getUserInfo) {
-				return options.getUserInfo(token);
-			}
+			if (options.getUserInfo) return options.getUserInfo(token);
 
 			const { data: profile, error } = await betterFetch<LinearProfile>(
 				"https://api.linear.app/graphql",
@@ -96,9 +94,7 @@ export const linear = (options: LinearOptions) => {
 					}),
 				},
 			);
-			if (error || !profile?.data?.viewer) {
-				return null;
-			}
+			if (error || !profile?.data?.viewer) return null;
 
 			const userData = profile.data.viewer;
 			const userMap = await options.mapProfileToUser?.(userData);
@@ -108,7 +104,9 @@ export const linear = (options: LinearOptions) => {
 					id: profile.data.viewer.id,
 					name: profile.data.viewer.name,
 					email: profile.data.viewer.email,
-					image: profile.data.viewer.avatarUrl,
+					...(profile.data.viewer.avatarUrl && {
+						image: profile.data.viewer.avatarUrl,
+					}),
 					emailVerified: true,
 					...userMap,
 				},
@@ -116,5 +114,5 @@ export const linear = (options: LinearOptions) => {
 			};
 		},
 		options,
-	} satisfies OAuthProvider<LinearUser>;
+	} satisfies OAuthProvider;
 };

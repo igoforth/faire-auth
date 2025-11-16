@@ -14,15 +14,15 @@ The Generic OAuth plugin provides a flexible way to integrate authentication wit
     To use the Generic OAuth plugin, add it to your auth config.
 
     ```ts title="auth.ts"
-    import { betterAuth } from "better-auth"
-    import { genericOAuth } from "better-auth/plugins" // [!code highlight]
-    
-    export const auth = betterAuth({
+    import { faireAuth } from "faire-auth"
+    import { genericOAuth } from "faire-auth/plugins" // [!code highlight]
+
+    export const auth = faireAuth({
         // ... other config options
-        plugins: [ 
+        plugins: [
             genericOAuth({ // [!code highlight]
                 config: [ // [!code highlight]
-                    { // [!code highlight] 
+                    { // [!code highlight]
                         providerId: "provider-id", // [!code highlight]
                         clientId: "test-client-id", // [!code highlight]
                         clientSecret: "test-client-secret", // [!code highlight]
@@ -43,9 +43,9 @@ The Generic OAuth plugin provides a flexible way to integrate authentication wit
     Include the Generic OAuth client plugin in your authentication client instance.
 
     ```ts title="auth-client.ts"
-    import { createAuthClient } from "better-auth/client"
-    import { genericOAuthClient } from "better-auth/client/plugins"
-    
+    import { createAuthClient } from "faire-auth/client"
+    import { genericOAuthClient } from "faire-auth/client/plugins"
+
     export const authClient = createAuthClient({
         plugins: [
             genericOAuthClient()
@@ -67,31 +67,31 @@ To start the OAuth sign-in process:
 ```ts
 type signInWithOAuth2 = {
     /**
-     * The provider ID for the OAuth provider. 
+     * The provider ID for the OAuth provider.
      */
     providerId: string = "provider-id"
     /**
-     * The URL to redirect to after sign in. 
+     * The URL to redirect to after sign in.
      */
     callbackURL?: string = "/dashboard"
     /**
-     * The URL to redirect to if an error occurs. 
+     * The URL to redirect to if an error occurs.
      */
     errorCallbackURL?: string = "/error-page"
     /**
-     * The URL to redirect to after login if the user is new. 
+     * The URL to redirect to after login if the user is new.
      */
     newUserCallbackURL?: string = "/welcome"
     /**
-     * Disable redirect. 
+     * Disable redirect.
      */
     disableRedirect?: boolean = false
     /**
-     * Scopes to be passed to the provider authorization request. 
+     * Scopes to be passed to the provider authorization request.
      */
     scopes?: string[] = ["my-scope"]
     /**
-     * Explicitly request sign-up. Useful when disableImplicitSignUp is true for this provider. 
+     * Explicitly request sign-up. Useful when disableImplicitSignUp is true for this provider.
      */
     requestSignUp?: boolean = false
 }
@@ -110,11 +110,11 @@ To link an OAuth account to an existing user:
 ```ts
 type oAuth2LinkAccount = {
     /**
-     * The OAuth provider ID. 
+     * The OAuth provider ID.
      */
     providerId: string = "my-provider-id"
     /**
-     * The URL to redirect to once the account linking was complete. 
+     * The URL to redirect to once the account linking was complete.
      */
     callbackURL: string = "/successful-link"
 }
@@ -248,5 +248,4 @@ genericOAuth({
 
 ### Error Handling
 
-The plugin includes built-in error handling for common OAuth issues. Errors are typically redirected to your application's error page with an appropriate error message in the URL parameters. If the callback URL is not provided, the user will be redirected to Better Auth's default error page.
-
+The plugin includes built-in error handling for common OAuth issues. Errors are typically redirected to your application's error page with an appropriate error message in the URL parameters. If the callback URL is not provided, the user will be redirected to Faire Auth's default error page.

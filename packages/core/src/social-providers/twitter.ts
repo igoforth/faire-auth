@@ -95,11 +95,11 @@ export interface TwitterProfile {
 	[claims: string]: unknown;
 }
 
-export interface TwitterOption extends ProviderOptions<TwitterProfile> {
+export interface TwitterOptions extends ProviderOptions<TwitterProfile> {
 	clientId: string;
 }
 
-export const twitter = (options: TwitterOption) => {
+export const twitter = (options: TwitterOptions) => {
 	return {
 		id: "twitter",
 		name: "Twitter",
@@ -145,9 +145,8 @@ export const twitter = (options: TwitterOption) => {
 					});
 				},
 		async getUserInfo(token) {
-			if (options.getUserInfo) {
-				return options.getUserInfo(token);
-			}
+			if (options.getUserInfo) return options.getUserInfo(token);
+
 			const { data: profile, error: profileError } =
 				await betterFetch<TwitterProfile>(
 					"https://api.x.com/2/users/me?user.fields=profile_image_url",
@@ -159,9 +158,7 @@ export const twitter = (options: TwitterOption) => {
 					},
 				);
 
-			if (profileError) {
-				return null;
-			}
+			if (profileError) return null;
 
 			const { data: emailData, error: emailError } = await betterFetch<{
 				data: { confirmed_email: string };
@@ -177,12 +174,17 @@ export const twitter = (options: TwitterOption) => {
 				emailVerified = true;
 			}
 			const userMap = await options.mapProfileToUser?.(profile);
+			const hasEmail = !!profile.data.email || !!profile.data.username;
 			return {
 				user: {
 					id: profile.data.id,
 					name: profile.data.name,
-					email: profile.data.email || profile.data.username || null,
-					image: profile.data.profile_image_url,
+					...(hasEmail && {
+						email: profile.data.email || profile.data.username,
+					}),
+					...(profile.data.profile_image_url && {
+						image: profile.data.profile_image_url,
+					}),
 					emailVerified: emailVerified,
 					...userMap,
 				},
@@ -190,5 +192,5 @@ export const twitter = (options: TwitterOption) => {
 			};
 		},
 		options,
-	} satisfies OAuthProvider<TwitterProfile>;
+	} satisfies OAuthProvider;
 };

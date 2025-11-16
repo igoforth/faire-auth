@@ -1,6 +1,6 @@
 ---
 title: Drizzle ORM Adapter
-description: Integrate Better Auth with Drizzle ORM.
+description: Integrate Faire Auth with Drizzle ORM.
 ---
 
 Drizzle ORM is a powerful and flexible ORM for Node.js and TypeScript. It provides a simple and intuitive API for working with databases, and supports a wide range of databases including MySQL, PostgreSQL, SQLite, and more.
@@ -12,11 +12,11 @@ Make sure you have Drizzle installed and configured.
 Then, you can use the Drizzle adapter to connect to your database.
 
 ```ts title="auth.ts"
-import { betterAuth } from "better-auth";
-import { drizzleAdapter } from "better-auth/adapters/drizzle";
+import { faireAuth } from "faire-auth";
+import { drizzleAdapter } from "faire-auth/adapters/drizzle";
 import { db } from "./database.ts";
 
-export const auth = betterAuth({
+export const auth = faireAuth({
   database: drizzleAdapter(db, {
     // [!code highlight]
     provider: "sqlite", // or "pg" or "mysql" // [!code highlight]
@@ -27,13 +27,13 @@ export const auth = betterAuth({
 
 ## Schema generation & migration
 
-The [Better Auth CLI](/docs/concepts/cli) allows you to generate or migrate
-your database schema based on your Better Auth configuration and plugins.
+The [Faire Auth CLI](/docs/concepts/cli) allows you to generate or migrate
+your database schema based on your Faire Auth configuration and plugins.
 
-To generate the schema required by Better Auth, run the following command:
+To generate the schema required by Faire Auth, run the following command:
 
 ```bash title="Schema Generation"
-npx @better-auth/cli@latest generate
+npx @faire-auth/cli@latest generate
 ```
 
 To generate and apply the migration, run the following commands:
@@ -48,12 +48,12 @@ npx drizzle-kit migrate # apply the migration
 The Drizzle adapter expects the schema you define to match the table names. For example, if your Drizzle schema maps the `user` table to `users`, you need to manually pass the schema and map it to the user table.
 
 ```ts
-import { betterAuth } from "better-auth";
+import { faireAuth } from "faire-auth";
 import { db } from "./drizzle";
-import { drizzleAdapter } from "better-auth/adapters/drizzle";
+import { drizzleAdapter } from "faire-auth/adapters/drizzle";
 import { schema } from "./schema";
 
-export const auth = betterAuth({
+export const auth = faireAuth({
   database: drizzleAdapter(db, {
     provider: "sqlite", // or "pg" or "mysql"
     schema: {
@@ -69,7 +69,7 @@ or you can mutate the auth config's `modelName` property directly.
 For example:
 
 ```ts
-export const auth = betterAuth({
+export const auth = faireAuth({
   database: drizzleAdapter(db, {
     provider: "sqlite", // or "pg" or "mysql"
     schema,
@@ -89,7 +89,7 @@ you simply need to change the Drizzle schema to:
 ```ts
 export const user = mysqlTable("user", {
   // Changed field name without changing the schema property name
-  // This allows drizzle & better-auth to still use the original field name,
+  // This allows drizzle & faire-auth to still use the original field name,
   // while your DB uses the modified field name
   email: varchar("email_address", { length: 255 }).notNull().unique(), // [!code highlight]
   // ... others
@@ -101,7 +101,7 @@ or you can mutate the auth config's `fields` property directly.
 For example:
 
 ```ts
-export const auth = betterAuth({
+export const auth = faireAuth({
   database: drizzleAdapter(db, {
     provider: "sqlite", // or "pg" or "mysql"
     schema,
@@ -119,7 +119,7 @@ export const auth = betterAuth({
 If all your tables are using plural form, you can just pass the `usePlural` option:
 
 ```ts
-export const auth = betterAuth({
+export const auth = faireAuth({
   database: drizzleAdapter(db, {
     ...
     usePlural: true,

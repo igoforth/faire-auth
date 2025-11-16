@@ -1,13 +1,13 @@
 ---
 title: Optimizing for Performance
-description: A guide to optimizing your Better Auth application for performance.
+description: A guide to optimizing your Faire Auth application for performance.
 ---
 
-In this guide, we’ll go over some of the ways you can optimize your application for a more performant Better Auth app.
+In this guide, we’ll go over some of the ways you can optimize your application for a more performant Faire Auth app.
 
 ## Caching
 
-Caching is a powerful technique that can significantly improve the performance of your Better Auth application by reducing the number of database queries and speeding up response times.
+Caching is a powerful technique that can significantly improve the performance of your Faire Auth application by reducing the number of database queries and speeding up response times.
 
 ### Cookie Cache
 
@@ -16,9 +16,9 @@ Calling your database every time `useSession` or `getSession` is invoked isn’t
 To turn on cookie caching, just set `session.cookieCache` in your auth config:
 
 ```ts title="auth.ts"
-import { betterAuth } from "better-auth";
+import { faireAuth } from "faire-auth";
 
-export const auth = betterAuth({
+export const auth = faireAuth({
   session: {
     cookieCache: {
       enabled: true,
@@ -129,7 +129,7 @@ const session = await auth.api.getSession({
 
 ## Database optimizations
 
-Optimizing database performance is essential to get the best out of Better Auth.
+Optimizing database performance is essential to get the best out of Faire Auth.
 
 #### Recommended fields to index
 

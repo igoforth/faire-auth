@@ -1,6 +1,10 @@
 import { betterFetch } from "@better-fetch/fetch";
-import { generateCodeChallenge, validateAuthorizationCode } from "../oauth2";
-import type { OAuthProvider, ProviderOptions } from "../oauth2";
+import {
+	type OAuthProvider,
+	type ProviderOptions,
+	generateCodeChallenge,
+	validateAuthorizationCode,
+} from "../oauth2";
 
 export type LoginType =
 	| 0 /** Facebook OAuth */
@@ -211,5 +215,5 @@ export const zoom = (userOptions: ZoomOptions) => {
 				},
 			};
 		},
-	} satisfies OAuthProvider<ZoomProfile>;
+	} satisfies OAuthProvider;
 };

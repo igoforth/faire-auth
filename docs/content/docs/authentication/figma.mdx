@@ -24,9 +24,9 @@ description: Figma provider setup and usage.
         To configure the provider, you need to import the provider and pass it to the `socialProviders` option of the auth instance.
 
         ```ts title="auth.ts"
-        import { betterAuth } from "better-auth"
+        import { faireAuth } from "faire-auth"
 
-        export const auth = betterAuth({
+        export const auth = faireAuth({
             socialProviders: {
                 figma: { // [!code highlight]
                     clientId: process.env.FIGMA_CLIENT_ID as string, // [!code highlight]
@@ -43,7 +43,7 @@ description: Figma provider setup and usage.
         - `provider`: The provider to use. It should be set to `figma`.
 
         ```ts title="auth-client.ts"
-        import { createAuthClient } from "better-auth/client"
+        import { createAuthClient } from "faire-auth/client"
         const authClient =  createAuthClient()
 
         const signIn = async () => {

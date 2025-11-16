@@ -5,7 +5,7 @@ import {
 	getOAuth2Tokens,
 	refreshAccessToken,
 } from "../oauth2";
-import { base64 } from "@better-auth/utils/base64";
+import { base64 } from "../datatypes/base64";
 
 export interface RedditProfile {
 	id: string;
@@ -48,7 +48,7 @@ export const reddit = (options: RedditOptions) => {
 			const headers = {
 				"content-type": "application/x-www-form-urlencoded",
 				accept: "text/plain",
-				"user-agent": "better-auth",
+				"user-agent": "faire-auth",
 				Authorization: `Basic ${base64.encode(
 					`${options.clientId}:${options.clientSecret}`,
 				)}`,
@@ -63,9 +63,7 @@ export const reddit = (options: RedditOptions) => {
 				},
 			);
 
-			if (error) {
-				throw error;
-			}
+			if (error) throw error;
 
 			return getOAuth2Tokens(data);
 		},
@@ -85,23 +83,18 @@ export const reddit = (options: RedditOptions) => {
 					});
 				},
 		async getUserInfo(token) {
-			if (options.getUserInfo) {
-				return options.getUserInfo(token);
-			}
+			if (options.getUserInfo) return options.getUserInfo(token);
 
 			const { data: profile, error } = await betterFetch<RedditProfile>(
 				"https://oauth.reddit.com/api/v1/me",
 				{
 					headers: {
 						Authorization: `Bearer ${token.accessToken}`,
-						"User-Agent": "better-auth",
+						"User-Agent": "faire-auth",
 					},
 				},
 			);
-
-			if (error) {
-				return null;
-			}
+			if (error) return null;
 
 			const userMap = await options.mapProfileToUser?.(profile);
 
@@ -111,12 +104,12 @@ export const reddit = (options: RedditOptions) => {
 					name: profile.name,
 					email: profile.oauth_client_id,
 					emailVerified: profile.has_verified_email,
-					image: profile.icon_img?.split("?")[0]!,
+					...(profile.icon_img && { image: profile.icon_img.split("?")[0] }),
 					...userMap,
 				},
 				data: profile,
 			};
 		},
 		options,
-	} satisfies OAuthProvider<RedditProfile>;
+	} satisfies OAuthProvider;
 };

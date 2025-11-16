@@ -1,16 +1,16 @@
 ---
 title: TypeScript
-description: Better Auth TypeScript integration.
+description: Faire Auth TypeScript integration.
 ---
 
-Better Auth is designed to be type-safe. Both the client and server are built with TypeScript, allowing you to easily infer types.
+Faire Auth is designed to be type-safe. Both the client and server are built with TypeScript, allowing you to easily infer types.
 
 
 ## TypeScript Config
 
 ### Strict Mode
 
-Better Auth is designed to work with TypeScript's strict mode. We recommend enabling strict mode in your TypeScript config file:
+Faire Auth is designed to work with TypeScript's strict mode. We recommend enabling strict mode in your TypeScript config file:
 
 ```json title="tsconfig.json"
 {
@@ -39,8 +39,8 @@ then please make sure you're following the instructions above, as well as ensuri
 
 Both the client SDK and the server offer types that can be inferred using the `$Infer` property. Plugins can extend base types like `User` and `Session`, and you can use `$Infer` to infer these types. Additionally, plugins can provide extra types that can also be inferred through `$Infer`.
 
-```ts title="auth-client.ts" 
-import { createAuthClient } from "better-auth/client"
+```ts title="auth-client.ts"
+import { createAuthClient } from "faire-auth/client"
 
 const authClient = createAuthClient()
 
@@ -51,11 +51,11 @@ The `Session` type includes both `session` and `user` properties. The user prope
 
 You can also infer types on the server side.
 
-```ts title="auth.ts" 
-import { betterAuth } from "better-auth"
+```ts title="auth.ts"
+import { faireAuth } from "faire-auth"
 import Database from "better-sqlite3"
 
-export const auth = betterAuth({
+export const auth = faireAuth({
     database: new Database("database.db")
 })
 
@@ -65,23 +65,23 @@ type Session = typeof auth.$Infer.Session
 
 ## Additional Fields
 
-Better Auth allows you to add additional fields to the user and session objects. All additional fields are properly inferred and available on the server and client side.
+Faire Auth allows you to add additional fields to the user and session objects. All additional fields are properly inferred and available on the server and client side.
 
-```ts 
-import { betterAuth } from "better-auth"
+```ts
+import { faireAuth } from "faire-auth"
 import Database from "better-sqlite3"
 
-export const auth = betterAuth({
+export const auth = faireAuth({
     database: new Database("database.db"),
     user: {
        additionalFields: {
           role: {
               type: "string",
               input: false
-            } 
+            }
         }
     }
-   
+
 })
 
 type Session = typeof auth.$Infer.Session
@@ -118,8 +118,8 @@ To make sure proper type inference for additional fields on the client side, you
 If your server and client code reside in the same project, you can use the `inferAdditionalFields` plugin to automatically infer the additional fields from your server configuration.
 
 ```ts
-import { inferAdditionalFields } from "better-auth/client/plugins";
-import { createAuthClient } from "better-auth/react";
+import { inferAdditionalFields } from "faire-auth/client/plugins";
+import { createAuthClient } from "faire-auth/react";
 import type { auth } from "./auth";
 
 export const authClient = createAuthClient({
@@ -132,7 +132,7 @@ export const authClient = createAuthClient({
 If your client and server are in separate projects, you'll need to manually specify the additional fields when creating the auth client.
 
 ```ts
-import { inferAdditionalFields } from "better-auth/client/plugins";
+import { inferAdditionalFields } from "faire-auth/client/plugins";
 
 export const authClient = createAuthClient({
   plugins: [inferAdditionalFields({

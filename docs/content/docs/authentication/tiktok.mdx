@@ -34,9 +34,9 @@ description: TikTok provider setup and usage.
         To configure the provider, you need to import the provider and pass it to the `socialProviders` option of the auth instance.
 
         ```ts title="auth.ts"
-        import { betterAuth } from "better-auth"
+        import { faireAuth } from "faire-auth"
 
-        export const auth = betterAuth({
+        export const auth = faireAuth({
             socialProviders: {
                 tiktok: { // [!code highlight]
                     clientSecret: process.env.TIKTOK_CLIENT_SECRET as string, // [!code highlight]
@@ -52,7 +52,7 @@ description: TikTok provider setup and usage.
         - `provider`: The provider to use. It should be set to `tiktok`.
 
         ```ts title="auth-client.ts"
-        import { createAuthClient } from "better-auth/client"
+        import { createAuthClient } from "faire-auth/client"
         const authClient =  createAuthClient()
 
         const signIn = async () => {

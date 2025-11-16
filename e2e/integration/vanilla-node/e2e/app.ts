@@ -1,15 +1,15 @@
 import { createServer } from "node:http";
-import { betterAuth } from "better-auth";
-import { toNodeHandler } from "better-auth/node";
+import { faireAuth } from "faire-auth";
+import { toNodeHandler } from "faire-auth/node";
 import Database from "better-sqlite3";
-import { getMigrations } from "better-auth/db";
+import { getMigrations } from "faire-auth/db";
 
 export async function createAuthServer(
 	baseURL: string = "http://localhost:3000",
 ) {
 	const database = new Database(":memory:");
 
-	const auth = betterAuth({
+	const auth = faireAuth({
 		database,
 		baseURL,
 		emailAndPassword: {
@@ -22,7 +22,7 @@ export async function createAuthServer(
 	await runMigrations();
 	// Create an example user
 	await auth.api.signUpEmail({
-		body: {
+		json: {
 			name: "Test User",
 			email: "test@test.com",
 			password: "password123",

@@ -15,10 +15,10 @@ The JWT plugin provides endpoints to retrieve a JWT token and a JWKS endpoint to
 <Step>
 ### Add the plugin to your **auth** config
 ```ts title="auth.ts"
-import { betterAuth } from "better-auth"
-import { jwt } from "better-auth/plugins"
+import { faireAuth } from "faire-auth"
+import { jwt } from "faire-auth/plugins"
 
-export const auth = betterAuth({
+export const auth = faireAuth({
     plugins: [ // [!code highlight]
         jwt(), // [!code highlight]
     ] // [!code highlight]
@@ -34,18 +34,18 @@ export const auth = betterAuth({
     <Tabs items={["migrate", "generate"]}>
         <Tab value="migrate">
         ```bash
-        npx @better-auth/cli migrate
+        npx @faire-auth/cli migrate
         ```
         </Tab>
         <Tab value="generate">
         ```bash
-        npx @better-auth/cli generate
+        npx @faire-auth/cli generate
         ```
         </Tab>
     </Tabs>
     See the [Schema](#schema) section to add the fields manually.
 </Step>
-</Steps>    
+</Steps>
 
 
 ## Usage
@@ -63,8 +63,8 @@ There are multiple ways to retrieve JWT tokens:
 Add the `jwtClient` plugin to your auth client configuration:
 
 ```ts title="auth-client.ts"
-import { createAuthClient } from "better-auth/client"
-import { jwtClient } from "better-auth/client/plugins" // [!code highlight]
+import { createAuthClient } from "faire-auth/client"
+import { jwtClient } from "faire-auth/client/plugins" // [!code highlight]
 
 export const authClient = createAuthClient({
   plugins: [
@@ -91,9 +91,9 @@ This is the recommended approach for client applications that need JWT tokens fo
 2. **Using your session token**
 
 To get the token, call the `/token` endpoint. This will return the following:
-  
+
 ```json
-  { 
+  {
     "token": "ey..."
   }
 ```
@@ -148,7 +148,7 @@ In case a JWT with a different `kid` is received, it is recommended to fetch the
 If you are making your system oAuth compliant (such as when utilizing the OIDC or MCP plugins), you **MUST** disable the `/token` endpoint (oAuth equivalent `/oauth2/token`) and disable setting the jwt header (oAuth equivalent `/oauth2/userinfo`).
 
 ```ts title="auth.ts"
-betterAuth({
+faireAuth({
   disabledPaths: [
     "/token",
   ],
@@ -317,26 +317,26 @@ Table Name: `jwks`
 
 <DatabaseTable
   fields={[
-    { 
-      name: "id", 
-      type: "string", 
+    {
+      name: "id",
+      type: "string",
       description: "Unique identifier for each web key",
       isPrimaryKey: true
     },
-    { 
-      name: "publicKey", 
-      type: "string", 
-      description: "The public part of the web key" 
+    {
+      name: "publicKey",
+      type: "string",
+      description: "The public part of the web key"
     },
-    { 
-      name: "privateKey", 
-      type: "string", 
-      description: "The private part of the web key" 
+    {
+      name: "privateKey",
+      type: "string",
+      description: "The private part of the web key"
     },
-    { 
-      name: "createdAt", 
-      type: "Date", 
-      description: "Timestamp of when the web key was created" 
+    {
+      name: "createdAt",
+      type: "Date",
+      description: "Timestamp of when the web key was created"
     },
   ]}
   />

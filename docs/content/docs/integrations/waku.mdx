@@ -1,22 +1,22 @@
 ---
 title: Waku Integration
-description: Integrate Better Auth with Waku.
+description: Integrate Faire Auth with Waku.
 ---
 
-Better Auth can be easily integrated with Waku. Before you start, make sure you have a Better Auth instance configured. If you haven't done that yet, check out the [installation](/docs/installation).
+Faire Auth can be easily integrated with Waku. Before you start, make sure you have a Faire Auth instance configured. If you haven't done that yet, check out the [installation](/docs/installation).
 
 ## Create auth instance
 
-Create a file named `auth.ts` in your application. Import Better Auth and create your instance.
+Create a file named `auth.ts` in your application. Import Faire Auth and create your instance.
 
 <Callout type="warn">
 Make sure to export the auth instance with the variable name `auth` or as a `default` export.
 </Callout>
 
 ```ts title="src/auth.ts"
-import { betterAuth } from "better-auth"
+import { faireAuth } from "faire-auth"
 
-export const auth = betterAuth({
+export const auth = faireAuth({
     database: {
         provider: "postgres", //change this to your database provider
         url: process.env.DATABASE_URL, // path to your database or connection string
@@ -41,7 +41,7 @@ export const POST = async (request: Request): Promise<Response> => {
 ```
 
 <Callout type="info">
- You can change the path on your better-auth configuration but it's recommended to keep it as `src/pages/api/auth/[...route].ts`
+ You can change the path on your faire-auth configuration but it's recommended to keep it as `src/pages/api/auth/[...route].ts`
 </Callout>
 
 ## Create a client
@@ -49,7 +49,7 @@ export const POST = async (request: Request): Promise<Response> => {
 Create a client instance. Here we are creating `auth-client.ts` file inside the `lib/` directory.
 
 ```ts title="src/lib/auth-client.ts"
-import { createAuthClient } from "better-auth/react" // make sure to import from better-auth/react
+import { createAuthClient } from "faire-auth/react" // make sure to import from faire-auth/react
 
 export const authClient = createAuthClient({
     //you can pass client configuration here
@@ -65,7 +65,7 @@ The client also uses [better-fetch](https://github.com/bekacru/better-fetch) to 
 
 ## RSC and Server actions
 
-The `api` object exported from the auth instance contains all the actions that you can perform on the server. Every endpoint made inside Better Auth is a invocable as a function. Including plugins endpoints.
+The `api` object exported from the auth instance contains all the actions that you can perform on the server. Every endpoint made inside Faire Auth is a invocable as a function. Including plugins endpoints.
 
 **Example: Getting Session on a server action**
 
@@ -114,11 +114,11 @@ When you call a function that needs to set cookies, like `signInEmail` or `signU
 We can create a plugin that works together with our middleware to set cookies.
 
 ```ts title="auth.ts"
-import { betterAuth } from "better-auth";
-import { wakuCookies } from "better-auth/waku";
+import { faireAuth } from "faire-auth";
+import { wakuCookies } from "faire-auth/waku";
 import { getContextData } from "waku/middleware/context";
 
-export const auth = betterAuth({
+export const auth = faireAuth({
     //...your config
     plugins: [wakuCookies()] // make sure this is the last plugin in the array // [!code highlight]
 })
@@ -141,17 +141,17 @@ function wakuCookies() {
               const setCookieHeader = returned?.get("set-cookie");
               if (!setCookieHeader) return;
               const contextData = getContextData();
-              contextData.betterAuthSetCookie = setCookieHeader;
+              contextData.faireAuthSetCookie = setCookieHeader;
             }
           }),
         },
       ],
     },
-  } satisfies BetterAuthPlugin;
+  } satisfies FaireAuthPlugin;
 }
 ```
 
-See below for the middleware to create to add the `contextData.betterAuthSetCookie` cookies to the response.
+See below for the middleware to create to add the `contextData.faireAuthSetCookie` cookies to the response.
 Now, when you call functions that set cookies, they will be automatically set.
 
 ```ts
@@ -172,7 +172,7 @@ const signIn = async () => {
 
 In Waku middleware, it's recommended to only check for the existence of a session cookie to handle redirection. This avoids blocking requests by making API or database calls.
 
-You can use the `getSessionCookie` helper from Better Auth for this purpose:
+You can use the `getSessionCookie` helper from Faire Auth for this purpose:
 
 <Callout type="warn">
 The <code>getSessionCookie()</code> function does not automatically reference the auth config specified in <code>auth.ts</code>. Therefore, if you customized the cookie name or prefix, you need to ensure that the configuration in <code>getSessionCookie()</code> matches the config defined in your <code>auth.ts</code>.
@@ -181,7 +181,7 @@ The <code>getSessionCookie()</code> function does not automatically reference th
 ```ts title="src/middleware/auth.ts"
 import type { Middleware } from "waku/config"
 import { getSession } from "../auth"
-import { getSessionCookie } from "better-auth/cookies"
+import { getSessionCookie } from "faire-auth/cookies"
 
 const authMiddleware: Middleware = () => {
     return async (ctx, next) => {
@@ -212,7 +212,7 @@ const authMiddleware: Middleware = () => {
         // Or skip starting the promise here and just invoke from server components and functions
         getSession()
         await next()
-        if (ctx.data.betterAuthSetCookie) {
+        if (ctx.data.faireAuthSetCookie) {
             ctx.res.headers ||= {}
             let origSetCookie = ctx.res.headers["set-cookie"] || ([] as string[])
             if (typeof origSetCookie === "string") {
@@ -220,7 +220,7 @@ const authMiddleware: Middleware = () => {
             }
             ctx.res.headers["set-cookie"] = [
                 ...origSetCookie,
-                ctx.data.betterAuthSetCookie as string,
+                ctx.data.faireAuthSetCookie as string,
             ]
         }
     }
@@ -250,7 +250,7 @@ const sessionCookie = getSessionCookie(request, {
 Alternatively, you can use the `getCookieCache` helper to get the session object from the cookie cache.
 
 ```ts
-import { getCookieCache } from "better-auth/cookies"
+import { getCookieCache } from "faire-auth/cookies"
 
 const authMiddleware: Middleware = () => {
     return async (ctx, next) => {

@@ -54,7 +54,9 @@ export const spotify = (options: SpotifyOptions) => {
 						options: {
 							clientId: options.clientId,
 							clientKey: options.clientKey,
-							clientSecret: options.clientSecret,
+							...(options.clientSecret && {
+								clientSecret: options.clientSecret,
+							}),
 						},
 						tokenEndpoint: "https://accounts.spotify.com/api/token",
 					});
@@ -76,12 +78,13 @@ export const spotify = (options: SpotifyOptions) => {
 				return null;
 			}
 			const userMap = await options.mapProfileToUser?.(profile);
+			const image = profile.images[0]?.url;
 			return {
 				user: {
 					id: profile.id,
 					name: profile.display_name,
 					email: profile.email,
-					image: profile.images[0]?.url,
+					...(image && { image }),
 					emailVerified: false,
 					...userMap,
 				},
@@ -89,5 +92,5 @@ export const spotify = (options: SpotifyOptions) => {
 			};
 		},
 		options,
-	} satisfies OAuthProvider<SpotifyProfile>;
+	} satisfies OAuthProvider;
 };

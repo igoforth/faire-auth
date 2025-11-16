@@ -1,11 +1,9 @@
-import { createAuthClient } from "better-auth/react";
-import Database from "better-sqlite3";
-import { beforeAll, afterAll, describe, expect, it, vi } from "vitest";
-import { expo } from ".";
+import { faireAuth, defineOptions } from "faire-auth";
+import { oAuthProxy } from "faire-auth/plugins";
+import { getTestInstance } from "faire-auth/test";
+import { describe, expect, it, vi } from "vitest";
 import { expoClient } from "./client";
-import { betterAuth } from "better-auth";
-import { getMigrations } from "better-auth/db";
-import { oAuthProxy } from "better-auth/plugins";
+import { expo } from "./index";
 
 vi.mock("expo-web-browser", async () => {
 	return {
@@ -13,7 +11,7 @@ vi.mock("expo-web-browser", async () => {
 			fn(...args);
 			return {
 				type: "success",
-				url: "better-auth://?cookie=better-auth.session_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxMzQwZj",
+				url: "faire-auth://?cookie=faire-auth.session_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxMzQwZj",
 			};
 		}),
 	};
@@ -31,7 +29,7 @@ vi.mock("expo-constants", async () => {
 	return {
 		default: {
 			platform: {
-				scheme: "better-auth",
+				scheme: "faire-auth",
 			},
 		},
 	};
@@ -39,18 +37,17 @@ vi.mock("expo-constants", async () => {
 
 vi.mock("expo-linking", async () => {
 	return {
-		createURL: vi.fn((url) => `better-auth://${url}`),
+		createURL: vi.fn((url) => `faire-auth://${url}`),
 	};
 });
 
 const fn = vi.fn();
 
-function testUtils(extraOpts?: Parameters<typeof betterAuth>[0]) {
+describe("expo", async () => {
 	const storage = new Map<string, string>();
-
-	const auth = betterAuth({
+	const opts = defineOptions({
 		baseURL: "http://localhost:3000",
-		database: new Database(":memory:"),
+		// database: new Database(":memory:"),
 		emailAndPassword: {
 			enabled: true,
 		},
@@ -61,42 +58,32 @@ function testUtils(extraOpts?: Parameters<typeof betterAuth>[0]) {
 			},
 		},
 		plugins: [expo(), oAuthProxy()],
-		trustedOrigins: ["better-auth://"],
-		...extraOpts,
+		trustedOrigins: ["faire-auth://"],
 	});
-
-	const client = createAuthClient({
-		baseURL: "http://localhost:3000",
-		fetchOptions: {
-			customFetchImpl: (url, init) => {
-				const req = new Request(url.toString(), init);
-				return auth.handler(req);
-			},
+	const { $Infer, auth } = await getTestInstance(opts, {
+		disableTestUser: true,
+		clientOptions: {
+			plugins: [
+				expoClient({
+					storage: {
+						getItem: (key) => storage.get(key) || null,
+						setItem: async (key, value) => storage.set(key, value),
+					},
+				}),
+			],
 		},
-		plugins: [
-			expoClient({
-				storage: {
-					getItem: (key) => storage.get(key) || null,
-					setItem: async (key, value) => storage.set(key, value),
-				},
-			}),
-		],
 	});
+	const app = $Infer.app(opts);
+	const client = $Infer.client(app);
 
-	return { storage, auth, client };
-}
-
-describe("expo", async () => {
-	const { auth, client, storage } = testUtils();
-
-	beforeAll(async () => {
-		const { runMigrations } = await getMigrations(auth.options);
-		await runMigrations();
-		vi.useFakeTimers();
-	});
-	afterAll(() => {
-		vi.useRealTimers();
-	});
+	// beforeAll(async () => {
+	// 	// const { runMigrations } = await getMigrations(auth.options);
+	// 	// await runMigrations();
+	// 	vi.useFakeTimers();
+	// });
+	// afterAll(() => {
+	// 	vi.useRealTimers();
+	// });
 
 	it("should store cookie with expires date", async () => {
 		const testUser = {
@@ -104,62 +91,66 @@ describe("expo", async () => {
 			password: "password",
 			name: "Test User",
 		};
-		await client.signUp.email(testUser);
-		const storedCookie = storage.get("better-auth_cookie");
-		expect(storedCookie).toBeDefined();
+		await client.signUp.email.$post({ json: testUser });
+		const storedCookie = storage.get("faire-auth_cookie");
+		expect(storedCookie, JSON.stringify(storage)).toBeDefined();
 		const parsedCookie = JSON.parse(storedCookie || "");
-		expect(parsedCookie["better-auth.session_token"]).toMatchObject({
+		expect(parsedCookie["faire-auth.session_token"]).toMatchObject({
 			value: expect.stringMatching(/.+/),
 			expires: expect.any(String),
 		});
 	});
 
 	it("should send cookie and get session", async () => {
-		const { data } = await client.getSession();
-		expect(data).toMatchObject({
+		const { data } = await client.getSession.$get({ query: {} });
+		expect(data?.data).toMatchObject({
 			session: expect.any(Object),
 			user: expect.any(Object),
 		});
 	});
 
 	it("should use the scheme to open the browser", async () => {
-		const { data: res } = await client.signIn.social({
-			provider: "google",
-			callbackURL: "/dashboard",
+		const res = await client.signIn.social.$post({
+			json: {
+				provider: "google",
+				callbackURL: "/dashboard",
+			},
 		});
-		const stateId = res?.url?.split("state=")[1]!.split("&")[0];
+		const stateId = res.data?.data.url?.split("state=")[1].split("&")[0];
 		const ctx = await auth.$context;
-		if (!stateId) {
-			throw new Error("State ID not found");
-		}
+		if (!stateId) throw new Error("State ID not found");
+
 		const state = await ctx.internalAdapter.findVerificationValue(stateId);
+		// TODO: this fails due to our normalization of callback URLs
+		// see packages/call/src/static/schema.ts
 		const callbackURL = JSON.parse(state?.value || "{}").callbackURL;
-		expect(callbackURL).toBe("better-auth:///dashboard");
-		expect(res).toMatchObject({
+		expect(callbackURL).toBe("faire-auth:///dashboard");
+		expect(res.data?.data).toMatchObject({
 			url: expect.stringContaining("accounts.google"),
 		});
 		expect(fn).toHaveBeenCalledWith(
 			expect.stringContaining("accounts.google"),
-			"better-auth:///dashboard",
+			"faire-auth:///dashboard",
 		);
 	});
 
 	it("should get cookies", async () => {
 		const c = client.getCookie();
-		expect(c).includes("better-auth.session_token");
+		expect(c).includes("faire-auth.session_token");
 	});
+
 	it("should correctly parse multiple Set-Cookie headers with Expires commas", async () => {
 		const header =
-			"better-auth.session_token=abc; Expires=Wed, 21 Oct 2015 07:28:00 GMT; Path=/, better-auth.session_data=xyz; Expires=Thu, 22 Oct 2015 07:28:00 GMT; Path=/";
+			"faire-auth.session_token=abc; Expires=Wed, 21 Oct 2015 07:28:00 GMT; Path=/, faire-auth.session_data=xyz; Expires=Thu, 22 Oct 2015 07:28:00 GMT; Path=/";
 		const map = (await import("./client")).parseSetCookieHeader(header);
-		expect(map.get("better-auth.session_token")?.value).toBe("abc");
-		expect(map.get("better-auth.session_data")?.value).toBe("xyz");
+		expect(map.get("faire-auth.session_token")?.value).toBe("abc");
+		expect(map.get("faire-auth.session_data")?.value).toBe("xyz");
 	});
 
 	it("should preserve unchanged client store session properties on signout", async () => {
-		const before = client.$store.atoms.session!.get();
-		await client.signOut();
-		const after = client.$store.atoms.session!.get();
+		const before = client.$store.atoms.session.get();
+		await client.signOut.$post();
+		const after = client.$store.atoms.session.get();
 
 		expect(after).toMatchObject({
 			...before,
@@ -171,7 +162,21 @@ describe("expo", async () => {
 });
 
 describe("expo with cookieCache", async () => {
-	const { auth, client, storage } = testUtils({
+	const storage = new Map<string, string>();
+	const opts = defineOptions({
+		baseURL: "http://localhost:3000",
+		// database: new Database(":memory:"),
+		emailAndPassword: {
+			enabled: true,
+		},
+		socialProviders: {
+			google: {
+				clientId: "test",
+				clientSecret: "test",
+			},
+		},
+		plugins: [expo(), oAuthProxy()],
+		trustedOrigins: ["faire-auth://"],
 		session: {
 			expiresIn: 5,
 			cookieCache: {
@@ -180,14 +185,30 @@ describe("expo with cookieCache", async () => {
 			},
 		},
 	});
-	beforeAll(async () => {
-		const { runMigrations } = await getMigrations(auth.options);
-		await runMigrations();
-		vi.useFakeTimers();
+	const { $Infer, auth } = await getTestInstance(opts, {
+		disableTestUser: true,
+		clientOptions: {
+			plugins: [
+				expoClient({
+					storage: {
+						getItem: (key) => storage.get(key) || null,
+						setItem: async (key, value) => storage.set(key, value),
+					},
+				}),
+			],
+		},
 	});
-	afterAll(() => {
-		vi.useRealTimers();
-	});
+	const app = $Infer.app(opts);
+	const client = $Infer.client(app);
+
+	// beforeAll(async () => {
+	// 	// const { runMigrations } = await getMigrations(auth.options);
+	// 	// await runMigrations();
+	// 	vi.useFakeTimers();
+	// });
+	// afterAll(() => {
+	// 	vi.useRealTimers();
+	// });
 
 	it("should store cookie with expires date", async () => {
 		const testUser = {
@@ -195,64 +216,69 @@ describe("expo with cookieCache", async () => {
 			password: "password",
 			name: "Test User",
 		};
-		await client.signUp.email(testUser);
-		const storedCookie = storage.get("better-auth_cookie");
+		await client.signUp.email.$post({ json: testUser });
+		const storedCookie = storage.get("faire-auth_cookie");
 		expect(storedCookie).toBeDefined();
 		const parsedCookie = JSON.parse(storedCookie || "");
-		expect(parsedCookie["better-auth.session_token"]).toMatchObject({
+		expect(parsedCookie["faire-auth.session_token"]).toMatchObject({
 			value: expect.stringMatching(/.+/),
 			expires: expect.any(String),
 		});
-		expect(parsedCookie["better-auth.session_data"]).toMatchObject({
+		expect(parsedCookie["faire-auth.session_data"]).toMatchObject({
 			value: expect.stringMatching(/.+/),
-			expires: expect.any(String),
-		});
-	});
-	it("should refresh session_data when it expired without erasing session_token", async () => {
-		vi.advanceTimersByTime(1000);
-		const { data } = await client.getSession();
-		expect(data).toMatchObject({
-			session: expect.any(Object),
-			user: expect.any(Object),
-		});
-		const storedCookie = storage.get("better-auth_cookie");
-		expect(storedCookie).toBeDefined();
-		const parsedCookie = JSON.parse(storedCookie || "");
-		expect(parsedCookie["better-auth.session_token"]).toMatchObject({
-			value: expect.any(String),
-			expires: expect.any(String),
-		});
-		expect(parsedCookie["better-auth.session_data"]).toMatchObject({
-			value: expect.any(String),
 			expires: expect.any(String),
 		});
 	});
 
-	it("should erase both session_data and session_token when token expired", async () => {
-		vi.advanceTimersByTime(5000);
-		const { data } = await client.getSession();
-		expect(data).toBeNull();
-		const storedCookie = storage.get("better-auth_cookie");
+	it("should refresh session_data when it expired without erasing session_token", async () => {
+		vi.useFakeTimers();
+		vi.advanceTimersByTime(1000);
+		const { data } = await client.getSession.$get({ query: {} });
+		expect(data?.data).toMatchObject({
+			session: expect.any(Object),
+			user: expect.any(Object),
+		});
+		const storedCookie = storage.get("faire-auth_cookie");
 		expect(storedCookie).toBeDefined();
 		const parsedCookie = JSON.parse(storedCookie || "");
-		expect(parsedCookie["better-auth.session_token"]).toMatchObject({
+		expect(parsedCookie["faire-auth.session_token"]).toMatchObject({
 			value: expect.any(String),
 			expires: expect.any(String),
 		});
-		expect(parsedCookie["better-auth.session_data"]).toMatchObject({
+		expect(parsedCookie["faire-auth.session_data"]).toMatchObject({
 			value: expect.any(String),
 			expires: expect.any(String),
 		});
+		vi.useRealTimers();
+	});
+
+	it("should erase both session_data and session_token when token expired", async () => {
+		vi.useFakeTimers();
+		vi.advanceTimersByTime(5000);
+		const { data } = await client.getSession.$get({ query: {} });
+		expect(data).toBeNull();
+		const storedCookie = storage.get("faire-auth_cookie");
+		expect(storedCookie).toBeDefined();
+		const parsedCookie = JSON.parse(storedCookie || "");
+		expect(parsedCookie["faire-auth.session_token"]).toMatchObject({
+			value: expect.any(String),
+			expires: expect.any(String),
+		});
+		expect(parsedCookie["faire-auth.session_data"]).toMatchObject({
+			value: expect.any(String),
+			expires: expect.any(String),
+		});
+		vi.useRealTimers();
 	});
 
 	it("should add `exp://` to trusted origins", async () => {
 		vi.stubEnv("NODE_ENV", "development");
-		const auth = betterAuth({
+		const auth = faireAuth({
 			plugins: [expo()],
 			trustedOrigins: ["http://localhost:3000"],
 		});
 		const ctx = await auth.$context;
-		expect(ctx.options.trustedOrigins).toContain("exp://");
-		expect(ctx.options.trustedOrigins).toContain("http://localhost:3000");
+		expect(auth.options.trustedOrigins).toContain("exp://");
+		expect(auth.options.trustedOrigins).toContain("http://localhost:3000");
 	});
 });

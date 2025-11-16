@@ -1,14 +1,14 @@
 ---
 title: NestJS Integration
-description: Integrate Better Auth with NestJS.
+description: Integrate Faire Auth with NestJS.
 ---
 
-This guide will show you how to integrate Better Auth with [NestJS](https://nestjs.com/).
+This guide will show you how to integrate Faire Auth with [NestJS](https://nestjs.com/).
 
-Before you start, make sure you have a Better Auth instance configured. If you haven't done that yet, check out the [installation](/docs/installation).
+Before you start, make sure you have a Faire Auth instance configured. If you haven't done that yet, check out the [installation](/docs/installation).
 
 <Callout type="info">
-The NestJS integration is **community maintained**. If you encounter any issues, please open them at [nestjs-better-auth](https://github.com/ThallesP/nestjs-better-auth).
+The NestJS integration is **community maintained**. If you encounter any issues, please open them at [nestjs-faire-auth](https://github.com/ThallesP/nestjs-faire-auth).
 </Callout>
 
 ## Installation
@@ -16,18 +16,18 @@ The NestJS integration is **community maintained**. If you encounter any issues,
 Install the NestJS integration library:
 
 ```package-install
-@thallesp/nestjs-better-auth
+@thallesp/nestjs-faire-auth
 ```
 
 ## Basic Setup
 
 <Callout type="warn">
-Currently the library has beta support for Fastify, if you experience any issues with it, please open an issue at [nestjs-better-auth](https://github.com/ThallesP/nestjs-better-auth).
+Currently the library has beta support for Fastify, if you experience any issues with it, please open an issue at [nestjs-faire-auth](https://github.com/ThallesP/nestjs-faire-auth).
 </Callout>
 
 ### 1. Disable Body Parser
 
-Disable NestJS's built-in body parser to allow Better Auth to handle the raw request body:
+Disable NestJS's built-in body parser to allow Faire Auth to handle the raw request body:
 
 ```ts title="main.ts"
 import { NestFactory } from "@nestjs/core";
@@ -35,7 +35,7 @@ import { AppModule } from "./app.module";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
-    bodyParser: false, // Required for Better Auth
+    bodyParser: false, // Required for Faire Auth
   });
   await app.listen(process.env.PORT ?? 3000);
 }
@@ -48,8 +48,8 @@ Import the `AuthModule` in your root module:
 
 ```ts title="app.module.ts"
 import { Module } from '@nestjs/common';
-import { AuthModule } from '@thallesp/nestjs-better-auth';
-import { auth } from "./auth"; // Your Better Auth instance
+import { AuthModule } from '@thallesp/nestjs-faire-auth';
+import { auth } from "./auth"; // Your Faire Auth instance
 
 @Module({
   imports: [
@@ -67,7 +67,7 @@ Use the `Session` decorator to access the user session:
 
 ```ts title="user.controller.ts"
 import { Controller, Get } from '@nestjs/common';
-import { Session, UserSession, AllowAnonymous, OptionalAuth } from '@thallesp/nestjs-better-auth';
+import { Session, UserSession, AllowAnonymous, OptionalAuth } from '@thallesp/nestjs-faire-auth';
 
 @Controller('users')
 export class UserController {
@@ -92,4 +92,4 @@ export class UserController {
 
 ## Full Documentation
 
-For comprehensive documentation including decorators, hooks, global guards, and advanced configuration, visit the [NestJS Better Auth repository](https://github.com/thallesp/nestjs-better-auth).
+For comprehensive documentation including decorators, hooks, global guards, and advanced configuration, visit the [NestJS Faire Auth repository](https://github.com/thallesp/nestjs-faire-auth).

@@ -1,6 +1,6 @@
 ---
 title: SQLite
-description: Integrate Better Auth with SQLite.
+description: Integrate Faire Auth with SQLite.
 ---
 
 SQLite is a lightweight, serverless, self-contained SQL database engine that is widely used for local data storage in applications.
@@ -8,17 +8,17 @@ Read more [here.](https://www.sqlite.org/)
 
 ## Example Usage
 
-Better Auth supports multiple SQLite drivers. Choose the one that best fits your environment:
+Faire Auth supports multiple SQLite drivers. Choose the one that best fits your environment:
 
 ### Better-SQLite3 (Recommended)
 
 The most popular and stable SQLite driver for Node.js:
 
 ```ts title="auth.ts"
-import { betterAuth } from "better-auth";
+import { faireAuth } from "faire-auth";
 import Database from "better-sqlite3";
 
-export const auth = betterAuth({
+export const auth = faireAuth({
   database: new Database("database.sqlite"),
 });
 ```
@@ -37,10 +37,10 @@ export const auth = betterAuth({
 Starting from Node.js 22.5.0, you can use the built-in [SQLite](https://nodejs.org/api/sqlite.html) module:
 
 ```ts title="auth.ts"
-import { betterAuth } from "better-auth";
+import { faireAuth } from "faire-auth";
 import { DatabaseSync } from "node:sqlite";
 
-export const auth = betterAuth({
+export const auth = faireAuth({
   database: new DatabaseSync("database.sqlite"),
 });
 ```
@@ -55,17 +55,17 @@ node your-app.js
 You can also use the built-in [SQLite](https://bun.com/docs/api/sqlite) module in Bun, which is similar to the Node.js version:
 
 ```ts title="auth.ts"
-import { betterAuth } from "better-auth";
+import { faireAuth } from "faire-auth";
 import { Database } from "bun:sqlite";
-export const auth = betterAuth({
+export const auth = faireAuth({
   database: new Database("database.sqlite"),
 });
 ```
 
 ## Schema generation & migration
 
-The [Better Auth CLI](/docs/concepts/cli) allows you to generate or migrate
-your database schema based on your Better Auth configuration and plugins.
+The [Faire Auth CLI](/docs/concepts/cli) allows you to generate or migrate
+your database schema based on your Faire Auth configuration and plugins.
 
 <table>
   <thead>
@@ -87,11 +87,11 @@ your database schema based on your Better Auth configuration and plugins.
 </table>
 
 ```bash title="Schema Generation"
-npx @better-auth/cli@latest generate
+npx @faire-auth/cli@latest generate
 ```
 
 ```bash title="Schema Migration"
-npx @better-auth/cli@latest migrate
+npx @faire-auth/cli@latest migrate
 ```
 
 ## Additional Information

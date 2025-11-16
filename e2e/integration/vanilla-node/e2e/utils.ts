@@ -1,16 +1,17 @@
+import { terminate } from "@faire-auth/test-utils/playwright";
 import type { Page } from "@playwright/test";
 import { type ChildProcessWithoutNullStreams, spawn } from "node:child_process";
 import { fileURLToPath } from "node:url";
+import type { Client } from "../src/main";
 import { createAuthServer } from "./app";
-import { terminate } from "@better-auth/test-utils/playwright";
 
 const root = fileURLToPath(new URL("../", import.meta.url));
 
 export async function runClient<R>(
 	page: Page,
-	fn: ({ client }: { client: Window["client"] }) => R,
+	fn: ({ client }: { client: Client }) => R,
 ): Promise<R> {
-	const client = await page.evaluateHandle<Window["client"]>("window.client");
+	const client = await page.evaluateHandle<Client>("window.client");
 	return page.evaluate(fn, { client });
 }
 

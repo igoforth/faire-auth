@@ -26,7 +26,7 @@ import { Support } from "../_components/support";
 
 const metaTitle = "Blogs";
 const metaDescription = "Latest changes , fixes and updates.";
-const ogImage = "https://better-auth.com/release-og/changelog-og.png";
+const ogImage = "https://faire-auth.com/release-og/changelog-og.png";
 
 export default async function Page({
 	params,
@@ -209,7 +209,7 @@ export async function generateMetadata({
 	const { slug } = await params;
 	if (!slug) {
 		return {
-			metadataBase: new URL("https://better-auth.com/blogs"),
+			metadataBase: new URL("https://faire-auth.com/blogs"),
 			title: metaTitle,
 			description: metaDescription,
 			openGraph: {
@@ -220,7 +220,7 @@ export async function generateMetadata({
 						url: ogImage,
 					},
 				],
-				url: "https://better-auth.com/blogs",
+				url: "https://faire-auth.com/blogs",
 			},
 			twitter: {
 				card: "summary_large_image",

@@ -1,11 +1,11 @@
 ---
 title: Elysia Integration
-description: Integrate Better Auth with Elysia.
+description: Integrate Faire Auth with Elysia.
 ---
 
 This integration guide is assuming you are using Elysia with bun server.
 
-Before you start, make sure you have a Better Auth instance configured. If you haven't done that yet, check out the [installation](/docs/installation).
+Before you start, make sure you have a Faire Auth instance configured. If you haven't done that yet, check out the [installation](/docs/installation).
 
 ### Mount the handler
 
@@ -58,7 +58,7 @@ import { Elysia } from "elysia";
 import { auth } from "./auth";
 
 // user middleware (compute user and session and pass to routes)
-const betterAuth = new Elysia({ name: "better-auth" })
+const faireAuth = new Elysia({ name: "faire-auth" })
   .mount(auth.handler)
   .macro({
     auth: {
@@ -78,7 +78,7 @@ const betterAuth = new Elysia({ name: "better-auth" })
   });
 
 const app = new Elysia()
-  .use(betterAuth)
+  .use(faireAuth)
   .get("/user", ({ user }) => user, {
     auth: true,
   })

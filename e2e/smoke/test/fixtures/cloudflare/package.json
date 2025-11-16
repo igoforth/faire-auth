@@ -2,14 +2,14 @@
   "name": "cloudflare",
   "private": true,
   "dependencies": {
-    "better-auth": "workspace:*",
-    "drizzle-orm": "^0.44.5",
-    "hono": "^4.9.7"
+    "faire-auth": "workspace:*",
+    "drizzle-orm": "catalog:",
+    "hono": "catalog:"
   },
   "devDependencies": {
     "@cloudflare/vitest-pool-workers": "^0.8.69",
-    "@cloudflare/workers-types": "^4.20250903.0",
-    "drizzle-kit": "^0.31.4",
+    "@cloudflare/workers-types": "catalog:",
+    "drizzle-kit": "catalog:",
     "wrangler": "4.33.2"
   },
   "scripts": {

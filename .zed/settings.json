@@ -1,0 +1,145 @@
+// Folder-specific settings
+//
+// For a full list of overridable settings, and general information on folder-specific settings,
+// see the documentation: https://zed.dev/docs/configuring-zed#settings-files
+{
+  "file_scan_exclusions": [
+    "**/.git",
+    "**/.DS_Store",
+    "**/.settings",
+    "**/raw-data/**",
+    // "**/node_modules/**",
+    "**/build/**",
+    // "**/dist/**",
+    "**/.cache/**",
+    "**/.next/**",
+    "**/.open-next/**",
+    "**/.vscode/**",
+    "**/.storybook/**",
+    "**/.wrangler/**"
+  ],
+  "lsp": {
+    "vtsls": {
+      "settings": {
+        "typescript": {
+          // "validate": {
+          //   "enable": false
+          // },
+          "inlayHints": {
+            "parameterNames": {
+              "enabled": "none",
+              "suppressWhenArgumentMatchesName": true
+            },
+            "parameterTypes": {
+              "enabled": false
+            },
+            "variableTypes": {
+              "enabled": false,
+              "suppressWhenTypeMatchesName": true
+            },
+            "propertyDeclarationTypes": {
+              "enabled": false
+            },
+            "functionLikeReturnTypes": {
+              "enabled": false
+            },
+            "enumMemberValues": {
+              "enabled": false
+            }
+          }
+        },
+        "javascript": {
+          // "validate": {
+          //   "enable": false
+          // },
+          "inlayHints": {
+            "parameterNames": {
+              "enabled": "none",
+              "suppressWhenArgumentMatchesName": true
+            },
+            "parameterTypes": {
+              "enabled": false
+            },
+            "variableTypes": {
+              "enabled": false,
+              "suppressWhenTypeMatchesName": true
+            },
+            "propertyDeclarationTypes": {
+              "enabled": false
+            },
+            "functionLikeReturnTypes": {
+              "enabled": false
+            }
+          }
+        }
+      }
+    }
+  },
+  "languages": {
+    "CSS": {
+      "enable_language_server": false
+    },
+    "JavaScript": {
+      "language_servers": ["vtsls", "!..."],
+      "prettier": null,
+      // "prettier": {
+      //   "allowed": false,
+      //   "plugins": ["@ianvs/prettier-plugin-sort-imports", "prettier-plugin-tailwindcss"]
+      // },
+      "format_on_save": "on",
+      "formatter": [
+        {
+          "external": {
+            "command": "/usr/bin/bash",
+            "arguments": [
+              "-c",
+              "PATH=$HOME/.asdf/shims:$HOME/.asdf/bin:$PATH $HOME/.local/src/faire-auth/node_modules/.bin/biome format --stdin-file-path {buffer_path}"
+            ]
+          }
+        }
+      ]
+    },
+    "TypeScript": {
+      "language_servers": ["vtsls", "!..."],
+      // "language_servers": ["vtsls"],
+      "prettier": null,
+      "format_on_save": "on",
+      // "formatter": {
+      //   "language_server": {
+      //     "name": "prettier"
+      //   }
+      // }
+      "formatter": [
+        {
+          "external": {
+            "command": "/usr/bin/bash",
+            "arguments": [
+              "-c",
+              "PATH=$HOME/.asdf/shims:$HOME/.asdf/bin:$PATH $HOME/.local/src/faire-auth/node_modules/.bin/biome format --stdin-file-path {buffer_path}"
+            ]
+          }
+        }
+      ]
+    },
+    "TSX": {
+      "language_servers": ["vtsls", "!..."],
+      "prettier": null,
+      // "prettier": {
+      //   "allowed": false,
+      //   "plugins": ["@ianvs/prettier-plugin-sort-imports", "prettier-plugin-tailwindcss"]
+      // },
+      "format_on_save": "on",
+      "formatter": [
+        {
+          "external": {
+            "command": "/usr/bin/bash",
+            "arguments": [
+              "-c",
+              "PATH=$HOME/.asdf/shims:$HOME/.asdf/bin:$PATH $HOME/.local/src/faire-auth/node_modules/.bin/biome format --stdin-file-path {buffer_path}"
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

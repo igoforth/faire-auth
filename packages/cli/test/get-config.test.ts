@@ -59,11 +59,11 @@ describe("getConfig", async () => {
 		//create dummy auth.ts
 		await fs.writeFile(
 			path.join(authPath, "auth.ts"),
-			`import {betterAuth} from "better-auth";
-			 import {prismaAdapter} from "better-auth/adapters/prisma";			
+			`import {faireAuth} from "faire-auth";
+			 import {prismaAdapter} from "faire-auth/adapters/prisma";
 			 import {db} from "@server/db/db";
 
-			 export const auth = betterAuth({
+			 export const auth = faireAuth({
 					database: prismaAdapter(db, {
 							provider: 'sqlite'
 					}),
@@ -79,7 +79,7 @@ describe("getConfig", async () => {
 			`class PrismaClient {
 				constructor() {}
 			}
-			
+
 			export const db = new PrismaClient()`,
 		);
 
@@ -114,11 +114,11 @@ describe("getConfig", async () => {
 		//create dummy auth.ts
 		await fs.writeFile(
 			path.join(authPath, "auth.ts"),
-			`import {betterAuth} from "better-auth";
-			 import {prismaAdapter} from "better-auth/adapters/prisma";			
+			`import {faireAuth} from "faire-auth";
+			 import {prismaAdapter} from "faire-auth/adapters/prisma";
 			 import {db} from "prismaDbClient";
 
-			 export const auth = betterAuth({
+			 export const auth = faireAuth({
 					database: prismaAdapter(db, {
 							provider: 'sqlite'
 					}),
@@ -134,7 +134,7 @@ describe("getConfig", async () => {
 			`class PrismaClient {
 				constructor() {}
 			}
-			
+
 			export const db = new PrismaClient()`,
 		);
 
@@ -169,11 +169,11 @@ describe("getConfig", async () => {
 		//create dummy auth.ts
 		await fs.writeFile(
 			path.join(authPath, "auth.ts"),
-			`import {betterAuth} from "better-auth";
-			 import {prismaAdapter} from "better-auth/adapters/prisma";			
+			`import {faireAuth} from "faire-auth";
+			 import {prismaAdapter} from "faire-auth/adapters/prisma";
 			 import {db} from "@server/db/db";
 
-			 export const auth = betterAuth({
+			 export const auth = faireAuth({
 					database: prismaAdapter(db, {
 							provider: 'sqlite'
 					}),
@@ -189,7 +189,7 @@ describe("getConfig", async () => {
 			`class PrismaClient {
 				constructor() {}
 			}
-			
+
 			export const db = new PrismaClient()`,
 		);
 
@@ -224,11 +224,11 @@ describe("getConfig", async () => {
 		//create dummy auth.ts
 		await fs.writeFile(
 			path.join(authPath, "auth.ts"),
-			`import {betterAuth} from "better-auth";
-			 import {prismaAdapter} from "better-auth/adapters/prisma";			
+			`import {faireAuth} from "faire-auth";
+			 import {prismaAdapter} from "faire-auth/adapters/prisma";
 			 import {db} from "prismaDbClient";
 
-			 export const auth = betterAuth({
+			 export const auth = faireAuth({
 					database: prismaAdapter(db, {
 							provider: 'sqlite'
 					}),
@@ -244,7 +244,7 @@ describe("getConfig", async () => {
 			`class PrismaClient {
 				constructor() {}
 			}
-			
+
 			export const db = new PrismaClient()`,
 		);
 
@@ -279,11 +279,11 @@ describe("getConfig", async () => {
 		//create dummy auth.ts
 		await fs.writeFile(
 			path.join(authPath, "auth.ts"),
-			`import {betterAuth} from "better-auth";
-			 import {prismaAdapter} from "better-auth/adapters/prisma";			
+			`import {faireAuth} from "faire-auth";
+			 import {prismaAdapter} from "faire-auth/adapters/prisma";
 			 import {db} from "../db/db";
 
-			 export const auth = betterAuth({
+			 export const auth = faireAuth({
 					database: prismaAdapter(db, {
 							provider: 'sqlite'
 					}),
@@ -299,7 +299,7 @@ describe("getConfig", async () => {
 			`class PrismaClient {
 				constructor() {}
 			}
-			
+
 			export const db = new PrismaClient()`,
 		);
 
@@ -334,11 +334,11 @@ describe("getConfig", async () => {
 		//create dummy auth.ts
 		await fs.writeFile(
 			path.join(authPath, "auth.ts"),
-			`import {betterAuth} from "better-auth";
-			 import {prismaAdapter} from "better-auth/adapters/prisma";			
+			`import {faireAuth} from "faire-auth";
+			 import {prismaAdapter} from "faire-auth/adapters/prisma";
 			 import {db} from "@server/db/db";
 
-			 export const auth = betterAuth({
+			 export const auth = faireAuth({
 					database: prismaAdapter(db, {
 							provider: 'sqlite'
 					}),
@@ -354,7 +354,7 @@ describe("getConfig", async () => {
 			`class PrismaClient {
 				constructor() {}
 			}
-			
+
 			export const db = new PrismaClient()`,
 		);
 
@@ -383,9 +383,9 @@ describe("getConfig", async () => {
 		//create dummy auth.ts
 		await fs.writeFile(
 			path.join(authPath, "auth.js"),
-			`import  { betterAuth } from "better-auth";
+			`import  { faireAuth } from "faire-auth";
 
-			 export const auth = betterAuth({
+			 export const auth = faireAuth({
 					emailAndPassword: {
 						enabled: true,
 					}
@@ -446,11 +446,11 @@ describe("getConfig", async () => {
 		// Create dummy auth.ts using both aliases
 		await fs.writeFile(
 			path.join(authPath, "auth.ts"),
-			`import {betterAuth} from "better-auth";
-			 import {prismaAdapter} from "better-auth/adapters/prisma";			
+			`import {faireAuth} from "faire-auth";
+			 import {prismaAdapter} from "faire-auth/adapters/prisma";
 			 import {db} from "@shared/db";
 
-			 export const auth = betterAuth({
+			 export const auth = faireAuth({
 					database: prismaAdapter(db, {
 							provider: 'sqlite'
 					}),
@@ -466,7 +466,7 @@ describe("getConfig", async () => {
 			`class PrismaClient {
 				constructor() {}
 			}
-			
+
 			export const db = new PrismaClient()`,
 		);
 
@@ -506,9 +506,9 @@ describe("getConfig", async () => {
 		// Create dummy auth.ts
 		await fs.writeFile(
 			path.join(authPath, "auth.ts"),
-			`import {betterAuth} from "better-auth";
+			`import {faireAuth} from "faire-auth";
 
-			 export const auth = betterAuth({
+			 export const auth = faireAuth({
 					emailAndPassword: {
 						enabled: true,
 					}
@@ -564,9 +564,9 @@ describe("getConfig", async () => {
 		// Create dummy auth.ts
 		await fs.writeFile(
 			path.join(authPath, "auth.ts"),
-			`import {betterAuth} from "better-auth";
+			`import {faireAuth} from "faire-auth";
 
-			 export const auth = betterAuth({
+			 export const auth = faireAuth({
 					emailAndPassword: {
 						enabled: true,
 					}
@@ -627,11 +627,11 @@ describe("getConfig", async () => {
 		// Create dummy auth.ts using both aliases
 		await fs.writeFile(
 			path.join(authPath, "auth.ts"),
-			`import {betterAuth} from "better-auth";
-			 import {prismaAdapter} from "better-auth/adapters/prisma";			
+			`import {faireAuth} from "faire-auth";
+			 import {prismaAdapter} from "faire-auth/adapters/prisma";
 			 import {db} from "@shared/db/db";
 
-			 export const auth = betterAuth({
+			 export const auth = faireAuth({
 					database: prismaAdapter(db, {
 							provider: 'sqlite'
 					}),
@@ -647,7 +647,7 @@ describe("getConfig", async () => {
 			`class PrismaClient {
 				constructor() {}
 			}
-			
+
 			export const db = new PrismaClient()`,
 		);
 
@@ -705,9 +705,9 @@ describe("getConfig", async () => {
 		// Create dummy auth.ts
 		await fs.writeFile(
 			path.join(authPath, "auth.ts"),
-			`import {betterAuth} from "better-auth";
+			`import {faireAuth} from "faire-auth";
 
-			 export const auth = betterAuth({
+			 export const auth = faireAuth({
 					emailAndPassword: {
 						enabled: true,
 					}
@@ -753,10 +753,10 @@ describe("getConfig", async () => {
 
 		await fs.writeFile(
 			path.join(authPath, "auth.ts"),
-			`import { betterAuth } from "better-auth";
+			`import { faireAuth } from "faire-auth";
 			 import { db } from "$lib/server/database";
 
-			 export const auth = betterAuth({
+			 export const auth = faireAuth({
 					emailAndPassword: {
 						enabled: true,
 					}
@@ -780,9 +780,9 @@ describe("getConfig", async () => {
 
 		await fs.writeFile(
 			path.join(authPath, "auth.ts"),
-			`import { betterAuth } from "better-auth";
+			`import { faireAuth } from "faire-auth";
 
-			 const auth = betterAuth({
+			 const auth = faireAuth({
 					emailAndPassword: {
 						enabled: true,
 					},
@@ -793,7 +793,7 @@ describe("getConfig", async () => {
 						}
 					}
 			 });
-			 
+
 			 export default auth;`,
 		);
 
@@ -820,9 +820,9 @@ describe("getConfig", async () => {
 
 		await fs.writeFile(
 			path.join(authPath, "auth.ts"),
-			`import { betterAuth } from "better-auth";
+			`import { faireAuth } from "faire-auth";
 
-			 const auth = betterAuth({
+			 const auth = faireAuth({
 					emailAndPassword: {
 						enabled: true,
 					},
@@ -833,7 +833,7 @@ describe("getConfig", async () => {
 						}
 					}
 			 });
-			 
+
 			 export { auth };
 
 			 export default auth;`,
@@ -856,15 +856,15 @@ describe("getConfig", async () => {
 		});
 	});
 
-	it("should resolve export default with inline betterAuth call", async () => {
+	it("should resolve export default with inline faireAuth call", async () => {
 		const authPath = path.join(tmpDir, "server", "auth");
 		await fs.mkdir(authPath, { recursive: true });
 
 		await fs.writeFile(
 			path.join(authPath, "auth.ts"),
-			`import { betterAuth } from "better-auth";
+			`import { faireAuth } from "faire-auth";
 
-			 export default betterAuth({
+			 export default faireAuth({
 					emailAndPassword: {
 						enabled: true,
 					},

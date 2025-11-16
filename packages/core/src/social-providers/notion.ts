@@ -66,9 +66,8 @@ export const notion = (options: NotionOptions) => {
 					});
 				},
 		async getUserInfo(token) {
-			if (options.getUserInfo) {
-				return options.getUserInfo(token);
-			}
+			if (options.getUserInfo) return options.getUserInfo(token);
+
 			const { data: profile, error } = await betterFetch<{
 				bot: {
 					owner: {
@@ -81,20 +80,20 @@ export const notion = (options: NotionOptions) => {
 					"Notion-Version": "2022-06-28",
 				},
 			});
-			if (error || !profile) {
-				return null;
-			}
+			if (error || !profile) return null;
+
 			const userProfile = profile.bot?.owner?.user;
-			if (!userProfile) {
-				return null;
-			}
+			if (!userProfile) return null;
+
 			const userMap = await options.mapProfileToUser?.(userProfile);
 			return {
 				user: {
 					id: userProfile.id,
 					name: userProfile.name || "Notion User",
-					email: userProfile.person?.email || null,
-					image: userProfile.avatar_url,
+					...(userProfile.person?.email && {
+						email: userProfile.person?.email,
+					}),
+					...(userProfile.avatar_url && { image: userProfile.avatar_url }),
 					emailVerified: !!userProfile.person?.email,
 					...userMap,
 				},
@@ -102,5 +101,5 @@ export const notion = (options: NotionOptions) => {
 			};
 		},
 		options,
-	} satisfies OAuthProvider<NotionProfile>;
+	} satisfies OAuthProvider;
 };

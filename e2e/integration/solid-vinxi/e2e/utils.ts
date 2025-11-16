@@ -1,7 +1,7 @@
 import type { Page } from "@playwright/test";
 import { type ChildProcessWithoutNullStreams, spawn } from "node:child_process";
 import { fileURLToPath } from "node:url";
-import { terminate } from "@better-auth/test-utils/playwright";
+import { terminate } from "@faire-auth/test-utils/playwright";
 
 const root = fileURLToPath(new URL("../", import.meta.url));
 

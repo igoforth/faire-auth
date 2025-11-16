@@ -26,12 +26,12 @@
       ],
     },
     {
-      groupName: 'better-auth dependencies',
+      groupName: 'faire-auth dependencies',
       matchManagers: [
         'npm',
       ],
       matchFileNames: [
-        'packages/better-auth/**',
+        'packages/faire-auth/**',
       ],
     },
   ],

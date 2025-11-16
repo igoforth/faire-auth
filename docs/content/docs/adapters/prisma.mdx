@@ -1,6 +1,6 @@
 ---
 title: Prisma
-description: Integrate Better Auth with Prisma.
+description: Integrate Faire Auth with Prisma.
 ---
 
 Prisma ORM is an open-source database toolkit that simplifies database access and management in applications by providing a type-safe query builder and an intuitive data modeling interface.
@@ -12,13 +12,13 @@ Make sure you have Prisma installed and configured.
 Then, you can use the Prisma adapter to connect to your database.
 
 ```ts title="auth.ts"
-import { betterAuth } from "better-auth";
-import { prismaAdapter } from "better-auth/adapters/prisma";
+import { faireAuth } from "faire-auth";
+import { prismaAdapter } from "faire-auth/adapters/prisma";
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-export const auth = betterAuth({
+export const auth = faireAuth({
   database: prismaAdapter(prisma, {
     provider: "sqlite",
   }),
@@ -31,8 +31,8 @@ export const auth = betterAuth({
 
 ## Schema generation & migration
 
-The [Better Auth CLI](/docs/concepts/cli) allows you to generate or migrate
-your database schema based on your Better Auth configuration and plugins.
+The [Faire Auth CLI](/docs/concepts/cli) allows you to generate or migrate
+your database schema based on your Faire Auth configuration and plugins.
 
 <table>
   <thead>
@@ -54,7 +54,7 @@ your database schema based on your Better Auth configuration and plugins.
 </table>
 
 ```bash title="Schema Generation"
-npx @better-auth/cli@latest generate
+npx @faire-auth/cli@latest generate
 ```
 
 ## Additional Information

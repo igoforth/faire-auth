@@ -120,20 +120,18 @@ export const gitlab = (options: GitlabOptions) => {
 							clientKey: options.clientKey,
 							clientSecret: options.clientSecret,
 						},
-						tokenEndpoint: tokenEndpoint,
+						tokenEndpoint: "https://gitlab.com/oauth/token",
 					});
 				},
 		async getUserInfo(token) {
-			if (options.getUserInfo) {
-				return options.getUserInfo(token);
-			}
+			if (options.getUserInfo) return options.getUserInfo(token);
+
 			const { data: profile, error } = await betterFetch<GitlabProfile>(
 				userinfoEndpoint,
 				{ headers: { authorization: `Bearer ${token.accessToken}` } },
 			);
-			if (error || profile.state !== "active" || profile.locked) {
-				return null;
-			}
+			if (error || profile.state !== "active" || profile.locked) return null;
+
 			const userMap = await options.mapProfileToUser?.(profile);
 			return {
 				user: {
@@ -148,5 +146,5 @@ export const gitlab = (options: GitlabOptions) => {
 			};
 		},
 		options,
-	} satisfies OAuthProvider<GitlabProfile>;
+	} satisfies OAuthProvider;
 };

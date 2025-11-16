@@ -1,9 +1,9 @@
 ---
-title: Migrating from Auth0 to Better Auth
-description: A step-by-step guide to transitioning from Auth0 to Better Auth.
+title: Migrating from Auth0 to Faire Auth
+description: A step-by-step guide to transitioning from Auth0 to Faire Auth.
 ---
 
-In this guide, we'll walk through the steps to migrate a project from Auth0 to Better Auth — including email/password with proper hashing, social/external accounts, two-factor authentication, and more.
+In this guide, we'll walk through the steps to migrate a project from Auth0 to Faire Auth — including email/password with proper hashing, social/external accounts, two-factor authentication, and more.
 
 <Callout type="warn">
 This migration will invalidate all active sessions. This guide doesn't currently show you how to migrate Organizations but it should be possible with additional steps and the [Organization](/docs/plugins/organization) Plugin.
@@ -11,7 +11,7 @@ This migration will invalidate all active sessions. This guide doesn't currently
 
 ## Before You Begin
 
-Before starting the migration process, set up Better Auth in your project. Follow the [installation guide](/docs/installation) to get started.
+Before starting the migration process, set up Faire Auth in your project. Follow the [installation guide](/docs/installation) to get started.
 
 <Steps>
 <Step>
@@ -28,9 +28,9 @@ And then you can use the following code to connect to your database.
 ```ts title="auth.ts"
 import { Pool } from "pg";
 
-export const auth = betterAuth({
-    database: new Pool({ 
-        connectionString: process.env.DATABASE_URL 
+export const auth = faireAuth({
+    database: new Pool({
+        connectionString: process.env.DATABASE_URL
     }),
 })
 ```
@@ -41,11 +41,11 @@ export const auth = betterAuth({
 Enable the email and password in your auth config and implement your own logic for sending verification emails, reset password emails, etc.
 
 ```ts title="auth.ts"
-import { betterAuth } from "better-auth";
+import { faireAuth } from "faire-auth";
 
-export const auth = betterAuth({
-    database: new Pool({ 
-        connectionString: process.env.DATABASE_URL 
+export const auth = faireAuth({
+    database: new Pool({
+        connectionString: process.env.DATABASE_URL
     }),
     emailAndPassword: { // [!code highlight]
         enabled: true, // [!code highlight]
@@ -66,13 +66,13 @@ See [Email and Password](/docs/authentication/email-password) for more configura
 Add social providers you have enabled in your Auth0 project in your auth config.
 
 ```ts title="auth.ts"
-import { betterAuth } from "better-auth";
+import { faireAuth } from "faire-auth";
 
-export const auth = betterAuth({
-    database: new Pool({ 
-        connectionString: process.env.DATABASE_URL 
+export const auth = faireAuth({
+    database: new Pool({
+        connectionString: process.env.DATABASE_URL
     }),
-    emailAndPassword: { 
+    emailAndPassword: {
         enabled: true,
     },
     socialProviders: { // [!code highlight]
@@ -101,14 +101,14 @@ You can add the following plugins to your auth config based on your needs.
 
 ```ts title="auth.ts"
 import { Pool } from "pg";
-import { betterAuth } from "better-auth";
-import { admin, twoFactor, username } from "better-auth/plugins";
+import { faireAuth } from "faire-auth";
+import { admin, twoFactor, username } from "faire-auth/plugins";
 
-export const auth = betterAuth({
-    database: new Pool({ 
-        connectionString: process.env.DATABASE_URL 
+export const auth = faireAuth({
+    database: new Pool({
+        connectionString: process.env.DATABASE_URL
     }),
-    emailAndPassword: { 
+    emailAndPassword: {
         enabled: true,
         password: {
             verify: (data) => {
@@ -136,13 +136,13 @@ export const auth = betterAuth({
 If you're using a custom database adapter, generate the schema:
 
 ```sh
-npx @better-auth/cli generate
+npx @faire-auth/cli generate
 ```
 
 or if you're using the default adapter, you can use the following command:
 
 ```sh
-npx @better-auth/cli migrate
+npx @faire-auth/cli migrate
 ```
 </Step>
 <Step>
@@ -186,7 +186,7 @@ const auth0Users = [
 
 ```ts title="scripts/migrate-auth0.ts"
 import { ManagementClient } from 'auth0';
-import { generateRandomString, symmetricEncrypt } from "better-auth/crypto";
+import { generateRandomString, symmetricEncrypt } from "faire-auth/crypto";
 import { auth } from '@/lib/auth';
 
 const auth0Client = new ManagementClient({
@@ -236,7 +236,7 @@ async function generateBackupCodes(secret: string) {
     return encCodes;
 }
 
-function mapAuth0RoleToBetterAuthRole(auth0Roles: string[]) {
+function mapAuth0RoleToFaireAuthRole(auth0Roles: string[]) {
     if (typeof auth0Roles === 'string') return auth0Roles;
     if (Array.isArray(auth0Roles)) return auth0Roles.join(',');
 }
@@ -338,7 +338,7 @@ async function migrateOAuthAccounts(auth0User: any, userId: string | undefined, 
                     tokenType: identity.token_type,
                     refreshToken: identity.refresh_token,
                     accessTokenExpiresAt: identity.expires_in ? new Date(Date.now() + identity.expires_in * 1000) : undefined,
-                    // if you are enterprise user, you can get the refresh tokens or all the tokensets - auth0Client.users.getAllTokensets 
+                    // if you are enterprise user, you can get the refresh tokens or all the tokensets - auth0Client.users.getAllTokensets
                     refreshTokenExpiresAt: identity.refresh_token_expires_in ? new Date(Date.now() + identity.refresh_token_expires_in * 1000) : undefined,
 
                     scope: identity.scope,
@@ -403,7 +403,7 @@ async function migrateOrganizations(ctx: any) {
                             id: org.id,
                             user_id: member.user_id
                         });
-                        const role = mapAuth0RoleToBetterAuthRole(userRoles.data?.map(r => r.name) || []);
+                        const role = mapAuth0RoleToFaireAuthRole(userRoles.data?.map(r => r.name) || []);
                         await ctx.adapter.create({
                             model: "member",
                             data: {
@@ -481,7 +481,7 @@ async function migrateFromAuth0() {
                     updatedAt: safeDateConversion(auth0User.updated_at),
                     ...(isAdminEnabled ? {
                         banned: auth0User.blocked || false,
-                        role: mapAuth0RoleToBetterAuthRole(auth0User.roles || []),
+                        role: mapAuth0RoleToFaireAuthRole(auth0User.roles || []),
                     } : {}),
 
                     ...(isUsernameEnabled ? {
@@ -528,7 +528,7 @@ migrateFromAuth0()
     .catch((error) => {
         console.error('Migration failed:', error);
         process.exit(1);
-    }); 
+    });
 ```
 
 Make sure to replace the Auth0 environment variables with your own values:
@@ -550,7 +550,7 @@ bun run scripts/migrate-auth0.ts # or use your preferred runtime
 Important considerations:
 1. Test the migration in a development environment first
 2. Monitor the migration process for any errors
-3. Verify the migrated data in Better Auth before proceeding
+3. Verify the migrated data in Faire Auth before proceeding
 4. Keep Auth0 installed and configured until the migration is complete
 5. The script handles bcrypt password hashes by default. For custom password hashing algorithms, you'll need to modify the `migratePassword` function
 </Callout>
@@ -560,7 +560,7 @@ Important considerations:
 <Step>
  ### Change password hashing algorithm
 
- By default, Better Auth uses the `scrypt` algorithm to hash passwords. Since Auth0 uses `bcrypt`, you'll need to configure Better Auth to use bcrypt for password verification.
+ By default, Faire Auth uses the `scrypt` algorithm to hash passwords. Since Auth0 uses `bcrypt`, you'll need to configure Faire Auth to use bcrypt for password verification.
 
  First, install bcrypt:
 
@@ -572,10 +572,10 @@ Important considerations:
  Then update your auth configuration:
 
  ```ts title="auth.ts"
- import { betterAuth } from "better-auth";
+ import { faireAuth } from "faire-auth";
  import bcrypt from "bcrypt";
- 
- export const auth = betterAuth({
+
+ export const auth = faireAuth({
     emailAndPassword: {
         password: {
             hash: async (password) => {
@@ -602,10 +602,10 @@ After running the migration, verify that:
 <Step>
 ### Update your components
 
-Now that the data is migrated, update your components to use Better Auth. Here's an example for the sign-in component:
+Now that the data is migrated, update your components to use Faire Auth. Here's an example for the sign-in component:
 
 ```tsx title="components/auth/sign-in.tsx"
-import { authClient } from "better-auth/client";
+import { authClient } from "faire-auth/client";
 
 export const SignIn = () => {
   const handleSignIn = async () => {
@@ -613,7 +613,7 @@ export const SignIn = () => {
       email: "helloworld@gmail.com",
       password: "helloworld",
     });
-    
+
     if (error) {
       console.error(error);
       return;
@@ -632,11 +632,11 @@ export const SignIn = () => {
 <Step>
 ### Update the middleware
 
-Replace your Auth0 middleware with Better Auth's middleware:
+Replace your Auth0 middleware with Faire Auth's middleware:
 
 ```ts title="middleware.ts"
 import { NextRequest, NextResponse } from "next/server";
-import { getSessionCookie } from "better-auth/cookies";
+import { getSessionCookie } from "faire-auth/cookies";
 
 export async function middleware(request: NextRequest) {
   const sessionCookie = getSessionCookie(request);
@@ -661,7 +661,7 @@ export const config = {
 <Step>
 ### Remove Auth0 Dependencies
 
-Once you've verified everything is working correctly with Better Auth, remove Auth0:
+Once you've verified everything is working correctly with Faire Auth, remove Auth0:
 
 ```bash
 npm remove @auth0/auth0-react @auth0/auth0-spa-js @auth0/nextjs-auth0
@@ -675,13 +675,13 @@ npm remove @auth0/auth0-react @auth0/auth0-spa-js @auth0/nextjs-auth0
 The migration script handles bcrypt password hashes by default. If you're using custom password hashing algorithms in Auth0, you'll need to modify the `migratePassword` function in the migration script to handle your specific case.
 
 ### Role Mapping
-The script includes a basic role mapping function (`mapAuth0RoleToBetterAuthRole`). Customize this function based on your Auth0 roles and Better Auth role requirements.
+The script includes a basic role mapping function (`mapAuth0RoleToFaireAuthRole`). Customize this function based on your Auth0 roles and Faire Auth role requirements.
 
 ### Rate Limiting
 The migration script includes pagination to handle large numbers of users. Adjust the `perPage` value based on your needs and Auth0's rate limits.
 
 ## Wrapping Up
 
-Now! You've successfully migrated from Auth0 to Better Auth.
+Now! You've successfully migrated from Auth0 to Faire Auth.
 
-Better Auth offers greater flexibility and more features—be sure to explore the [documentation](/docs) to unlock its full potential. 
+Faire Auth offers greater flexibility and more features—be sure to explore the [documentation](/docs) to unlock its full potential.

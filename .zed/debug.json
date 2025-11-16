@@ -1,0 +1,35 @@
+// Project-local debug tasks
+//
+// For more documentation on how to configure debug tasks,
+// see: https://zed.dev/docs/debugger
+[
+  {
+    "label": "Debug current test file",
+    "adapter": "JavaScript",
+    "type": "pwa-node",
+    "request": "launch",
+    "program": "${ZED_WORKTREE_ROOT}/node_modules/vitest/vitest.mjs",
+    "args": [
+      "run",
+      "$ZED_RELATIVE_FILE"
+    ],
+    "console": "integratedTerminal",
+    "sourceMaps": true,
+    "skipFiles": ["<node_internals>/**", "**/node_modules/**"]
+  },
+  {
+    "label": "Attach to Node Inspector",
+    "adapter": "JavaScript",
+    "type": "pwa-node",
+    "request": "launch",
+    "program": "cd $(npm prefix --no-workspaces) && ${ZED_WORKTREE_ROOT}/node_modules/vitest/vitest.mjs",
+    "args": [
+      "run",
+      "$ZED_FILE"
+    ],
+    "console": "integratedTerminal",
+    "sourceMaps": true,
+    "cwd": "$ZED_DIRNAME",
+    "skipFiles": ["<node_internals>/**", "**/node_modules/**"]
+  }
+]

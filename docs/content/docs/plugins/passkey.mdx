@@ -37,13 +37,13 @@ The passkey plugin implementation is powered by [SimpleWebAuthn](https://simplew
                 - `preferred`: Verification encouraged but not mandatory
                 - `discouraged`: No verification required (fastest experience)
                 - Default: `preferred`
-            
-           
-        ```ts title="auth.ts"
-        import { betterAuth } from "better-auth"
-        import { passkey } from "better-auth/plugins/passkey" // [!code highlight]
 
-        export const auth = betterAuth({
+
+        ```ts title="auth.ts"
+        import { faireAuth } from "faire-auth"
+        import { passkey } from "faire-auth/plugins/passkey" // [!code highlight]
+
+        export const auth = faireAuth({
             plugins: [ // [!code highlight]
                 passkey(), // [!code highlight]
             ], // [!code highlight]
@@ -58,12 +58,12 @@ The passkey plugin implementation is powered by [SimpleWebAuthn](https://simplew
         <Tabs items={["migrate", "generate"]}>
             <Tab value="migrate">
             ```bash
-            npx @better-auth/cli migrate
+            npx @faire-auth/cli migrate
             ```
             </Tab>
             <Tab value="generate">
             ```bash
-            npx @better-auth/cli generate
+            npx @faire-auth/cli generate
             ```
             </Tab>
         </Tabs>
@@ -73,8 +73,8 @@ The passkey plugin implementation is powered by [SimpleWebAuthn](https://simplew
         ### Add the client plugin
 
         ```ts title="auth-client.ts"
-        import { createAuthClient } from "better-auth/client"
-        import { passkeyClient } from "better-auth/client/plugins"
+        import { createAuthClient } from "faire-auth/client"
+        import { passkeyClient } from "faire-auth/client/plugins"
 
         export const authClient = createAuthClient({
             plugins: [ // [!code highlight]
@@ -174,7 +174,7 @@ You can delete a passkey by calling `passkey.delete` and providing the passkey I
 ```ts
 type deletePasskey = {
     /**
-     * The ID of the passkey to delete. 
+     * The ID of the passkey to delete.
      */
     id: string = "some-passkey-id"
 }
@@ -195,7 +195,7 @@ type updatePasskey = {
      */
     id: string = "id of passkey"
     /**
-     * The new name which the passkey will be updated to. 
+     * The new name which the passkey will be updated to.
      */
     name: string = "my-new-passkey-name"
 }
@@ -265,9 +265,9 @@ Table Name: `passkey`
 
 <DatabaseTable
     fields={[
-        { 
-            name: "id", 
-            type: "string", 
+        {
+            name: "id",
+            type: "string",
             description: "Unique identifier for each passkey",
             isPrimaryKey: true
         },
@@ -277,14 +277,14 @@ Table Name: `passkey`
             description: "The name of the passkey",
             isOptional: true
         },
-        { 
-            name: "publicKey", 
-            type: "string", 
+        {
+            name: "publicKey",
+            type: "string",
             description: "The public key of the passkey",
         },
-        { 
-            name: "userId", 
-            type: "string", 
+        {
+            name: "userId",
+            type: "string",
             description: "The ID of the user",
             isForeignKey: true
         },
@@ -293,9 +293,9 @@ Table Name: `passkey`
             type: "string",
             description: "The unique identifier of the registered credential",
         },
-        { 
-            name: "counter", 
-            type: "number", 
+        {
+            name: "counter",
+            type: "number",
             description: "The counter of the passkey",
         },
         {
@@ -313,9 +313,9 @@ Table Name: `passkey`
             type: "string",
             description: "The transports used to register the passkey",
         },
-        { 
-            name: "createdAt", 
-            type: "Date", 
+        {
+            name: "createdAt",
+            type: "Date",
             description: "The time when the passkey was created",
         },
         {

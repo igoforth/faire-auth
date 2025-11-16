@@ -6,7 +6,7 @@ import Link from "next/link";
 async function getGitHubStars() {
 	try {
 		const response = await fetch(
-			"https://api.github.com/repos/better-auth/better-auth",
+			"https://api.github.com/repos/igoforth/faire-auth",
 			{
 				next: {
 					revalidate: 60,
@@ -36,19 +36,19 @@ export default async function HomePage() {
 								<span className=" text-zinc-900 dark:text-white/90 hover:text-zinc-950 text-xs md:text-sm dark:hover:text-zinc-100 transition-colors">
 									Introducing{" "}
 									<span className="font-semibold">
-										Better Auth Infrastructure
+										Faire Auth Infrastructure
 									</span>
 								</span>
 								<span className=" text-zinc-400 hidden md:block">|</span>
 								<Link
-									href="https://better-auth.build"
+									href="https://faire-auth.build"
 									className="font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 hidden dark:hover:text-blue-300 transition-colors md:block"
 								>
 									Join the waitlist →
 								</Link>
 							</span>
 							<Link
-								href="https://better-auth.build"
+								href="https://faire-auth.build"
 								className="font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 text-xs dark:hover:text-blue-300 transition-colors md:hidden"
 							>
 								Join the waitlist →

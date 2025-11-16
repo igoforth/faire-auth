@@ -1,12 +1,12 @@
 ---
-title: Better Auth Fastify Integration Guide
-description: Learn how to seamlessly integrate Better Auth with your Fastify application.
+title: Faire Auth Fastify Integration Guide
+description: Learn how to seamlessly integrate Faire Auth with your Fastify application.
 ---
 
 This guide provides step-by-step instructions for configuring both essential handlers and CORS settings.
 
 <Callout type="important">
-A configured Better Auth instance is required before proceeding. If you haven't set this up yet, please consult our [Installation Guide](/docs/installation).
+A configured Faire Auth instance is required before proceeding. If you haven't set this up yet, please consult our [Installation Guide](/docs/installation).
 </Callout>
 
 ### Prerequisites
@@ -26,11 +26,11 @@ Verify the following requirements before integration:
 
 ### Authentication Handler Setup
 
-Configure Better Auth to process authentication requests by creating a catch-all route:
+Configure Faire Auth to process authentication requests by creating a catch-all route:
 
 ```ts title="server.ts"
 import Fastify from "fastify";
-import { auth } from "./auth"; // Your configured Better Auth instance
+import { auth } from "./auth"; // Your configured Faire Auth instance
 
 const fastify = Fastify({ logger: true });
 
@@ -42,7 +42,7 @@ fastify.route({
     try {
       // Construct request URL
       const url = new URL(request.url, `http://${request.headers.host}`);
-      
+
       // Convert Fastify headers to standard Headers object
       const headers = new Headers();
       Object.entries(request.headers).forEach(([key, value]) => {
@@ -66,7 +66,7 @@ fastify.route({
 
     } catch (error) {
       fastify.log.error("Authentication Error:", error);
-      reply.status(500).send({ 
+      reply.status(500).send({
         error: "Internal authentication error",
         code: "AUTH_FAILURE"
       });
@@ -89,7 +89,7 @@ fastify.listen({ port: 4000 }, (err) => {
 When a request is made from a different origin, the request will be blocked by default. You can add trusted origins to the `auth` instance.
 
 ```ts
-export const auth = betterAuth({
+export const auth = faireAuth({
   trustedOrigins: ["http://localhost:3000", "https://example.com"],
 });
 ```

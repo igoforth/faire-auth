@@ -1,15 +1,15 @@
 ---
 title: Telemetry
-description: Better Auth now collects anonymous telemetry data about general usage.
+description: Faire Auth now collects anonymous telemetry data about general usage.
 ---
 
-Better Auth collects anonymous usage data to help us improve the project. This is optional, transparent, and disabled by default.
+Faire Auth collects anonymous usage data to help us improve the project. This is optional, transparent, and disabled by default.
 
 ## Why is telemetry collected?
 
-Since v1.3.5, Better Auth collects anonymous telemetry data about general usage if enabled.
+Since v1.3.5, Faire Auth collects anonymous telemetry data about general usage if enabled.
 
-Telemetry data helps us understand how Better Auth is being used across different environments so we can improve performance, prioritize features, and fix issues more effectively. It guides our decisions on performance optimizations, feature development, and bug fixes. All data is collected completely anonymously and with privacy in mind, and users can opt out at any time. We strive to keep what we collect as transparent as possible.
+Telemetry data helps us understand how Faire Auth is being used across different environments so we can improve performance, prioritize features, and fix issues more effectively. It guides our decisions on performance optimizations, feature development, and bug fixes. All data is collected completely anonymously and with privacy in mind, and users can opt out at any time. We strive to keep what we collect as transparent as possible.
 
 ## What is being collected?
 
@@ -22,7 +22,7 @@ The following data points may be reported. Everything is anonymous and intended 
 - **Database (if detected)**: `{ name, version }` for integrations like PostgreSQL, MySQL, SQLite, Prisma, Drizzle, MongoDB, etc.
 - **System info**: platform, OS release, architecture, CPU count/model/speed, total memory, and flags like `isDocker`, `isWSL`, `isTTY`.
 - **Package manager**: `{ name, version }` derived from the npm user agent.
-- **Redacted auth config snapshot**: A minimized, privacy‑preserving view of your `betterAuth` options produced by `getTelemetryAuthConfig`.
+- **Redacted auth config snapshot**: A minimized, privacy‑preserving view of your `faireAuth` options produced by `getTelemetryAuthConfig`.
 
 We also collect anonymous telemetry from the CLI:
 
@@ -31,10 +31,10 @@ We also collect anonymous telemetry from the CLI:
 
 
 <Callout type="info">
-  You can audit telemetry locally by setting the `BETTER_AUTH_TELEMETRY_DEBUG=1` environment variable when running your project or by setting `telemetry: { debug: true }` in your auth config. In this debug mode, telemetry events are logged only to the console.
+  You can audit telemetry locally by setting the `FAIRE_AUTH_TELEMETRY_DEBUG=1` environment variable when running your project or by setting `telemetry: { debug: true }` in your auth config. In this debug mode, telemetry events are logged only to the console.
 
   ```ts title="auth.ts"
-  export const auth = betterAuth({
+  export const auth = faireAuth({
     // [!code highlight]
     telemetry: { // [!code highlight]
       debug: true // [!code highlight]
@@ -45,11 +45,11 @@ We also collect anonymous telemetry from the CLI:
 
 ## How is my data protected?
 
-All collected data is fully anonymous and only useful in aggregate. It cannot be traced back to any individual source and is accessible only to a small group of core Better Auth maintainers to guide roadmap decisions.
+All collected data is fully anonymous and only useful in aggregate. It cannot be traced back to any individual source and is accessible only to a small group of core Faire Auth maintainers to guide roadmap decisions.
 
 - **No PII or secrets**: We do not collect emails, usernames, tokens, secrets, client IDs, client secrets, or database URLs.
-- **No full config**: We never send your full `betterAuth` configuration. Instead we send a reduced, redacted snapshot of non‑sensitive toggles and counts.
-- **Redaction by design**: See [detect-auth-config.ts](https://github.com/better-auth/better-auth/blob/main/packages/better-auth/src/telemetry/detectors/detect-auth-config.ts) in the Better Auth source for the exact shape of what is included. It purposely converts sensitive values to booleans, counts, or generic identifiers.
+- **No full config**: We never send your full `faireAuth` configuration. Instead we send a reduced, redacted snapshot of non‑sensitive toggles and counts.
+- **Redaction by design**: See [detect-auth-config.ts](https://github.com/igoforth/faire-auth/blob/main/packages/faire-auth/src/telemetry/detectors/detect-auth-config.ts) in the Faire Auth source for the exact shape of what is included. It purposely converts sensitive values to booleans, counts, or generic identifiers.
 
 ## How can I enable it?
 
@@ -58,7 +58,7 @@ You can enable telemetry collection in your auth config or by setting an environ
 - Via your auth config.
 
   ```ts title="auth.ts"
-  export const auth = betterAuth({
+  export const auth = faireAuth({
     // [!code highlight]
     telemetry: { // [!code highlight]
       enabled: true// [!code highlight]
@@ -70,16 +70,16 @@ You can enable telemetry collection in your auth config or by setting an environ
 
   ```txt title=".env"
   # Enable telemetry
-  BETTER_AUTH_TELEMETRY=1
+  FAIRE_AUTH_TELEMETRY=1
 
   # Disable telemetry
-  BETTER_AUTH_TELEMETRY=0
+  FAIRE_AUTH_TELEMETRY=0
   ```
 
 
 ### When is telemetry sent?
 
-- On `betterAuth` initialization (`type: "init"`).
+- On `faireAuth` initialization (`type: "init"`).
 - On CLI actions: `generate` and `migrate` as described above.
 
 Telemetry is disabled automatically in tests (`NODE_ENV=test`) unless explicitly overridden by internal tooling.

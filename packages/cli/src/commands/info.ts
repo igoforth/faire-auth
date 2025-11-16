@@ -1,9 +1,9 @@
-import { Command } from "commander";
-import os from "os";
-import { execSync } from "child_process";
-import { existsSync, readFileSync } from "fs";
-import path from "path";
 import chalk from "chalk";
+import { execSync } from "child_process";
+import { Command } from "commander";
+import { existsSync, readFileSync } from "fs";
+import os from "os";
+import path from "path";
 import { getConfig } from "../utils/get-config";
 import { getPackageInfo } from "../utils/get-package-info";
 
@@ -139,7 +139,7 @@ function getDatabaseInfo(projectRoot: string) {
 	}
 }
 
-function sanitizeBetterAuthConfig(config: any): any {
+function sanitizeFaireAuthConfig(config: any): any {
 	if (!config) return null;
 
 	const sanitized = JSON.parse(JSON.stringify(config));
@@ -307,7 +307,7 @@ function sanitizeBetterAuthConfig(config: any): any {
 	return redactSensitive(sanitized);
 }
 
-async function getBetterAuthInfo(
+async function getFaireAuthInfo(
 	projectRoot: string,
 	configPath?: string,
 	suppressLogs = false,
@@ -327,20 +327,20 @@ async function getBetterAuthInfo(
 		try {
 			const config = await getConfig({
 				cwd: projectRoot,
-				configPath,
+				...(configPath && { configPath }),
 				shouldThrowOnError: false,
 			});
 			const packageInfo = await getPackageInfo();
-			const betterAuthVersion =
-				packageInfo.dependencies?.["better-auth"] ||
-				packageInfo.devDependencies?.["better-auth"] ||
-				packageInfo.peerDependencies?.["better-auth"] ||
-				packageInfo.optionalDependencies?.["better-auth"] ||
+			const faireAuthVersion =
+				packageInfo.dependencies?.["faire-auth"] ||
+				packageInfo.devDependencies?.["faire-auth"] ||
+				packageInfo.peerDependencies?.["faire-auth"] ||
+				packageInfo.optionalDependencies?.["faire-auth"] ||
 				"Unknown";
 
 			return {
-				version: betterAuthVersion,
-				config: sanitizeBetterAuthConfig(config),
+				version: faireAuthVersion,
+				config: sanitizeFaireAuthConfig(config),
 			};
 		} finally {
 			// Restore console methods
@@ -357,7 +357,7 @@ async function getBetterAuthInfo(
 			error:
 				error instanceof Error
 					? error.message
-					: "Failed to load Better Auth config",
+					: "Failed to load Faire Auth config",
 		};
 	}
 }
@@ -408,9 +408,9 @@ function formatOutput(data: any, indent = 0): string {
 }
 
 export const info = new Command("info")
-	.description("Display system and Better Auth configuration information")
+	.description("Display system and Faire Auth configuration information")
 	.option("--cwd <cwd>", "The working directory", process.cwd())
-	.option("--config <config>", "Path to the Better Auth configuration file")
+	.option("--config <config>", "Path to the Faire Auth configuration file")
 	.option("-j, --json", "Output as JSON")
 	.option("-c, --copy", "Copy output to clipboard (requires pbcopy/xclip)")
 	.action(async (options) => {
@@ -422,7 +422,7 @@ export const info = new Command("info")
 		const packageManager = getPackageManager();
 		const frameworks = getFrameworkInfo(projectRoot);
 		const databases = getDatabaseInfo(projectRoot);
-		const betterAuthInfo = await getBetterAuthInfo(
+		const faireAuthInfo = await getFaireAuthInfo(
 			projectRoot,
 			options.config,
 			options.json,
@@ -434,7 +434,7 @@ export const info = new Command("info")
 			packageManager,
 			frameworks,
 			databases,
-			betterAuth: betterAuthInfo,
+			faireAuth: faireAuthInfo,
 		};
 
 		if (options.json) {
@@ -455,17 +455,17 @@ export const info = new Command("info")
 						console.log(chalk.green("\n✓ Copied to clipboard"));
 					}
 				} catch {
-					console.log(chalk.yellow("\n⚠ Could not copy to clipboard"));
+					console.log(chalk.yellow("\n! Could not copy to clipboard"));
 				}
 			}
 			return;
 		}
 
 		// Format and display output
-		console.log(chalk.bold("\n📊 Better Auth System Information\n"));
+		console.log(chalk.bold("\n📊 Faire Auth System Information\n"));
 		console.log(chalk.gray("=".repeat(50)));
 
-		console.log(chalk.bold.white("\n🖥️  System Information:"));
+		console.log(chalk.bold.white("\n🖥  System Information:"));
 		console.log(formatOutput(systemInfo, 2));
 
 		console.log(chalk.bold.white("\n📦 Node.js:"));
@@ -484,14 +484,14 @@ export const info = new Command("info")
 			console.log(formatOutput(databases, 2));
 		}
 
-		console.log(chalk.bold.white("\n🔐 Better Auth:"));
-		if (betterAuthInfo.error) {
-			console.log(`  ${chalk.red("Error:")} ${betterAuthInfo.error}`);
+		console.log(chalk.bold.white("\n🔐 Faire Auth:"));
+		if (faireAuthInfo.error) {
+			console.log(`  ${chalk.red("Error:")} ${faireAuthInfo.error}`);
 		} else {
-			console.log(`  ${chalk.cyan("Version")}: ${betterAuthInfo.version}`);
-			if (betterAuthInfo.config) {
+			console.log(`  ${chalk.cyan("Version")}: ${faireAuthInfo.version}`);
+			if (faireAuthInfo.config) {
 				console.log(`  ${chalk.cyan("Configuration")}:`);
-				console.log(formatOutput(betterAuthInfo.config, 4));
+				console.log(formatOutput(faireAuthInfo.config, 4));
 			}
 		}
 
@@ -504,7 +504,7 @@ export const info = new Command("info")
 
 		if (options.copy) {
 			const textOutput = `
-Better Auth System Information
+Faire Auth System Information
 ==============================
 
 System Information:
@@ -522,8 +522,8 @@ ${JSON.stringify(frameworks, null, 2)}
 Database Clients:
 ${JSON.stringify(databases, null, 2)}
 
-Better Auth:
-${JSON.stringify(betterAuthInfo, null, 2)}
+Faire Auth:
+${JSON.stringify(faireAuthInfo, null, 2)}
 `;
 
 			try {
@@ -539,7 +539,7 @@ ${JSON.stringify(betterAuthInfo, null, 2)}
 					console.log(chalk.green("✓ Copied to clipboard"));
 				}
 			} catch {
-				console.log(chalk.yellow("⚠ Could not copy to clipboard"));
+				console.log(chalk.yellow("! Could not copy to clipboard"));
 			}
 		}
 	});

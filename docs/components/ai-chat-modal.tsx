@@ -38,7 +38,7 @@ export function AIChatModal({ isOpen, onClose }: AIChatModalProps) {
 	const [sessionId, setSessionId] = useState<string | null>(null);
 	const [externalUserId] = useState<string>(
 		() =>
-			`better-auth-user-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+			`faire-auth-user-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
 	);
 	const messagesEndRef = useRef<HTMLDivElement>(null);
 	const abortControllerRef = useRef<AbortController | null>(null);
@@ -224,10 +224,10 @@ export function AIChatModal({ isOpen, onClose }: AIChatModalProps) {
 				<DialogHeader>
 					<DialogTitle className="flex items-center gap-2">
 						<Bot className="h-5 w-5 text-primary" />
-						Ask AI About Better Auth
+						Ask AI About Faire Auth
 					</DialogTitle>
 					<DialogDescription>
-						Ask questions about Better-Auth and get AI-powered answers
+						Ask questions about Faire Auth and get AI-powered answers
 						{apiError && (
 							<div className="flex items-center gap-2 mt-2 text-amber-600 dark:text-amber-400">
 								<AlertCircle className="h-4 w-4" />
@@ -256,10 +256,10 @@ export function AIChatModal({ isOpen, onClose }: AIChatModalProps) {
 
 								<div className="mb-8 max-w-md">
 									<h3 className="text-xl font-semibold text-foreground mb-2">
-										Ask About Better Auth
+										Ask About Faire Auth
 									</h3>
 									<p className="text-muted-foreground text-sm leading-relaxed">
-										I'm here to help you with Better Auth questions, setup
+										I'm here to help you with Faire Auth questions, setup
 										guides, and implementation tips. Ask me anything!
 									</p>
 								</div>
@@ -271,7 +271,7 @@ export function AIChatModal({ isOpen, onClose }: AIChatModalProps) {
 									<div className="space-y-3">
 										{[
 											"How do I set up SSO with Google?",
-											"How to integrate Better Auth with NextJs?",
+											"How to integrate Faire Auth with NextJs?",
 											"How to setup Two Factor Authentication?",
 										].map((question, index) => (
 											<button
@@ -368,7 +368,7 @@ export function AIChatModal({ isOpen, onClose }: AIChatModalProps) {
 									<Textarea
 										value={input}
 										onChange={(e) => setInput(e.target.value)}
-										placeholder="Ask a question about Better-Auth..."
+										placeholder="Ask a question about Faire Auth..."
 										className="w-full rounded-none rounded-b-none px-4 py-3 h-[70px] bg-transparent border-none text-foreground placeholder:text-muted-foreground resize-none focus-visible:ring-0 leading-[1.2] min-h-[52px] max-h-32"
 										disabled={isLoading}
 										onKeyDown={(e) => {

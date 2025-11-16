@@ -1,7 +1,8 @@
 import * as z from "zod";
+import { dateOrIsoStringSchema } from "../../factory/schema";
 
 export const coreSchema = z.object({
 	id: z.string(),
-	createdAt: z.date().default(() => new Date()),
-	updatedAt: z.date().default(() => new Date()),
+	createdAt: dateOrIsoStringSchema.default(() => new Date()),
+	updatedAt: dateOrIsoStringSchema.default(() => new Date()),
 });

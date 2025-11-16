@@ -1,5 +1,6 @@
-import type { BetterAuthDBSchema, DBFieldAttribute } from "../type";
-import type { BetterAuthOptions } from "../../types";
+import type { OmitId } from "../../types";
+import type { FaireAuthOptions } from "../../types/options";
+import type { FaireAuthDBSchema, DBFieldAttribute } from "../type";
 
 export type DBAdapterDebugLogOption =
 	| boolean
@@ -48,7 +49,7 @@ export type DBAdapterSchemaCreation = {
 };
 
 export interface DBAdapterFactoryConfig<
-	Options extends BetterAuthOptions = BetterAuthOptions,
+	Options extends FaireAuthOptions = FaireAuthOptions,
 > {
 	/**
 	 * Use plural table names.
@@ -57,13 +58,13 @@ export interface DBAdapterFactoryConfig<
 	 *
 	 * @default false
 	 */
-	usePlural?: boolean;
+	usePlural?: boolean | undefined;
 	/**
 	 * Enable debug logs.
 	 *
 	 * @default false
 	 */
-	debugLogs?: DBAdapterDebugLogOption;
+	debugLogs?: DBAdapterDebugLogOption | undefined;
 	/**
 	 * Name of the adapter.
 	 *
@@ -116,7 +117,7 @@ export interface DBAdapterFactoryConfig<
 	transaction?:
 		| false
 		| (<R>(
-				callback: (trx: DBTransactionAdapter<Options>) => Promise<R>,
+				callback: (trx: DBTransactionAdapter<Options>) => R | Promise<R>,
 		  ) => Promise<R>);
 	/**
 	 * Disable id generation for the `create` method.
@@ -131,7 +132,7 @@ export interface DBAdapterFactoryConfig<
 	 *
 	 * This is useful for databases that expect a different key name for a given situation.
 	 *
-	 * For example, MongoDB uses `_id` while in Better-Auth we use `id`.
+	 * For example, MongoDB uses `_id` while in Faire-Auth we use `id`.
 	 *
 	 *
 	 * @example
@@ -152,7 +153,7 @@ export interface DBAdapterFactoryConfig<
 	 *
 	 * This is useful for databases that expect a different key name for a given situation.
 	 *
-	 * For example, MongoDB uses `_id` while in Better-Auth we use `id`.
+	 * For example, MongoDB uses `_id` while in Faire-Auth we use `id`.
 	 *
 	 * @example
 	 * Each key represents the old key to replace.
@@ -191,11 +192,11 @@ export interface DBAdapterFactoryConfig<
 		 */
 		model: string;
 		/**
-		 * The schema of the user's Better-Auth instance.
+		 * The schema of the user's Faire-Auth instance.
 		 */
-		schema: BetterAuthDBSchema;
+		schema: FaireAuthDBSchema;
 		/**
-		 * The options of the user's Better-Auth instance.
+		 * The options of the user's Faire-Auth instance.
 		 */
 		options: Options;
 	}) => any;
@@ -223,11 +224,11 @@ export interface DBAdapterFactoryConfig<
 		 */
 		model: string;
 		/**
-		 * The schema of the user's Better-Auth instance.
+		 * The schema of the user's Faire-Auth instance.
 		 */
-		schema: BetterAuthDBSchema;
+		schema: FaireAuthDBSchema;
 		/**
-		 * The options of the user's Better-Auth instance.
+		 * The options of the user's Faire-Auth instance.
 		 */
 		options: Options;
 	}) => any;
@@ -240,7 +241,7 @@ export interface DBAdapterFactoryConfig<
 	 *
 	 * Notes:
 	 * - If the user enabled `useNumberId`, then this option will be ignored. Unless this adapter config has `supportsNumericIds` set to `false`.
-	 * - If `generateId` is `false` in the user's Better-Auth config, then this option will be ignored.
+	 * - If `generateId` is `false` in the user's Faire-Auth config, then this option will be ignored.
 	 * - If `generateId` is a function, then it will override this option.
 	 *
 	 * @example
@@ -291,14 +292,14 @@ export type Where = {
 };
 
 export type DBTransactionAdapter<
-	Options extends BetterAuthOptions = BetterAuthOptions,
+	Options extends FaireAuthOptions = FaireAuthOptions,
 > = Omit<DBAdapter<Options>, "transaction">;
 
-export type DBAdapter<Options extends BetterAuthOptions = BetterAuthOptions> = {
+export type DBAdapter<Options extends FaireAuthOptions = FaireAuthOptions> = {
 	id: string;
 	create: <T extends Record<string, any>, R = T>(data: {
 		model: string;
-		data: Omit<T, "id">;
+		data: OmitId<T>;
 		select?: string[];
 		/**
 		 * By default, any `id` provided in `data` will be ignored.
@@ -324,7 +325,7 @@ export type DBAdapter<Options extends BetterAuthOptions = BetterAuthOptions> = {
 	}) => Promise<T[]>;
 	count: (data: { model: string; where?: Where[] }) => Promise<number>;
 	/**
-	 * ⚠︎ Update may not return the updated data
+	 * ! Update may not return the updated data
 	 * if multiple where clauses are provided
 	 */
 	update: <T>(data: {
@@ -344,17 +345,16 @@ export type DBAdapter<Options extends BetterAuthOptions = BetterAuthOptions> = {
 	 * If the adapter doesn't support transactions, operations will be executed sequentially.
 	 */
 	transaction: <R>(
-		callback: (trx: DBTransactionAdapter<Options>) => Promise<R>,
+		callback: (trx: DBTransactionAdapter<Options>) => R | Promise<R>,
 	) => Promise<R>;
 	/**
 	 *
 	 * @param options
 	 * @param file - file path if provided by the user
 	 */
-	createSchema?: (
-		options: Options,
-		file?: string,
-	) => Promise<DBAdapterSchemaCreation>;
+	createSchema?:
+		| ((options: Options, file?: string) => Promise<DBAdapterSchemaCreation>)
+		| undefined;
 	options?: {
 		adapterConfig: DBAdapterFactoryConfig<Options>;
 	} & CustomAdapter["options"];
@@ -431,9 +431,9 @@ export interface CustomAdapter {
 		 */
 		file?: string;
 		/**
-		 * The tables from the user's Better-Auth instance schema.
+		 * The tables from the user's Faire-Auth instance schema.
 		 */
-		tables: BetterAuthDBSchema;
+		tables: FaireAuthDBSchema;
 	}) => Promise<DBAdapterSchemaCreation>;
 	/**
 	 * Your adapter's options.
@@ -442,7 +442,7 @@ export interface CustomAdapter {
 }
 
 export interface DBAdapterInstance<
-	Options extends BetterAuthOptions = BetterAuthOptions,
+	Options extends FaireAuthOptions = FaireAuthOptions,
 > {
-	(options: BetterAuthOptions): DBAdapter<Options>;
+	(options: FaireAuthOptions): DBAdapter<Options>;
 }

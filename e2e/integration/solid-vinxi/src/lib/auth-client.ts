@@ -1,4 +1,4 @@
-import { createAuthClient } from "better-auth/solid";
+import { createAuthClient } from "faire-auth/solid";
 
 const search =
 	typeof window !== "undefined"
@@ -6,7 +6,7 @@ const search =
 		: new URLSearchParams("");
 const port = search.get("port");
 
-export const client = createAuthClient({
+export const client = createAuthClient()({
 	baseURL: `http://localhost:${port || 3000}`,
 });
 

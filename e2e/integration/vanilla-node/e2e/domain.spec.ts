@@ -22,19 +22,23 @@ test.describe("cross domain", async () => {
 			runClient(page, ({ client }) => typeof client !== "undefined"),
 		).resolves.toBe(true);
 		await expect(
-			runClient(page, async ({ client }) => client.getSession()),
+			runClient(page, async ({ client }) =>
+				client.getSession.$get({ query: {} }),
+			),
 		).resolves.toEqual({ data: null, error: null });
 		await runClient(page, ({ client }) =>
-			client.signIn.email({
-				email: "test@test.com",
-				password: "password123",
+			client.signIn.email.$post({
+				json: {
+					email: "test@test.com",
+					password: "password123",
+				},
 			}),
 		);
 
 		// Check that the session is not set because of we didn't set the cookie domain correctly
 		const cookies = await page.context().cookies();
 		expect(
-			cookies.find((c) => c.name === "better-auth.session_token"),
+			cookies.find((c) => c.name === "faire-auth.session_token"),
 		).not.toBeDefined();
 	});
 });

@@ -1,6 +1,6 @@
 ---
 title: MCP
-description: MCP provider plugin for Better Auth
+description: MCP provider plugin for Faire Auth
 ---
 
 `OAuth` `MCP`
@@ -16,10 +16,10 @@ The **MCP** plugin lets your app act as an OAuth provider for MCP clients. It ha
         Add the MCP plugin to your auth configuration and specify the login page path.
 
         ```ts title="auth.ts"
-        import { betterAuth } from "better-auth";
-        import { mcp } from "better-auth/plugins";
+        import { faireAuth } from "faire-auth";
+        import { mcp } from "faire-auth/plugins";
 
-        export const auth = betterAuth({
+        export const auth = faireAuth({
             plugins: [
                 mcp({
                     loginPage: "/sign-in" // path to your login page
@@ -40,12 +40,12 @@ The **MCP** plugin lets your app act as an OAuth provider for MCP clients. It ha
         <Tabs items={["migrate", "generate"]}>
             <Tab value="migrate">
             ```bash
-            npx @better-auth/cli migrate
+            npx @faire-auth/cli migrate
             ```
             </Tab>
             <Tab value="generate">
             ```bash
-            npx @better-auth/cli generate
+            npx @faire-auth/cli generate
             ```
             </Tab>
         </Tabs>
@@ -57,10 +57,10 @@ The **MCP** plugin lets your app act as an OAuth provider for MCP clients. It ha
 
 ### OAuth Discovery Metadata
 
-Better Auth already handles the `/api/auth/.well-known/oauth-authorization-server` route automatically but some client may fail to parse the `WWW-Authenticate` header and default to `/.well-known/oauth-authorization-server` (this can happen, for example, if your CORS configuration doesn't expose the `WWW-Authenticate`). For this reason it's better to add a route to expose OAuth metadata for MCP clients:
+Faire Auth already handles the `/api/auth/.well-known/oauth-authorization-server` route automatically but some client may fail to parse the `WWW-Authenticate` header and default to `/.well-known/oauth-authorization-server` (this can happen, for example, if your CORS configuration doesn't expose the `WWW-Authenticate`). For this reason it's better to add a route to expose OAuth metadata for MCP clients:
 
 ```ts title=".well-known/oauth-authorization-server/route.ts"
-import { oAuthDiscoveryMetadata } from "better-auth/plugins";
+import { oAuthDiscoveryMetadata } from "faire-auth/plugins";
 import { auth } from "../../../lib/auth";
 
 export const GET = oAuthDiscoveryMetadata(auth);
@@ -68,10 +68,10 @@ export const GET = oAuthDiscoveryMetadata(auth);
 
 ### OAuth Protected Resource Metadata
 
-Better Auth already handles the `/api/auth/.well-known/oauth-protected-resource` route automatically but some client may fail to parse the `WWW-Authenticate` header and default to `/.well-known/oauth-protected-resource` (this can happen, for example, if your CORS configuration doesn't expose the `WWW-Authenticate`). For this reason it's better to add a route to expose OAuth metadata for MCP clients:
+Faire Auth already handles the `/api/auth/.well-known/oauth-protected-resource` route automatically but some client may fail to parse the `WWW-Authenticate` header and default to `/.well-known/oauth-protected-resource` (this can happen, for example, if your CORS configuration doesn't expose the `WWW-Authenticate`). For this reason it's better to add a route to expose OAuth metadata for MCP clients:
 
 ```ts title="/.well-known/oauth-protected-resource/route.ts"
-import { oAuthProtectedResourceMetadata } from "better-auth/plugins";
+import { oAuthProtectedResourceMetadata } from "faire-auth/plugins";
 import { auth } from "@/lib/auth";
 
 export const GET = oAuthProtectedResourceMetadata(auth);
@@ -85,7 +85,7 @@ You can use the helper function `withMcpAuth` to get the session and handle unau
 ```ts title="api/[transport]/route.ts"
 import { auth } from "@/lib/auth";
 import { createMcpHandler } from "@vercel/mcp-adapter";
-import { withMcpAuth } from "better-auth/plugins";
+import { withMcpAuth } from "faire-auth/plugins";
 import { z } from "zod";
 
 const handler = withMcpAuth(auth, (req, session) => {

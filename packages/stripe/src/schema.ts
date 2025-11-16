@@ -1,6 +1,6 @@
-import type { BetterAuthPluginDBSchema } from "@better-auth/core/db";
+import type { AuthPluginSchema } from "faire-auth";
 import type { StripeOptions } from "./types";
-import { mergeSchema } from "better-auth/db";
+import { mergeSchema } from "faire-auth/db";
 
 export const subscriptions = {
 	subscription: {
@@ -52,7 +52,7 @@ export const subscriptions = {
 			},
 		},
 	},
-} satisfies BetterAuthPluginDBSchema;
+} satisfies AuthPluginSchema;
 
 export const user = {
 	user: {
@@ -63,7 +63,7 @@ export const user = {
 			},
 		},
 	},
-} satisfies BetterAuthPluginDBSchema;
+} satisfies AuthPluginSchema;
 
 export const getSchema = (options: StripeOptions) => {
 	let baseSchema = {};

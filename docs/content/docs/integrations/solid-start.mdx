@@ -1,9 +1,9 @@
 ---
 title: SolidStart Integration
-description: Integrate Better Auth with SolidStart.
+description: Integrate Faire Auth with SolidStart.
 ---
 
-Before you start, make sure you have a Better Auth instance configured. If you haven't done that yet, check out the [installation](/docs/installation).
+Before you start, make sure you have a Faire Auth instance configured. If you haven't done that yet, check out the [installation](/docs/installation).
 
 ### Mount the handler
 
@@ -11,7 +11,7 @@ We need to mount the handler to SolidStart server. Put the following code in you
 
 ```ts title="*auth.ts"
 import { auth } from "~/lib/auth";
-import { toSolidStartHandler } from "better-auth/solid-start";
+import { toSolidStartHandler } from "faire-auth/solid-start";
 
 export const { GET, POST } = toSolidStartHandler(auth);
 ```

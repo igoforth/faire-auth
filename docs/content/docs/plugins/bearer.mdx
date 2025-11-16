@@ -14,10 +14,10 @@ The Bearer plugin enables authentication using Bearer tokens as an alternative t
 Add the Bearer plugin to your authentication setup:
 
 ```ts title="auth.ts"
-import { betterAuth } from "better-auth";
-import { bearer } from "better-auth/plugins";
+import { faireAuth } from "faire-auth";
+import { bearer } from "faire-auth/plugins";
 
-export const auth = betterAuth({
+export const auth = faireAuth({
     plugins: [bearer()]
 });
 ```
@@ -123,11 +123,11 @@ export async function handler(req, res) {
   const session = await auth.api.getSession({
     headers: req.headers
   });
-  
+
   if (!session) {
     return res.status(401).json({ error: "Unauthorized" });
   }
-  
+
   // Process authenticated request
   // ...
 }

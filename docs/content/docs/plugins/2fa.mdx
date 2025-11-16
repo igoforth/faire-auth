@@ -26,10 +26,10 @@ This plugin offers two main methods to do a second factor verification:
         Add the two-factor plugin to your auth configuration and specify your app name as the issuer.
 
         ```ts title="auth.ts"
-        import { betterAuth } from "better-auth"
-        import { twoFactor } from "better-auth/plugins" // [!code highlight]
+        import { faireAuth } from "faire-auth"
+        import { twoFactor } from "faire-auth/plugins" // [!code highlight]
 
-        export const auth = betterAuth({
+        export const auth = faireAuth({
             // ... other config options
             appName: "My App", // provide your app name. It'll be used as an issuer. // [!code highlight]
             plugins: [
@@ -46,12 +46,12 @@ This plugin offers two main methods to do a second factor verification:
         <Tabs items={["migrate", "generate"]}>
             <Tab value="migrate">
             ```bash
-            npx @better-auth/cli migrate
+            npx @faire-auth/cli migrate
             ```
             </Tab>
             <Tab value="generate">
             ```bash
-            npx @better-auth/cli generate
+            npx @faire-auth/cli generate
             ```
             </Tab>
         </Tabs>
@@ -64,8 +64,8 @@ This plugin offers two main methods to do a second factor verification:
         Add the client plugin and Specify where the user should be redirected if they need to verify 2nd factor
 
         ```ts title="auth-client.ts"
-        import { createAuthClient } from "better-auth/client"
-        import { twoFactorClient } from "better-auth/client/plugins"
+        import { createAuthClient } from "faire-auth/client"
+        import { twoFactorClient } from "faire-auth/client/plugins"
 
         export const authClient = createAuthClient({
             plugins: [
@@ -135,8 +135,8 @@ await authClient.signIn.email({
 Using the `onTwoFactorRedirect` config:
 
 ```ts title="sign-in.ts"
-import { createAuthClient } from "better-auth/client";
-import { twoFactorClient } from "better-auth/client/plugins";
+import { createAuthClient } from "faire-auth/client";
+import { twoFactorClient } from "faire-auth/client/plugins";
 
 const authClient = createAuthClient({
     plugins: [
@@ -192,7 +192,7 @@ type disableTwoFactor = {
 
 ### TOTP
 
-TOTP (Time-Based One-Time Password) is an algorithm that generates a unique password for each login attempt using time as a counter. Every fixed interval (Better Auth defaults to 30 seconds), a new password is generated. This addresses several issues with traditional passwords: they can be forgotten, stolen, or guessed. OTPs solve some of these problems, but their delivery via SMS or email can be unreliable (or even risky, considering it opens new attack vectors).
+TOTP (Time-Based One-Time Password) is an algorithm that generates a unique password for each login attempt using time as a counter. Every fixed interval (Faire Auth defaults to 30 seconds), a new password is generated. This addresses several issues with traditional passwords: they can be forgotten, stolen, or guessed. OTPs solve some of these problems, but their delivery via SMS or email can be unreliable (or even risky, considering it opens new attack vectors).
 
 TOTP, however, generates codes offline, making it both secure and convenient. You just need an authenticator app on your phone.
 
@@ -240,22 +240,22 @@ export default function UserCard({ password }: { password: string }){
 ```
 
 <Callout>
-By default the issuer for TOTP is set to the app name provided in the auth config or if not provided it will be set to `Better Auth`. You can override this by passing `issuer` to the plugin config.
+By default the issuer for TOTP is set to the app name provided in the auth config or if not provided it will be set to `Faire Auth`. You can override this by passing `issuer` to the plugin config.
 </Callout>
 
 #### Verifying TOTP
 
-After the user has entered their 2FA code, you can verify it using `twoFactor.verifyTotp` method. `Better Auth` follows standard practice by accepting TOTP codes from one period before and one after the current code, ensuring users can authenticate even with minor time delays on their end.
+After the user has entered their 2FA code, you can verify it using `twoFactor.verifyTotp` method. `Faire Auth` follows standard practice by accepting TOTP codes from one period before and one after the current code, ensuring users can authenticate even with minor time delays on their end.
 
 <APIMethod path="/two-factor/verify-totp" method="POST">
 ```ts
 type verifyTOTP = {
     /**
-     * The otp code to verify. 
+     * The otp code to verify.
      */
     code: string = "012345"
     /**
-     * If true, the device will be trusted for 30 days. It'll be refreshed on every sign in request within this time. 
+     * If true, the device will be trusted for 30 days. It'll be refreshed on every sign in request within this time.
      */
     trustDevice?: boolean = true
 }
@@ -266,13 +266,13 @@ type verifyTOTP = {
 
 OTP (One-Time Password) is similar to TOTP but a random code is generated and sent to the user's email or phone.
 
-Before using OTP to verify the second factor, you need to configure `sendOTP` in your Better Auth instance. This function is responsible for sending the OTP to the user's email, phone, or any other method supported by your application.
+Before using OTP to verify the second factor, you need to configure `sendOTP` in your Faire Auth instance. This function is responsible for sending the OTP to the user's email, phone, or any other method supported by your application.
 
 ```ts title="auth.ts"
-import { betterAuth } from "better-auth"
-import { twoFactor } from "better-auth/plugins"
+import { faireAuth } from "faire-auth"
+import { twoFactor } from "faire-auth/plugins"
 
-export const auth = betterAuth({
+export const auth = faireAuth({
     plugins: [
         twoFactor({
           	otpOptions: {
@@ -287,13 +287,13 @@ export const auth = betterAuth({
 
 #### Sending OTP
 
-Sending an OTP is done by calling the `twoFactor.sendOtp` function. This function will trigger your sendOTP implementation that you provided in the Better Auth configuration.
+Sending an OTP is done by calling the `twoFactor.sendOtp` function. This function will trigger your sendOTP implementation that you provided in the Faire Auth configuration.
 
 <APIMethod path="/two-factor/send-otp" method="POST">
 ```ts
 type send2FaOTP = {
     /**
-     * If true, the device will be trusted for 30 days. It'll be refreshed on every sign in request within this time. 
+     * If true, the device will be trusted for 30 days. It'll be refreshed on every sign in request within this time.
      */
     trustDevice?: boolean = true
 }
@@ -312,11 +312,11 @@ After the user has entered their OTP code, you can verify it
 ```ts
 type verifyOTP = {
     /**
-     * The otp code to verify. 
+     * The otp code to verify.
      */
     code: string = "012345"
     /**
-     * If true, the device will be trusted for 30 days. It'll be refreshed on every sign in request within this time. 
+     * If true, the device will be trusted for 30 days. It'll be refreshed on every sign in request within this time.
      */
     trustDevice?: boolean = true
 }
@@ -338,7 +338,7 @@ Generate backup codes for account recovery:
 ```ts
 type generateBackupCodes = {
     /**
-     * The users password. 
+     * The users password.
      */
     password: string
 }
@@ -363,15 +363,15 @@ You can now allow users to provider backup code as account recover method.
 ```ts
 type verifyBackupCode = {
     /**
-     * A backup code to verify. 
+     * A backup code to verify.
      */
     code: string = "123456"
     /**
-     * If true, the session cookie will not be set. 
+     * If true, the session cookie will not be set.
      */
     disableSession?: boolean = false
     /**
-     * If true, the device will be trusted for 30 days. It'll be refreshed on every sign in request within this time. 
+     * If true, the device will be trusted for 30 days. It'll be refreshed on every sign in request within this time.
      */
     trustDevice?: boolean = true
 }
@@ -395,7 +395,7 @@ To display the backup codes to the user, you can call `viewBackupCodes` on the s
 ```ts
 type viewBackupCodes = {
     /**
-     * The user ID to view all backup codes. 
+     * The user ID to view all backup codes.
      */
     userId?: string | null = "user-id"
 }
@@ -425,7 +425,7 @@ When `trustDevice` is set to `true`, the current device will be remembered for 6
 
 By adding an `issuer` you can set your application name for the 2fa application.
 
-For example, if your user uses Google Auth, the default appName will show up as `Better Auth`. However, by using the following code, it will show up as `my-app-name`.
+For example, if your user uses Google Auth, the default appName will show up as `Faire Auth`. However, by using the following code, it will show up as `my-app-name`.
 
 ```ts
 twoFactor({
@@ -497,7 +497,7 @@ these are options for OTP.
         type: "function",
     },
     period: {
-        description: "The period for otp in minutes.", 
+        description: "The period for otp in minutes.",
         type: "number",
         default: 3,
     },
@@ -542,8 +542,8 @@ backup codes are generated and stored in the database when the user enabled two 
 To use the two factor plugin in the client, you need to add it on your plugins list.
 
 ```ts title="auth-client.ts"
-import { createAuthClient } from "better-auth/client"
-import { twoFactorClient } from "better-auth/client/plugins"
+import { createAuthClient } from "faire-auth/client"
+import { twoFactorClient } from "faire-auth/client/plugins"
 
 const authClient =  createAuthClient({
     plugins: [

@@ -1,4 +1,4 @@
-import type { BetterAuthClientPlugin } from "better-auth";
+import type { FaireAuthClientPlugin } from "faire-auth";
 import type { stripe } from "./index";
 
 export const stripeClient = <
@@ -31,5 +31,5 @@ export const stripeClient = <
 			"/subscription/restore": "POST",
 			"/subscription/billing-portal": "POST",
 		},
-	} satisfies BetterAuthClientPlugin;
+	} satisfies FaireAuthClientPlugin;
 };

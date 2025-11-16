@@ -1,4 +1,4 @@
-# @better-auth/stripe
+# @faire-auth/stripe
 
 ## 1.3.4
 
@@ -19,4 +19,4 @@
   - Ensured session is set in context when reading from cookie cach
 
 - Updated dependencies [2bd2fa9]
-  - better-auth@1.3.4
+  - faire-auth@1.3.4

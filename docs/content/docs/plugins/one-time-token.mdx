@@ -14,10 +14,10 @@ The One-Time Token (OTT) plugin provides functionality to generate and verify se
     To use the One-Time Token plugin, add it to your auth config.
 
     ```ts title="auth.ts"
-    import { betterAuth } from "better-auth";
-    import { oneTimeToken } from "better-auth/plugins/one-time-token";
-    
-    export const auth = betterAuth({
+    import { faireAuth } from "faire-auth";
+    import { oneTimeToken } from "faire-auth/plugins/one-time-token";
+
+    export const auth = faireAuth({
         plugins: [
           oneTimeToken()
         ]
@@ -32,9 +32,9 @@ The One-Time Token (OTT) plugin provides functionality to generate and verify se
     Next, include the one-time-token client plugin in your authentication client instance.
 
     ```ts title="auth-client.ts"
-    import { createAuthClient } from "better-auth/client"
-    import { oneTimeTokenClient } from "better-auth/client/plugins"
-    
+    import { createAuthClient } from "faire-auth/client"
+    import { oneTimeTokenClient } from "faire-auth/client/plugins"
+
     export const authClient = createAuthClient({
         plugins: [
             oneTimeTokenClient()
@@ -71,7 +71,7 @@ When the user clicks the link or submits the token, use the `auth.api.verifyOneT
 ```ts
 type verifyOneTimeToken = {
     /**
-     * The token to verify. 
+     * The token to verify.
      */
     token: string = "some-token"
 }

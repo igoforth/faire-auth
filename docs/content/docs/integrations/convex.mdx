@@ -1,10 +1,10 @@
 ---
 title: Convex Integration
-description: Integrate Better Auth with Convex.
+description: Integrate Faire Auth with Convex.
 ---
 
 <Callout>
-  This documentation comes from the [Convex documentation](https://convex-better-auth.netlify.app/),
+  This documentation comes from the [Convex documentation](https://convex-faire-auth.netlify.app/),
   for more information, please refer to their documentation.
 </Callout>
 
@@ -14,7 +14,7 @@ description: Integrate Better Auth with Convex.
 <Step>
 ### Create a Convex project
 
-To use Convex + Better Auth, you'll first need a [Convex](https://www.convex.dev/) project.
+To use Convex + Faire Auth, you'll first need a [Convex](https://www.convex.dev/) project.
 If you don't have one, run the following command to get started.
 ```package-install
 npm create convex@latest
@@ -39,14 +39,14 @@ npx convex dev
 
 
 
-## Installation of Convex + Better Auth
+## Installation of Convex + Faire Auth
 
 The following documentation assumes you're using Next.js.
 
-If you're not using Next.js, support for other frameworks is documented in the [installation guide by Convex](https://convex-better-auth.netlify.app/#select-your-framework).
+If you're not using Next.js, support for other frameworks is documented in the [installation guide by Convex](https://convex-faire-auth.netlify.app/#select-your-framework).
 
 <Callout>
-    For a complete example, check out Convex + Better Auth example with Next.js [on GitHub](https://github.com/get-convex/better-auth/tree/main/examples/next).
+    For a complete example, check out Convex + Faire Auth example with Next.js [on GitHub](https://github.com/get-convex/faire-auth/tree/main/examples/next).
 </Callout>
 
 ### Installation
@@ -55,7 +55,7 @@ If you're not using Next.js, support for other frameworks is documented in the [
     <Step>
         #### Install packages
 
-        Install the component, a pinned version of Better Auth, and ensure the latest version of Convex.
+        Install the component, a pinned version of Faire Auth, and ensure the latest version of Convex.
 
 
         <Callout>
@@ -63,21 +63,21 @@ If you're not using Next.js, support for other frameworks is documented in the [
         </Callout>
 
         ```package-install
-        npm install better-auth@1.3.27 --save-exact
-        npm install convex@latest @convex-dev/better-auth
+        npm install faire-auth@1.3.27 --save-exact
+        npm install convex@latest @convex-dev/faire-auth
         ```
     </Step>
     <Step>
         #### Register the component
 
-        Register the Better Auth component in your Convex project.
+        Register the Faire Auth component in your Convex project.
 
         ```ts title="convex/convex.config.ts"
         import { defineApp } from "convex/server";
-        import betterAuth from "@convex-dev/better-auth/convex.config";
+        import faireAuth from "@convex-dev/faire-auth/convex.config";
 
         const app = defineApp();
-        app.use(betterAuth);
+        app.use(faireAuth);
 
         export default app;
         ```
@@ -85,7 +85,7 @@ If you're not using Next.js, support for other frameworks is documented in the [
     <Step>
         #### Add Convex auth config
 
-        Add a `convex/auth.config.ts` file to configure Better Auth as an authentication provider.
+        Add a `convex/auth.config.ts` file to configure Faire Auth as an authentication provider.
 
 
 
@@ -106,7 +106,7 @@ If you're not using Next.js, support for other frameworks is documented in the [
         Generate a secret for encryption and generating hashes. Use the command below if you have openssl installed, or generate your own however you like.
 
         ```package-install
-        npx convex env set BETTER_AUTH_SECRET=$(openssl rand -base64 32)
+        npx convex env set FAIRE_AUTH_SECRET=$(openssl rand -base64 32)
         ```
 
         Add your site URL to your Convex deployment.
@@ -146,30 +146,30 @@ If you're not using Next.js, support for other frameworks is documented in the [
         ```
     </Step>
     <Step>
-        ### Create a Better Auth instance
-        Create a Better Auth instance and initialize the component.
+        ### Create a Faire Auth instance
+        Create a Faire Auth instance and initialize the component.
 
         <Callout>Some TypeScript errors will show until you save the file.</Callout>
 
         ```ts title="convex/auth.ts"
-        import { createClient, type GenericCtx } from "@convex-dev/better-auth";
-        import { convex } from "@convex-dev/better-auth/plugins";
+        import { createClient, type GenericCtx } from "@convex-dev/faire-auth";
+        import { convex } from "@convex-dev/faire-auth/plugins";
         import { components } from "./_generated/api";
         import { DataModel } from "./_generated/dataModel";
         import { query } from "./_generated/server";
-        import { betterAuth } from "better-auth";
+        import { faireAuth } from "faire-auth";
 
         const siteUrl = process.env.SITE_URL!;
 
-        // The component client has methods needed for integrating Convex with Better Auth,
+        // The component client has methods needed for integrating Convex with Faire Auth,
         // as well as helper methods for general use.
-        export const authComponent = createClient<DataModel>(components.betterAuth);
+        export const authComponent = createClient<DataModel>(components.faireAuth);
 
         export const createAuth = (
             ctx: GenericCtx<DataModel>,
             { optionsOnly } = { optionsOnly: false },
         ) => {
-            return betterAuth({
+            return faireAuth({
                 // disable logging when createAuth is called just to generate options.
                 // this is not required, but there's a lot of noise in logs without it.
                 logger: {
@@ -200,13 +200,13 @@ If you're not using Next.js, support for other frameworks is documented in the [
         ```
     </Step>
     <Step>
-        ### Create a Better Auth client instance
+        ### Create a Faire Auth client instance
 
-        Create a Better Auth client instance for interacting with the Better Auth server from your client.
+        Create a Faire Auth client instance for interacting with the Faire Auth server from your client.
 
         ```ts title="src/lib/auth-client.ts"
-        import { createAuthClient } from "better-auth/react";
-        import { convexClient } from "@convex-dev/better-auth/client/plugins";
+        import { createAuthClient } from "faire-auth/react";
+        import { convexClient } from "@convex-dev/faire-auth/client/plugins";
 
         export const authClient = createAuthClient({
             plugins: [convexClient()],
@@ -216,7 +216,7 @@ If you're not using Next.js, support for other frameworks is documented in the [
     <Step>
     ### Mount handlers
 
-    Register Better Auth route handlers on your Convex deployment.
+    Register Faire Auth route handlers on your Convex deployment.
 
     ```ts title="convex/http.ts"
     import { httpRouter } from "convex/server";
@@ -232,7 +232,7 @@ If you're not using Next.js, support for other frameworks is documented in the [
     Set up route handlers to proxy auth requests from your framework server to your Convex deployment.
 
     ```ts title="app/api/auth/[...all]/route.ts"
-    import { nextJsHandler } from "@convex-dev/better-auth/nextjs";
+    import { nextJsHandler } from "@convex-dev/faire-auth/nextjs";
 
     export const { GET, POST } = nextJsHandler();
     ```
@@ -240,7 +240,7 @@ If you're not using Next.js, support for other frameworks is documented in the [
     <Step>
     ### Set up Convex client provider
 
-    Wrap your app with the `ConvexBetterAuthProvider` component.
+    Wrap your app with the `ConvexFaireAuthProvider` component.
 
     ```ts title="app/ConvexClientProvider.tsx"
     "use client";
@@ -248,7 +248,7 @@ If you're not using Next.js, support for other frameworks is documented in the [
     import { ReactNode } from "react";
     import { ConvexReactClient } from "convex/react";
     import { authClient } from "@/lib/auth-client"; // [!code ++]
-    import { ConvexBetterAuthProvider } from "@convex-dev/better-auth/react"; // [!code ++]
+    import { ConvexFaireAuthProvider } from "@convex-dev/faire-auth/react"; // [!code ++]
 
     const convex = new ConvexReactClient(process.env.NEXT_PUBLIC_CONVEX_URL!, {
       // Optionally pause queries until the user is authenticated // [!code ++]
@@ -257,9 +257,9 @@ If you're not using Next.js, support for other frameworks is documented in the [
 
     export function ConvexClientProvider({ children }: { children: ReactNode }) {
       return (
-        <ConvexBetterAuthProvider client={convex} authClient={authClient}> // [!code ++]
+        <ConvexFaireAuthProvider client={convex} authClient={authClient}> // [!code ++]
           {children}
-        </ConvexBetterAuthProvider> // [!code ++]
+        </ConvexFaireAuthProvider> // [!code ++]
       );
     }
     ```
@@ -269,14 +269,14 @@ If you're not using Next.js, support for other frameworks is documented in the [
 
 ### You're done!
 
-You're now ready to start using Better Auth with Convex.
+You're now ready to start using Faire Auth with Convex.
 
 ## Usage
 
-### Using Better Auth from the server
+### Using Faire Auth from the server
 
-To use Better Auth's [server
-methods](https://www.better-auth.com/docs/concepts/api) in server rendering,
+To use Faire Auth's [server
+methods](https://www.faire-auth.com/docs/concepts/api) in server rendering,
 server functions, or any other Next.js server code, use Convex functions
 and call the function from your server code.
 
@@ -284,14 +284,14 @@ First, a token helper for calling Convex functions from your server code.
 
 ```ts title="src/lib/auth-server.ts"
 import { createAuth } from "@/convex/auth";
-import { getToken as getTokenNextjs } from "@convex-dev/better-auth/nextjs";
+import { getToken as getTokenNextjs } from "@convex-dev/faire-auth/nextjs";
 
 export const getToken = () => {
   return getTokenNextjs(createAuth);
 };
 ```
 
-Here's an example Convex function that uses Better Auth's server methods, and
+Here's an example Convex function that uses Faire Auth's server methods, and
 a server action that calls the Convex function.
 
 ```ts title="convex/users.ts"
@@ -342,6 +342,6 @@ export async function updatePassword({
 ```
 
 <Callout>
-  This documentation comes from the [Convex documentation](https://convex-better-auth.netlify.app/),
+  This documentation comes from the [Convex documentation](https://convex-faire-auth.netlify.app/),
   for more information, please refer to their documentation.
 </Callout>

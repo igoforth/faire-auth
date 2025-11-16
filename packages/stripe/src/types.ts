@@ -1,9 +1,5 @@
-import type {
-	GenericEndpointContext,
-	InferOptionSchema,
-	Session,
-	User,
-} from "better-auth";
+import type { ContextVars, InferOptionSchema, Session, User } from "faire-auth";
+import type { Context } from "@faire-auth/core/types";
 import type Stripe from "stripe";
 import type { subscriptions, user } from "./schema";
 
@@ -75,7 +71,7 @@ export type StripePlan = {
 			data: {
 				subscription: Subscription;
 			},
-			ctx: GenericEndpointContext,
+			ctx: Context<ContextVars>,
 		) => Promise<void>;
 		/**
 		 * A function that will be called when the trial
@@ -85,7 +81,7 @@ export type StripePlan = {
 		 */
 		onTrialExpired?: (
 			subscription: Subscription,
-			ctx: GenericEndpointContext,
+			ctx: Context<ContextVars>,
 		) => Promise<void>;
 	};
 };
@@ -188,9 +184,9 @@ export interface StripeOptions {
 	onCustomerCreate?: (
 		data: {
 			stripeCustomer: Stripe.Customer;
-			user: User & { stripeCustomerId: string };
+			user: User;
 		},
-		ctx: GenericEndpointContext,
+		ctx: Context<ContextVars>,
 	) => Promise<void>;
 	/**
 	 * A custom function to get the customer create
@@ -199,9 +195,12 @@ export interface StripeOptions {
 	 * @returns
 	 */
 	getCustomerCreateParams?: (
-		user: User,
-		ctx: GenericEndpointContext,
-	) => Promise<Partial<Stripe.CustomerCreateParams>>;
+		data: {
+			user: User;
+			session: Session;
+		},
+		ctx: Context<ContextVars>,
+	) => Promise<{}>;
 	/**
 	 * Subscriptions
 	 */
@@ -234,7 +233,7 @@ export interface StripeOptions {
 				subscription: Subscription;
 				plan: StripePlan;
 			},
-			ctx: GenericEndpointContext,
+			ctx: Context<ContextVars>,
 		) => Promise<void>;
 		/**
 		 * A callback to run after a user is about to cancel their subscription
@@ -249,7 +248,7 @@ export interface StripeOptions {
 		 * @returns
 		 */
 		onSubscriptionCancel?: (data: {
-			event?: Stripe.Event;
+			event?: Stripe.Event | undefined;
 			subscription: Subscription;
 			stripeSubscription: Stripe.Subscription;
 			cancellationDetails?: Stripe.Subscription.CancellationDetails | null;
@@ -274,7 +273,7 @@ export interface StripeOptions {
 					| "restore-subscription"
 					| "billing-portal";
 			},
-			ctx: GenericEndpointContext,
+			ctx: Context<ContextVars>,
 		) => Promise<boolean>;
 		/**
 		 * A callback to run after a user has deleted their subscription
@@ -298,7 +297,7 @@ export interface StripeOptions {
 				plan: StripePlan;
 				subscription: Subscription;
 			},
-			ctx: GenericEndpointContext,
+			ctx: Context<ContextVars>,
 		) =>
 			| Promise<{
 					params?: Stripe.Checkout.SessionCreateParams;

@@ -3,20 +3,111 @@ packages:
   - docs
   - demo/*
   - e2e/**
+  - templates/**
 
 catalog:
-  '@better-fetch/fetch': 1.1.18
-  better-call: 1.0.24
+  '@asteasolutions/zod-to-openapi': ^8.1.0
+  '@better-fetch/fetch': ^1.1.18
+  '@cloudflare/workers-types': ^4.20250903.0
+  '@hono/zod-openapi': ^1.1.3
+  '@hono/zod-validator': ^0.7.1
+  '@hookform/resolvers': ^5.2.1
+  '@prisma/client': ^5.22.0
+  '@simplewebauthn/browser': ^13.1.2
+  '@simplewebauthn/server': ^13.1.2
+  '@tsconfig/node22': ^22.0.1
+  '@types/better-sqlite3': ^7.6.13
+  '@types/bun': ^1.2.20
+  '@types/node': ^24.4.0
+  '@types/prompts': ^2.4.9
+  '@types/react': ^19.1.12
+  '@types/react-dom': ^19.1.1
+  '@typescript/native-preview': 7.0.0-dev.20250926.1
+  better-sqlite3: ^12.2.0
+  cbor-x: ^1.6.0
+  class-variance-authority: ^0.7.1
+  clsx: ^2.1.1
+  cmdk: 1.1.1
+  date-fns: ^4.1.0
+  defu: ^6.1.4
+  drizzle-kit: ^0.31.6
+  drizzle-orm: ^0.44.7
+  expect-type: ^1.2.2
+  fast-xml-parser: ^5.2.5
+  framer-motion: ^12.23.12
+  geist: ^1.4.2
+  hono: ^4.9.12
+  input-otp: ^1.4.2
+  jose: ^6.1.0
+  json-stable-stringify: 1.3.0
+  kysely: ^0.28.5
+  lru-cache: ^11.1.0
+  lucide-react: ^0.542.0
+  nanostores: ^1.0.1
+  next: ^15.5.2
+  next-themes: ^0.4.6
+  oauth2-mock-server: ^7.2.1
+  openapi3-ts: ^4.5.0
+  prisma: ^5.22.0
+  publint: ^0.3.15
+  react: ^19.1.1
+  react-dom: ^19.1.1
+  react-hook-form: ^7.62.0
+  react-resizable-panels: ^3.0.5
+  recharts: ^3.1.2
+  rimraf: ^6.0.1
+  samlify: ^2.10.1
+  sonner: ^2.0.7
+  stripe: ^18.5.0
+  tailwind-merge: ^3.3.1
+  tailwindcss-animate: ^1.0.7
+  terser: ^5.41.0
+  tsdown: ^0.16.0
+  tsup: ^8.4.0
+  tsx: ^4.20.5
+  type-fest: ^4.41.0
   typescript: ^5.9.2
-  tsdown: ^0.15.6
+  vaul: ^1.1.2
   vitest: ^3.2.4
+  zod: 4.1.4
 
 catalogs:
-  react18:
-    '@types/react': ^19.1.12
-    '@types/react-dom': ^19.1.9
-    react: 19.1.1
-    react-dom: 19.1.1
+  radix:
+    '@radix-ui/react-accordion': ^1.2.12
+    '@radix-ui/react-alert-dialog': ^1.1.15
+    '@radix-ui/react-aspect-ratio': ^1.1.7
+    '@radix-ui/react-avatar': ^1.1.10
+    '@radix-ui/react-checkbox': ^1.3.3
+    '@radix-ui/react-collapsible': ^1.1.12
+    '@radix-ui/react-context-menu': ^2.2.16
+    '@radix-ui/react-dialog': ^1.1.15
+    '@radix-ui/react-dropdown-menu': ^2.1.16
+    '@radix-ui/react-hover-card': ^1.1.15
+    '@radix-ui/react-icons': ^1.3.2
+    '@radix-ui/react-label': ^2.1.7
+    '@radix-ui/react-menubar': ^1.1.16
+    '@radix-ui/react-navigation-menu': ^1.2.14
+    '@radix-ui/react-popover': ^1.1.15
+    '@radix-ui/react-progress': ^1.1.7
+    '@radix-ui/react-radio-group': ^1.3.8
+    '@radix-ui/react-scroll-area': ^1.2.10
+    '@radix-ui/react-select': ^2.2.6
+    '@radix-ui/react-separator': ^1.1.7
+    '@radix-ui/react-slider': ^1.3.6
+    '@radix-ui/react-slot': ^1.2.3
+    '@radix-ui/react-switch': ^1.2.6
+    '@radix-ui/react-tabs': ^1.1.13
+    '@radix-ui/react-toast': ^1.2.15
+    '@radix-ui/react-toggle': ^1.1.10
+    '@radix-ui/react-toggle-group': ^1.1.11
+    '@radix-ui/react-tooltip': ^1.2.8
+  fumadocs:
+    fumadocs-core: 15.8.3
+    fumadocs-docgen: 2.1.0
+    fumadocs-mdx: 11.8.3
+    fumadocs-typescript: ^4.0.6
+    fumadocs-ui: 15.8.3
+
 
 neverBuiltDependencies: []
 
@@ -24,5 +115,5 @@ overrides:
   brace-expansion@>=1.0.0 <=1.1.11: '>=1.1.12'
   cookie@<0.7.0: '>=0.7.0'
   esbuild@<=0.24.2: '>=0.25.0'
-  miniflare>zod: ^3.25.1
-  zod: ^4.1.5
+  # miniflare>zod: ^3.25.1
+  # zod: ^4.1.5

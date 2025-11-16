@@ -3,7 +3,7 @@ title: Rate Limit
 description: How to limit the number of requests a user can make to the server in a given time period.
 ---
 
-Better Auth includes a built-in rate limiter to help manage traffic and prevent abuse. By default, in production mode, the rate limiter is set to:
+Faire Auth includes a built-in rate limiter to help manage traffic and prevent abuse. By default, in production mode, the rate limiter is set to:
 
 - Window: 60 seconds
 - Max Requests: 100 requests
@@ -12,12 +12,12 @@ Better Auth includes a built-in rate limiter to help manage traffic and prevent 
 Server-side requests made using `auth.api` aren't affected by rate limiting. Rate limits only apply to client-initiated requests.
 </Callout>
 
-You can easily customize these settings by passing the rateLimit object to the betterAuth function.
+You can easily customize these settings by passing the rateLimit object to the faireAuth function.
 
 ```ts title="auth.ts"
-import { betterAuth } from "better-auth";
+import { faireAuth } from "faire-auth";
 
-export const auth = betterAuth({
+export const auth = faireAuth({
     rateLimit: {
         window: 10, // time window in seconds
         max: 100, // max requests in the window
@@ -28,7 +28,7 @@ export const auth = betterAuth({
 Rate limiting is disabled in development mode by default. In order to enable it, set `enabled` to `true`:
 
 ```ts title="auth.ts"
-export const auth = betterAuth({
+export const auth = faireAuth({
     rateLimit: {
         enabled: true,
         //...other options
@@ -36,7 +36,7 @@ export const auth = betterAuth({
 })
 ```
 
-In addition to the default settings, Better Auth provides custom rules for specific paths. For example:
+In addition to the default settings, Faire Auth provides custom rules for specific paths. For example:
 - `/sign-in/email`: Is limited to 3 requests within 10 seconds.
 
 In addition, plugins also define custom rules for specific paths. For example, `twoFactor` plugin has custom rules:
@@ -52,8 +52,8 @@ Rate limiting uses the connecting IP address to track the number of requests mad
 default header checked is `x-forwarded-for`, which is commonly used in production environments. If
 you are using a different header to track the user's IP address, you'll need to specify it.
 
-```ts title="auth.ts" 
-export const auth = betterAuth({
+```ts title="auth.ts"
+export const auth = faireAuth({
     //...other options
     advanced: {
         ipAddress: {
@@ -71,9 +71,9 @@ export const auth = betterAuth({
 ### Rate Limit Window
 
 ```ts title="auth.ts"
-import { betterAuth } from "better-auth";
+import { faireAuth } from "faire-auth";
 
-export const auth = betterAuth({
+export const auth = faireAuth({
     //...other options
     rateLimit: {
         window: 60, // time window in seconds
@@ -85,9 +85,9 @@ export const auth = betterAuth({
 You can also pass custom rules for specific paths.
 
 ```ts title="auth.ts"
-import { betterAuth } from "better-auth";
+import { faireAuth } from "faire-auth";
 
-export const auth = betterAuth({
+export const auth = faireAuth({
     //...other options
     rateLimit: {
         window: 60, // time window in seconds
@@ -112,9 +112,9 @@ export const auth = betterAuth({
 If you like to disable rate limiting for a specific path, you can set it to `false` or return `false` from the custom rule function.
 
 ```ts title="auth.ts"
-import { betterAuth } from "better-auth";
+import { faireAuth } from "faire-auth";
 
-export const auth = betterAuth({
+export const auth = faireAuth({
     //...other options
     rateLimit: {
         customRules: {
@@ -131,9 +131,9 @@ By default, rate limit data is stored in memory, which may not be suitable for m
 **Using Database**
 
 ```ts title="auth.ts"
-import { betterAuth } from "better-auth";
+import { faireAuth } from "faire-auth";
 
-export const auth = betterAuth({
+export const auth = faireAuth({
     //...other options
     rateLimit: {
         storage: "database",
@@ -145,7 +145,7 @@ export const auth = betterAuth({
 Make sure to run `migrate` to create the rate limit table in your database.
 
 ```bash
-npx @better-auth/cli migrate
+npx @faire-auth/cli migrate
 ```
 
 **Using Secondary Storage**
@@ -153,9 +153,9 @@ npx @better-auth/cli migrate
 If a [Secondary Storage](/docs/concepts/database#secondary-storage) has been configured you can use that to store rate limit data.
 
 ```ts title="auth.ts"
-import { betterAuth } from "better-auth";
+import { faireAuth } from "faire-auth";
 
-export const auth = betterAuth({
+export const auth = faireAuth({
     //...other options
     rateLimit: {
 		storage: "secondary-storage"
@@ -168,9 +168,9 @@ export const auth = betterAuth({
 If none of the above solutions suits your use case you can implement a `customStorage`.
 
 ```ts title="auth.ts"
-import { betterAuth } from "better-auth";
+import { faireAuth } from "faire-auth";
 
-export const auth = betterAuth({
+export const auth = faireAuth({
     //...other options
     rateLimit: {
         customStorage: {
@@ -187,16 +187,16 @@ export const auth = betterAuth({
 
 ## Handling Rate Limit Errors
 
-When a request exceeds the rate limit, Better Auth returns the following header:
+When a request exceeds the rate limit, Faire Auth returns the following header:
 
 - `X-Retry-After`: The number of seconds until the user can make another request.
 
-To handle rate limit errors on the client side, you can manage them either globally or on a per-request basis. Since Better Auth clients wrap over Better Fetch, you can pass `fetchOptions` to handle rate limit errors
+To handle rate limit errors on the client side, you can manage them either globally or on a per-request basis. Since Faire Auth clients wrap over Better Fetch, you can pass `fetchOptions` to handle rate limit errors
 
 **Global Handling**
 
 ```ts title="auth-client.ts"
-import { createAuthClient } from "better-auth/client";
+import { createAuthClient } from "faire-auth/client";
 
 export const authClient = createAuthClient({
     fetchOptions: {
@@ -238,25 +238,25 @@ Table Name: `rateLimit`
 
 <DatabaseTable
     fields={[
-        { 
-        name: "id", 
-        type: "string", 
+        {
+        name: "id",
+        type: "string",
         description: "Database ID",
         isPrimaryKey: true
         },
-        { 
-        name: "key", 
-        type: "string", 
+        {
+        name: "key",
+        type: "string",
         description: "Unique identifier for each rate limit key",
         },
-        { 
-        name: "count", 
-        type: "integer", 
-        description: "Time window in seconds" 
+        {
+        name: "count",
+        type: "integer",
+        description: "Time window in seconds"
         },
-        { 
-        name: "lastRequest", 
-        type: "bigint", 
-        description: "Max requests in the window" 
+        {
+        name: "lastRequest",
+        type: "bigint",
+        description: "Max requests in the window"
         }]}
     />

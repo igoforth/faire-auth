@@ -9,10 +9,10 @@ The Have I Been Pwned plugin helps protect user accounts by preventing the use o
 
 ### Add the plugin to your **auth** config
 ```ts title="auth.ts"
-import { betterAuth } from "better-auth"
-import { haveIBeenPwned } from "better-auth/plugins" // [!code highlight]
+import { faireAuth } from "faire-auth"
+import { haveIBeenPwned } from "faire-auth/plugins" // [!code highlight]
 
-export const auth = betterAuth({
+export const auth = faireAuth({
     plugins: [
         haveIBeenPwned()
     ]

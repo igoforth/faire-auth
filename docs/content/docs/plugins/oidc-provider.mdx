@@ -1,6 +1,6 @@
 ---
 title: OIDC Provider
-description: Open ID Connect plugin for Better Auth that allows you to have your own OIDC provider.
+description: Open ID Connect plugin for Faire Auth that allows you to have your own OIDC provider.
 ---
 
 The **OIDC Provider Plugin** enables you to build and manage your own OpenID Connect (OIDC) provider, granting full control over user authentication without relying on third-party services like Okta or Azure AD. It also allows other services to authenticate users through your OIDC provider.
@@ -18,7 +18,7 @@ The **OIDC Provider Plugin** enables you to build and manage your own OpenID Con
 - **UserInfo Endpoint**: Provide a UserInfo endpoint for clients to retrieve user details.
 
 <Callout type="warn">
-This plugin is in active development and may not be suitable for production use. Please report any issues or bugs on [GitHub](https://github.com/better-auth/better-auth).
+This plugin is in active development and may not be suitable for production use. Please report any issues or bugs on [GitHub](https://github.com/igoforth/faire-auth).
 </Callout>
 
 ## Installation
@@ -30,10 +30,10 @@ This plugin is in active development and may not be suitable for production use.
         Add the OIDC plugin to your auth config. See [OIDC Configuration](#oidc-configuration) on how to configure the plugin.
 
         ```ts title="auth.ts"
-        import { betterAuth } from "better-auth";
-        import { oidcProvider } from "better-auth/plugins";
+        import { faireAuth } from "faire-auth";
+        import { oidcProvider } from "faire-auth/plugins";
 
-        const auth = betterAuth({
+        const auth = faireAuth({
             plugins: [oidcProvider({
                 loginPage: "/sign-in", // path to the login page
                 // ...other options
@@ -50,12 +50,12 @@ This plugin is in active development and may not be suitable for production use.
         <Tabs items={["migrate", "generate"]}>
             <Tab value="migrate">
             ```bash
-            npx @better-auth/cli migrate
+            npx @faire-auth/cli migrate
             ```
             </Tab>
             <Tab value="generate">
             ```bash
-            npx @better-auth/cli generate
+            npx @faire-auth/cli generate
             ```
             </Tab>
         </Tabs>
@@ -68,8 +68,8 @@ This plugin is in active development and may not be suitable for production use.
         Add the OIDC client plugin to your auth client config.
 
         ```ts
-        import { createAuthClient } from "better-auth/client";
-        import { oidcClient } from "better-auth/client/plugins"
+        import { createAuthClient } from "faire-auth/client";
+        import { oidcClient } from "faire-auth/client/plugins"
         const authClient = createAuthClient({
             plugins: [oidcClient({
                 // Your OIDC configuration
@@ -105,71 +105,71 @@ const application = await client.oauth2.register({
 ```ts
 type registerOAuthApplication = {
     /**
-     * A list of redirect URIs. 
+     * A list of redirect URIs.
      */
     redirect_uris: string[] = ["https://client.example.com/callback"]
     /**
-     * The authentication method for the token endpoint. 
+     * The authentication method for the token endpoint.
      */
     token_endpoint_auth_method?: "none" | "client_secret_basic" | "client_secret_post" = "client_secret_basic"
     /**
-     * The grant types supported by the application. 
+     * The grant types supported by the application.
      */
     grant_types?: ("authorization_code" | "implicit" | "password" | "client_credentials" | "refresh_token" | "urn:ietf:params:oauth:grant-type:jwt-bearer" | "urn:ietf:params:oauth:grant-type:saml2-bearer")[] = ["authorization_code"]
     /**
-     * The response types supported by the application. 
+     * The response types supported by the application.
      */
     response_types?: ("code" | "token")[] = ["code"]
     /**
-     * The name of the application. 
+     * The name of the application.
      */
     client_name?: string = "My App"
     /**
-     * The URI of the application. 
+     * The URI of the application.
      */
     client_uri?: string = "https://client.example.com"
     /**
-     * The URI of the application logo. 
+     * The URI of the application logo.
      */
     logo_uri?: string = "https://client.example.com/logo.png"
     /**
-     * The scopes supported by the application. Separated by spaces. 
+     * The scopes supported by the application. Separated by spaces.
      */
     scope?: string = "profile email"
     /**
-     * The contact information for the application. 
+     * The contact information for the application.
      */
     contacts?: string[] = ["admin@example.com"]
     /**
-     * The URI of the application terms of service. 
+     * The URI of the application terms of service.
      */
     tos_uri?: string = "https://client.example.com/tos"
     /**
-     * The URI of the application privacy policy. 
+     * The URI of the application privacy policy.
      */
     policy_uri?: string = "https://client.example.com/policy"
     /**
-     * The URI of the application JWKS. 
+     * The URI of the application JWKS.
      */
     jwks_uri?: string = "https://client.example.com/jwks"
     /**
-     * The JWKS of the application. 
+     * The JWKS of the application.
      */
     jwks?: Record<string, any> = {"keys": [{"kty": "RSA", "alg": "RS256", "use": "sig", "n": "...", "e": "..."}]}
     /**
-     * The metadata of the application. 
+     * The metadata of the application.
      */
     metadata?: Record<string, any> = {"key": "value"}
     /**
-     * The software ID of the application. 
+     * The software ID of the application.
      */
     software_id?: string = "my-software"
     /**
-     * The software version of the application. 
+     * The software version of the application.
      */
     software_version?: string = "1.0.0"
     /**
-     * The software statement of the application. 
+     * The software statement of the application.
      */
     software_statement?: string
 }
@@ -187,10 +187,10 @@ Once the application is created, you will receive a `client_id` and `client_secr
 For first-party applications and internal services, you can configure trusted clients directly in your OIDC provider configuration. Trusted clients bypass database lookups for better performance and can optionally skip consent screens for improved user experience.
 
 ```ts title="auth.ts"
-import { betterAuth } from "better-auth";
-import { oidcProvider } from "better-auth/plugins";
+import { faireAuth } from "faire-auth";
+import { oidcProvider } from "faire-auth/plugins";
 
-const auth = betterAuth({
+const auth = faireAuth({
     plugins: [
       oidcProvider({
         loginPage: "/sign-in",
@@ -207,7 +207,7 @@ const auth = betterAuth({
             },
             {
                 clientId: "mobile-app",
-                clientSecret: "mobile-secret", 
+                clientSecret: "mobile-secret",
                 name: "Company Mobile App",
                 type: "native",
                 redirectURLs: ["com.company.app://auth"],
@@ -248,14 +248,14 @@ The `getAdditionalUserInfoClaim` function receives the user object, requested sc
 
 ### Consent Screen
 
-When a user is redirected to the OIDC provider for authentication, they may be prompted to authorize the application to access their data. This is known as the consent screen. By default, Better Auth will display a sample consent screen. You can customize the consent screen by providing a `consentPage` option during initialization.
+When a user is redirected to the OIDC provider for authentication, they may be prompted to authorize the application to access their data. This is known as the consent screen. By default, Faire Auth will display a sample consent screen. You can customize the consent screen by providing a `consentPage` option during initialization.
 
 **Note**: Trusted clients with `skipConsent: true` will bypass the consent screen entirely, providing a seamless experience for first-party applications.
 
 ```ts title="auth.ts"
-import { betterAuth } from "better-auth";
+import { faireAuth } from "faire-auth";
 
-export const auth = betterAuth({
+export const auth = faireAuth({
     plugins: [oidcProvider({
         consentPage: "/path/to/consent/page"
     })]
@@ -302,9 +302,9 @@ Both methods are fully supported. The URL parameter method works well with mobil
 When a user is redirected to the OIDC provider for authentication, if they are not already logged in, they will be redirected to the login page. You can customize the login page by providing a `loginPage` option during initialization.
 
 ```ts title="auth.ts"
-import { betterAuth } from "better-auth";
+import { faireAuth } from "faire-auth";
 
-export const auth = betterAuth({
+export const auth = faireAuth({
     plugins: [oidcProvider({
         loginPage: "/sign-in"
     })]
@@ -320,10 +320,10 @@ You don't need to handle anything from your side; when a new session is created,
 Customize the OIDC metadata by providing a configuration object during initialization.
 
 ```ts title="auth.ts"
-import { betterAuth } from "better-auth";
-import { oidcProvider } from "better-auth/plugins";
+import { faireAuth } from "faire-auth";
+import { oidcProvider } from "faire-auth/plugins";
 
-export const auth = betterAuth({
+export const auth = faireAuth({
     plugins: [oidcProvider({
         metadata: {
             issuer: "https://your-domain.com",
@@ -342,11 +342,11 @@ The OIDC Provider plugin can integrate with the JWT plugin to provide asymmetric
 To make your plugin OIDC compliant, you **MUST** disable the `/token` endpoint, the OAuth equivalent is located at `/oauth2/token` instead.
 
 ```ts title="auth.ts"
-import { betterAuth } from "better-auth";
-import { oidcProvider } from "better-auth/plugins";
-import { jwt } from "better-auth/plugins";
+import { faireAuth } from "faire-auth";
+import { oidcProvider } from "faire-auth/plugins";
+import { jwt } from "faire-auth/plugins";
 
-export const auth = betterAuth({
+export const auth = faireAuth({
     disabledPaths: [
         "/token",
     ],
@@ -370,7 +370,7 @@ When `useJWTPlugin: false` (default), ID tokens are signed with the application 
 If you want to allow clients to register dynamically, you can enable this feature by setting the `allowDynamicClientRegistration` option to `true`.
 
 ```ts title="auth.ts"
-const auth = betterAuth({
+const auth = faireAuth({
     plugins: [oidcProvider({
         allowDynamicClientRegistration: true,
     })]
@@ -395,59 +395,59 @@ Table Name: `oauthApplication`
       description: "Database ID of the OAuth client",
       isPrimaryKey: true
    },
-    { 
-      name: "clientId", 
-      type: "string", 
+    {
+      name: "clientId",
+      type: "string",
       description: "Unique identifier for each OAuth client",
       isPrimaryKey: true
     },
-    { 
-      name: "clientSecret", 
-      type: "string", 
+    {
+      name: "clientSecret",
+      type: "string",
       description: "Secret key for the OAuth client. Optional for public clients using PKCE.",
       isOptional: true
     },
-    { 
-      name: "name", 
-      type: "string", 
+    {
+      name: "name",
+      type: "string",
       description: "Name of the OAuth client",
       isRequired: true
     },
-    { 
-      name: "redirectURLs", 
-      type: "string", 
+    {
+      name: "redirectURLs",
+      type: "string",
       description: "Comma-separated list of redirect URLs",
       isRequired: true
     },
-    { 
-      name: "metadata", 
+    {
+      name: "metadata",
       type: "string",
       description: "Additional metadata for the OAuth client",
       isOptional: true
     },
-    { 
-      name: "type", 
+    {
+      name: "type",
       type: "string",
       description: "Type of OAuth client (e.g., web, mobile)",
       isRequired: true
     },
-    { 
-      name: "disabled", 
-      type: "boolean", 
+    {
+      name: "disabled",
+      type: "boolean",
       description: "Indicates if the client is disabled",
       isRequired: true
     },
-    { 
-      name: "userId", 
-      type: "string", 
+    {
+      name: "userId",
+      type: "string",
       description: "ID of the user who owns the client. (optional)",
       isOptional: true,
       references: { model: "user", field: "id" }
     },
-    { 
-      name: "createdAt", 
-      type: "Date", 
-      description: "Timestamp of when the OAuth client was created" 
+    {
+      name: "createdAt",
+      type: "Date",
+      description: "Timestamp of when the OAuth client was created"
     },
    {
       name: "updatedAt",
@@ -469,53 +469,53 @@ Table Name: `oauthAccessToken`
       description: "Database ID of the access token",
       isPrimaryKey: true
    },
-    { 
-      name: "accessToken", 
-      type: "string", 
+    {
+      name: "accessToken",
+      type: "string",
       description: "Access token issued to the client",
     },
-    { 
-      name: "refreshToken", 
-      type: "string", 
+    {
+      name: "refreshToken",
+      type: "string",
       description: "Refresh token issued to the client",
       isRequired: true
     },
-    { 
-      name: "accessTokenExpiresAt", 
-      type: "Date", 
+    {
+      name: "accessTokenExpiresAt",
+      type: "Date",
       description: "Expiration date of the access token",
       isRequired: true
     },
-    { 
-      name: "refreshTokenExpiresAt", 
-      type: "Date", 
+    {
+      name: "refreshTokenExpiresAt",
+      type: "Date",
       description: "Expiration date of the refresh token",
       isRequired: true
     },
-    { 
-      name: "clientId", 
-      type: "string", 
+    {
+      name: "clientId",
+      type: "string",
       description: "ID of the OAuth client",
       isForeignKey: true,
       references: { model: "oauthApplication", field: "clientId" }
     },
-    { 
-      name: "userId", 
-      type: "string", 
+    {
+      name: "userId",
+      type: "string",
       description: "ID of the user associated with the token",
       isForeignKey: true,
       references: { model: "user", field: "id" }
     },
-    { 
-      name: "scopes", 
-      type: "string", 
+    {
+      name: "scopes",
+      type: "string",
       description: "Comma-separated list of scopes granted",
       isRequired: true
     },
-    { 
-      name: "createdAt", 
-      type: "Date", 
-      description: "Timestamp of when the access token was created" 
+    {
+      name: "createdAt",
+      type: "Date",
+      description: "Timestamp of when the access token was created"
     },
     {
       name: "updatedAt",
@@ -531,42 +531,42 @@ Table Name: `oauthConsent`
 
 <DatabaseTable
   fields={[
-    { 
-      name: "id", 
-      type: "string", 
+    {
+      name: "id",
+      type: "string",
       description: "Database ID of the consent",
       isPrimaryKey: true
     },
-    { 
-      name: "userId", 
-      type: "string", 
+    {
+      name: "userId",
+      type: "string",
       description: "ID of the user who gave consent",
       isForeignKey: true,
       references: { model: "user", field: "id" }
     },
-    { 
-      name: "clientId", 
-      type: "string", 
+    {
+      name: "clientId",
+      type: "string",
       description: "ID of the OAuth client",
       isForeignKey: true,
       references: { model: "oauthApplication", field: "clientId" }
     },
-    { 
-      name: "scopes", 
-      type: "string", 
+    {
+      name: "scopes",
+      type: "string",
       description: "Comma-separated list of scopes consented to",
       isRequired: true
     },
-    { 
-      name: "consentGiven", 
-      type: "boolean", 
+    {
+      name: "consentGiven",
+      type: "boolean",
       description: "Indicates if consent was given",
       isRequired: true
     },
-    { 
-      name: "createdAt", 
-      type: "Date", 
-      description: "Timestamp of when the consent was given" 
+    {
+      name: "createdAt",
+      type: "Date",
+      description: "Timestamp of when the consent was given"
     },
     {
       name: "updatedAt",

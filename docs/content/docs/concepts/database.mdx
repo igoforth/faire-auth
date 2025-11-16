@@ -1,45 +1,45 @@
 ---
 title: Database
-description: Learn how to use a database with Better Auth.
+description: Learn how to use a database with Faire Auth.
 ---
 
 ## Adapters
 
-Better Auth requires a database connection to store data. The database will be used to store data such as users, sessions, and more. Plugins can also define their own database tables to store data.
+Faire Auth requires a database connection to store data. The database will be used to store data such as users, sessions, and more. Plugins can also define their own database tables to store data.
 
-You can pass a database connection to Better Auth by passing a supported database instance in the database options. You can learn more about supported database adapters in the [Other relational databases](/docs/adapters/other-relational-databases) documentation.
+You can pass a database connection to Faire Auth by passing a supported database instance in the database options. You can learn more about supported database adapters in the [Other relational databases](/docs/adapters/other-relational-databases) documentation.
 
 ## CLI
 
-Better Auth comes with a CLI tool to manage database migrations and generate schema.
+Faire Auth comes with a CLI tool to manage database migrations and generate schema.
 
 ### Running Migrations
 
 The cli checks your database and prompts you to add missing tables or update existing ones with new columns. This is only supported for the built-in Kysely adapter. For other adapters, you can use the `generate` command to create the schema and handle the migration through your ORM.
 
 ```bash
-npx @better-auth/cli migrate
+npx @faire-auth/cli migrate
 ```
 
 ### Generating Schema
 
-Better Auth also provides a `generate` command to generate the schema required by Better Auth. The `generate` command creates the schema required by Better Auth. If you're using a database adapter like Prisma or Drizzle, this command will generate the right schema for your ORM. If you're using the built-in Kysely adapter, it will generate an SQL file you can run directly on your database.
+Faire Auth also provides a `generate` command to generate the schema required by Faire Auth. The `generate` command creates the schema required by Faire Auth. If you're using a database adapter like Prisma or Drizzle, this command will generate the right schema for your ORM. If you're using the built-in Kysely adapter, it will generate an SQL file you can run directly on your database.
 
 ```bash
-npx @better-auth/cli generate
+npx @faire-auth/cli generate
 ```
 
 See the [CLI](/docs/concepts/cli) documentation for more information on the CLI.
 
 <Callout>
   If you prefer adding tables manually, you can do that as well. The core schema
-  required by Better Auth is described below and you can find additional schema
+  required by Faire Auth is described below and you can find additional schema
   required by plugins in the plugin documentation.
 </Callout>
 
 ## Secondary Storage
 
-Secondary storage in Better Auth allows you to use key-value stores for managing session data, rate limiting counters, etc. This can be useful when you want to offload the storage of this intensive records to a high performance storage or even RAM.
+Secondary storage in Faire Auth allows you to use key-value stores for managing session data, rate limiting counters, etc. This can be useful when you want to offload the storage of this intensive records to a high performance storage or even RAM.
 
 ### Implementation
 
@@ -47,16 +47,16 @@ To use secondary storage, implement the `SecondaryStorage` interface:
 
 ```typescript
 interface SecondaryStorage {
-  get: (key: string) => Promise<unknown>; 
+  get: (key: string) => Promise<unknown>;
   set: (key: string, value: string, ttl?: number) => Promise<void>;
   delete: (key: string) => Promise<void>;
 }
 ```
 
-Then, provide your implementation to the `betterAuth` function:
+Then, provide your implementation to the `faireAuth` function:
 
 ```typescript
-betterAuth({
+faireAuth({
   // ... other options
   secondaryStorage: {
     // Your implementation here
@@ -70,12 +70,12 @@ Here's a basic example using Redis:
 
 ```typescript
 import { createClient } from "redis";
-import { betterAuth } from "better-auth";
+import { faireAuth } from "faire-auth";
 
 const redis = createClient();
 await redis.connect();
 
-export const auth = betterAuth({
+export const auth = faireAuth({
 	// ... other options
 	secondaryStorage: {
 		get: async (key) => {
@@ -94,11 +94,11 @@ export const auth = betterAuth({
 });
 ```
 
-This implementation allows Better Auth to use Redis for storing session data and rate limiting counters. You can also add prefixes to the keys names.
+This implementation allows Faire Auth to use Redis for storing session data and rate limiting counters. You can also add prefixes to the keys names.
 
 ## Core Schema
 
-Better Auth requires the following tables to be present in the database. The types are in `typescript` format. You can use corresponding types in your database.
+Faire Auth requires the following tables to be present in the database. The types are in `typescript` format. You can use corresponding types in your database.
 
 ### User
 
@@ -327,14 +327,14 @@ Table Name: `verification`
 
 ## Custom Tables
 
-Better Auth allows you to customize the table names and column names for the core schema. You can also extend the core schema by adding additional fields to the user and session tables.
+Faire Auth allows you to customize the table names and column names for the core schema. You can also extend the core schema by adding additional fields to the user and session tables.
 
 ### Custom Table Names
 
 You can customize the table names and column names for the core schema by using the `modelName` and `fields` properties in your auth config:
 
 ```ts title="auth.ts"
-export const auth = betterAuth({
+export const auth = faireAuth({
   user: {
     modelName: "users",
     fields: {
@@ -359,10 +359,10 @@ export const auth = betterAuth({
 To customize table names and column name for plugins, you can use the `schema` property in the plugin config:
 
 ```ts title="auth.ts"
-import { betterAuth } from "better-auth";
-import { twoFactor } from "better-auth/plugins";
+import { faireAuth } from "faire-auth";
+import { twoFactor } from "faire-auth/plugins";
 
-export const auth = betterAuth({
+export const auth = faireAuth({
   plugins: [
     twoFactor({
       schema: {
@@ -380,7 +380,7 @@ export const auth = betterAuth({
 
 ### Extending Core Schema
 
-Better Auth provides a type-safe way to extend the `user` and `session` schemas. You can add custom fields to your auth config, and the CLI will automatically update the database schema. These additional fields will be properly inferred in functions like `useSession`, `signUp.email`, and other endpoints that work with user or session objects.
+Faire Auth provides a type-safe way to extend the `user` and `session` schemas. You can add custom fields to your auth config, and the CLI will automatically update the database schema. These additional fields will be properly inferred in functions like `useSession`, `signUp.email`, and other endpoints that work with user or session objects.
 
 To add custom fields, use the `additionalFields` property in the `user` or `session` object of your auth config. The `additionalFields` object uses field names as keys, with each value being a `FieldAttributes` object containing:
 
@@ -392,9 +392,9 @@ To add custom fields, use the `additionalFields` property in the `user` or `sess
 Here's an example of how to extend the user schema with additional fields:
 
 ```ts title="auth.ts"
-import { betterAuth } from "better-auth";
+import { faireAuth } from "faire-auth";
 
-export const auth = betterAuth({
+export const auth = faireAuth({
   user: {
     additionalFields: {
       role: {
@@ -441,9 +441,9 @@ If you're using social / OAuth providers, you may want to provide `mapProfileToU
 **Example: Mapping Profile to User For `firstName` and `lastName`**
 
 ```ts title="auth.ts"
-import { betterAuth } from "better-auth";
+import { faireAuth } from "faire-auth";
 
-export const auth = betterAuth({
+export const auth = faireAuth({
   socialProviders: {
     github: {
       clientId: "YOUR_GITHUB_CLIENT_ID",
@@ -471,17 +471,17 @@ export const auth = betterAuth({
 
 ### ID Generation
 
-Better Auth by default will generate unique IDs for users, sessions, and other entities. You can customize ID generation behavior using the `advanced.database.generateId` option or `advanced.database.useNumberId`.
+Faire Auth by default will generate unique IDs for users, sessions, and other entities. You can customize ID generation behavior using the `advanced.database.generateId` option or `advanced.database.useNumberId`.
 
 #### Option 1: Let Database Generate IDs
 
 Setting `generateId` to `false` disables ID generation globally, letting your database handle all ID generation:
 
 ```ts title="auth.ts"
-import { betterAuth } from "better-auth";
+import { faireAuth } from "faire-auth";
 import { db } from "./db";
 
-export const auth = betterAuth({
+export const auth = faireAuth({
   database: db,
   advanced: {
     database: {
@@ -500,10 +500,10 @@ export const auth = betterAuth({
 Use a function to generate IDs. You can return `false` or `undefined` from the function to let the database generate the ID for specific models:
 
 ```ts title="auth.ts"
-import { betterAuth } from "better-auth";
+import { faireAuth } from "faire-auth";
 import { db } from "./db";
 
-export const auth = betterAuth({
+export const auth = faireAuth({
   database: db,
   advanced: {
     database: {
@@ -529,10 +529,10 @@ export const auth = betterAuth({
 Generate the same type of ID for all tables:
 
 ```ts title="auth.ts"
-import { betterAuth } from "better-auth";
+import { faireAuth } from "faire-auth";
 import { db } from "./db";
 
-export const auth = betterAuth({
+export const auth = faireAuth({
   database: db,
   advanced: {
     database: {
@@ -545,17 +545,17 @@ export const auth = betterAuth({
 ### Numeric IDs
 
 If you prefer auto-incrementing numeric IDs, you can set the `advanced.database.useNumberId` option to `true`.
-Doing this will disable Better-Auth from generating IDs for any table, and will assume your
+Doing this will disable Faire Auth from generating IDs for any table, and will assume your
 database will generate the numeric ID automatically.
 
-When enabled, the Better-Auth CLI will generate or migrate the schema with the `id` field as a numeric type for your database
+When enabled, the Faire Auth CLI will generate or migrate the schema with the `id` field as a numeric type for your database
 with auto-incrementing attributes associated with it.
 
 ```ts
-import { betterAuth } from "better-auth";
+import { faireAuth } from "faire-auth";
 import { db } from "./db";
 
-export const auth = betterAuth({
+export const auth = faireAuth({
   database: db,
   advanced: {
     database: {
@@ -566,11 +566,11 @@ export const auth = betterAuth({
 ```
 
 <Callout type="info">
-  Better-Auth will continue to infer the type of the `id` field as a `string` for the database, but will
+  Faire Auth will continue to infer the type of the `id` field as a `string` for the database, but will
   automatically convert it to a numeric type when fetching or inserting data from the database.
 
-  It's likely when grabbing `id` values returned from Better-Auth that you'll receive a string version of a number,
-  this is normal. It's also expected that all id values passed to Better-Auth (eg via an endpoint body) is expected to be a string.
+  It's likely when grabbing `id` values returned from Faire Auth that you'll receive a string version of a number,
+  this is normal. It's also expected that all id values passed to Faire Auth (eg via an endpoint body) is expected to be a string.
 </Callout>
 
 ### Mixed ID Types
@@ -584,10 +584,10 @@ If you need different ID types across tables (e.g., integer IDs for users, UUID 
 **Example: Integer IDs for Users, UUIDs for Other Tables**
 
 ```ts title="auth.ts"
-import { betterAuth } from "better-auth";
+import { faireAuth } from "faire-auth";
 import { db } from "./db";
 
-export const auth = betterAuth({
+export const auth = faireAuth({
   database: db,
   user: {
     modelName: "users", // PostgreSQL: id serial primary key
@@ -620,7 +620,7 @@ This configuration allows you to:
 
 ### Database Hooks
 
-Database hooks allow you to define custom logic that can be executed during the lifecycle of core database operations in Better Auth. You can create hooks for the following models: **user**, **session**, and **account**.
+Database hooks allow you to define custom logic that can be executed during the lifecycle of core database operations in Faire Auth. You can create hooks for the following models: **user**, **session**, and **account**.
 
 <Callout type="warn">
   Additional fields are supported, however full type inference for these fields isn't yet supported.
@@ -642,9 +642,9 @@ There are two types of hooks you can define:
 **Example Usage**
 
 ```typescript title="auth.ts"
-import { betterAuth } from "better-auth";
+import { faireAuth } from "faire-auth";
 
-export const auth = betterAuth({
+export const auth = faireAuth({
   databaseHooks: {
     user: {
       create: {
@@ -652,7 +652,7 @@ export const auth = betterAuth({
           // Modify the user object before it is created
           return {
             data: {
-              // Ensure to return Better-Auth named fields, not the original field names in your database.
+              // Ensure to return Faire Auth named fields, not the original field names in your database.
               ...user,
               firstName: user.name.split(" ")[0],
               lastName: user.name.split(" ")[1],
@@ -669,7 +669,7 @@ export const auth = betterAuth({
           if (user.email.includes("admin")) {
             return false; // Abort deletion
           }
-          
+
           return true; // Allow deletion
         },
         after: async (user) => {
@@ -698,13 +698,13 @@ export const auth = betterAuth({
 
 #### Throwing Errors
 
-If you want to stop the database hook from proceeding, you can throw errors using the `APIError` class imported from `better-auth/api`.
+If you want to stop the database hook from proceeding, you can throw errors using the `APIError` class imported from `faire-auth/api`.
 
 ```typescript title="auth.ts"
-import { betterAuth } from "better-auth";
-import { APIError } from "better-auth/api";
+import { faireAuth } from "faire-auth";
+import { APIError } from "faire-auth/api";
 
-export const auth = betterAuth({
+export const auth = faireAuth({
   databaseHooks: {
     user: {
       create: {
@@ -731,9 +731,9 @@ export const auth = betterAuth({
 The context object (`ctx`), passed as the second argument to the hook, contains useful information. For `update` hooks, this includes the current `session`, which you can use to access the logged-in user's details.
 
 ```typescript title="auth.ts"
-import { betterAuth } from "better-auth";
+import { faireAuth } from "faire-auth";
 
-export const auth = betterAuth({
+export const auth = faireAuth({
   databaseHooks: {
     user: {
       update: {

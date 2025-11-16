@@ -1,6 +1,6 @@
 ---
 title: Admin
-description: Admin plugin for Better Auth
+description: Admin plugin for Faire Auth
 ---
 
 The Admin plugin provides a set of administrative functions for user management in your application. It allows administrators to perform various operations such as creating users, managing user roles, banning/unbanning users, impersonating users, and more.
@@ -14,10 +14,10 @@ The Admin plugin provides a set of administrative functions for user management 
     To use the Admin plugin, add it to your auth config.
 
     ```ts title="auth.ts"
-    import { betterAuth } from "better-auth"
-    import { admin } from "better-auth/plugins" // [!code highlight]
+    import { faireAuth } from "faire-auth"
+    import { admin } from "faire-auth/plugins" // [!code highlight]
 
-    export const auth = betterAuth({
+    export const auth = faireAuth({
         // ... other config options
         plugins: [
             admin() // [!code highlight]
@@ -35,12 +35,12 @@ The Admin plugin provides a set of administrative functions for user management 
         <Tabs items={["migrate", "generate"]}>
             <Tab value="migrate">
             ```bash
-            npx @better-auth/cli migrate
+            npx @faire-auth/cli migrate
             ```
             </Tab>
             <Tab value="generate">
             ```bash
-            npx @better-auth/cli generate
+            npx @faire-auth/cli generate
             ```
             </Tab>
         </Tabs>
@@ -53,8 +53,8 @@ The Admin plugin provides a set of administrative functions for user management 
     Next, include the admin client plugin in your authentication client instance.
 
     ```ts title="auth-client.ts"
-    import { createAuthClient } from "better-auth/client"
-    import { adminClient } from "better-auth/client/plugins"
+    import { createAuthClient } from "faire-auth/client"
+    import { adminClient } from "faire-auth/client/plugins"
 
     export const authClient = createAuthClient({
         plugins: [
@@ -82,23 +82,23 @@ Allows an admin to create a new user.
 ```ts
 type createUser = {
     /**
-     * The email of the user. 
+     * The email of the user.
      */
     email: string = "user@example.com"
     /**
-     * The password of the user. 
+     * The password of the user.
      */
     password: string = "some-secure-password"
     /**
-     * The name of the user. 
+     * The name of the user.
      */
     name: string = "James Smith"
     /**
-     * A string or array of strings representing the roles to apply to the new user. 
+     * A string or array of strings representing the roles to apply to the new user.
      */
     role?: string | string[] = "user"
     /**
-     * Extra fields for the user. Including custom additional fields. 
+     * Extra fields for the user. Including custom additional fields.
      */
     data?: Record<string, any> = { customField: "customValue" }
 }
@@ -119,15 +119,15 @@ Allows an admin to list all users in the database.
 ```ts
 type listUsers = {
   /**
-   * The value to search for. 
+   * The value to search for.
    */
   searchValue?: string = "some name"
   /**
-   * The field to search in, defaults to email. Can be `email` or `name`. 
+   * The field to search in, defaults to email. Can be `email` or `name`.
    */
   searchField?: "email" | "name" = "name"
   /**
-   * The operator to use for the search. Can be `contains`, `starts_with` or `ends_with`. 
+   * The operator to use for the search. Can be `contains`, `starts_with` or `ends_with`.
    */
   searchOperator?: "contains" | "starts_with" | "ends_with" = "contains"
   /**
@@ -135,27 +135,27 @@ type listUsers = {
    */
   limit?: string | number = 100
   /**
-   * The offset to start from. 
+   * The offset to start from.
    */
   offset?: string | number = 100
   /**
-   * The field to sort by. 
+   * The field to sort by.
    */
   sortBy?: string = "name"
   /**
-   * The direction to sort by. 
+   * The direction to sort by.
    */
   sortDirection?: "asc" | "desc" = "desc"
   /**
-   * The field to filter by. 
+   * The field to filter by.
    */
   filterField?: string = "email"
   /**
-   * The value to filter by. 
+   * The value to filter by.
    */
   filterValue?: string | number | boolean = "hello@example.com"
   /**
-   * The operator to use for the filter. 
+   * The operator to use for the filter.
    */
   filterOperator?: "eq" | "ne" | "lt" | "lte" | "gt" | "gte" = "eq"
 }
@@ -224,7 +224,7 @@ type setRole = {
      */
     userId?: string = "user-id"
     /**
-     * The role to set, this can be a string or an array of strings. 
+     * The role to set, this can be a string or an array of strings.
      */
     role: string | string[] = "admin"
 }
@@ -243,7 +243,7 @@ Changes the password of a user.
 ```ts
 type setUserPassword = {
     /**
-     * The new password. 
+     * The new password.
      */
     newPassword: string = 'new-password'
     /**
@@ -295,11 +295,11 @@ type banUser = {
      */
     userId: string = "user-id"
     /**
-     * The reason for the ban. 
+     * The reason for the ban.
      */
     banReason?: string = "Spamming"
     /**
-     * The number of seconds until the ban expires. If not provided, the ban will never expire. 
+     * The number of seconds until the ban expires. If not provided, the ban will never expire.
      */
     banExpiresIn?: number = 60 * 60 * 24 * 7
 }
@@ -338,7 +338,7 @@ Lists all sessions for a user.
 ```ts
 type listUserSessions = {
     /**
-     * The user id. 
+     * The user id.
      */
     userId: string = "user-id"
 }
@@ -358,7 +358,7 @@ Revokes a specific session for a user.
 ```ts
 type revokeUserSession = {
     /**
-     * The session token which you want to revoke. 
+     * The session token which you want to revoke.
      */
     sessionToken: string = "session_token_here"
 }
@@ -377,7 +377,7 @@ Revokes all sessions for a user.
 ```ts
 type revokeUserSessions = {
     /**
-     * The user id which you want to revoke all sessions for. 
+     * The user id which you want to revoke all sessions for.
      */
     userId: string = "user-id"
 }
@@ -396,7 +396,7 @@ This feature allows an admin to create a session that mimics the specified user.
 ```ts
 type impersonateUser = {
     /**
-     * The user id which you want to impersonate. 
+     * The user id which you want to impersonate.
      */
     userId: string = "user-id"
 }
@@ -427,7 +427,7 @@ Hard deletes a user from the database.
 ```ts
 type removeUser = {
     /**
-     * The user id which you want to remove. 
+     * The user id which you want to remove.
      */
     userId: string = "user-id"
 }
@@ -472,7 +472,7 @@ The plugin provides an easy way to define your own set of permissions for each r
 
     You first need to create an access controller by calling the `createAccessControl` function and passing the statement object. The statement object should have the resource name as the key and the array of actions as the value.
     ```ts title="permissions.ts"
-    import { createAccessControl } from "better-auth/plugins/access";
+    import { createAccessControl } from "faire-auth/plugins/access";
 
     /**
      * make sure to use `as const` so typescript can infer the type correctly
@@ -491,7 +491,7 @@ The plugin provides an easy way to define your own set of permissions for each r
     Once you have created the access controller you can create roles with the permissions you have defined.
 
     ```ts title="permissions.ts"
-    import { createAccessControl } from "better-auth/plugins/access";
+    import { createAccessControl } from "faire-auth/plugins/access";
 
     export const statement = {
         project: ["create", "share", "update", "delete"], // <-- Permissions available for created roles
@@ -516,8 +516,8 @@ The plugin provides an easy way to define your own set of permissions for each r
       When you create custom roles for existing roles, the predefined permissions for those roles will be overridden. To add the existing permissions to the custom role, you need to import `defaultStatements` and merge it with your new statement, plus merge the roles' permissions set with the default roles.
 
     ```ts title="permissions.ts"
-    import { createAccessControl } from "better-auth/plugins/access";
-    import { defaultStatements, adminAc } from "better-auth/plugins/admin/access";
+    import { createAccessControl } from "faire-auth/plugins/access";
+    import { defaultStatements, adminAc } from "faire-auth/plugins/admin/access";
 
     const statement = {
         ...defaultStatements, // [!code highlight]
@@ -540,11 +540,11 @@ The plugin provides an easy way to define your own set of permissions for each r
         Once you have created the roles you can pass them to the admin plugin both on the client and the server.
 
         ```ts title="auth.ts"
-        import { betterAuth } from "better-auth"
-        import { admin as adminPlugin } from "better-auth/plugins"
+        import { faireAuth } from "faire-auth"
+        import { admin as adminPlugin } from "faire-auth/plugins"
         import { ac, admin, user } from "@/auth/permissions"
 
-        export const auth = betterAuth({
+        export const auth = faireAuth({
             plugins: [
                 adminPlugin({
                     ac,
@@ -561,8 +561,8 @@ The plugin provides an easy way to define your own set of permissions for each r
         You also need to pass the access controller and the roles to the client plugin.
 
         ```ts title="auth-client.ts"
-        import { createAuthClient } from "better-auth/client"
-        import { adminClient } from "better-auth/client/plugins"
+        import { createAuthClient } from "faire-auth/client"
+        import { adminClient } from "faire-auth/client/plugins"
         import { ac, admin, user, myCustomRole } from "@/auth/permissions"
 
         export const client = createAuthClient({
@@ -593,7 +593,7 @@ To check a user's permissions, you can use the `hasPermission` function provided
 ```ts
 type userHasPermission = {
     /**
-     * The user id which you want to check the permissions for. 
+     * The user id which you want to check the permissions for.
      */
     userId?: string = "user-id"
     /**
@@ -602,11 +602,11 @@ type userHasPermission = {
      */
     role?: string = "admin"
     /**
-     * Optionally check if a single permission is granted. Must use this, or permissions. 
+     * Optionally check if a single permission is granted. Must use this, or permissions.
      */
     permission?: Record<string, string[]> = { "project": ["create", "update"] } /* Must use this, or permissions */,
     /**
-     * Optionally check if multiple permissions are granted. Must use this, or permission. 
+     * Optionally check if multiple permissions are granted. Must use this, or permission.
      */
     permissions?: Record<string, string[]>
 }

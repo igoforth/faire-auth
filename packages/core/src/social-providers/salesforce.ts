@@ -1,9 +1,9 @@
 import { betterFetch } from "@better-fetch/fetch";
-import { BetterAuthError } from "../error";
+import { FaireAuthError } from "../error";
 import type { OAuthProvider, ProviderOptions } from "../oauth2";
 import { createAuthorizationURL, validateAuthorizationCode } from "../oauth2";
-import { logger } from "../env";
-import { refreshAccessToken } from "../oauth2";
+import { logger } from "../env/logger";
+import { refreshAccessToken } from "../oauth2/refresh-access-token";
 
 export interface SalesforceProfile {
 	sub: string;
@@ -64,11 +64,10 @@ export const salesforce = (options: SalesforceOptions) => {
 				logger.error(
 					"Client Id and Client Secret are required for Salesforce. Make sure to provide them in the options.",
 				);
-				throw new BetterAuthError("CLIENT_ID_AND_SECRET_REQUIRED");
+				throw new FaireAuthError("CLIENT_ID_AND_SECRET_REQUIRED");
 			}
-			if (!codeVerifier) {
-				throw new BetterAuthError("codeVerifier is required for Salesforce");
-			}
+			if (!codeVerifier)
+				throw new FaireAuthError("codeVerifier is required for Salesforce");
 
 			const _scopes = options.disableDefaultScope
 				? []
@@ -111,9 +110,7 @@ export const salesforce = (options: SalesforceOptions) => {
 				},
 
 		async getUserInfo(token) {
-			if (options.getUserInfo) {
-				return options.getUserInfo(token);
-			}
+			if (options.getUserInfo) return options.getUserInfo(token);
 
 			try {
 				const { data: user } = await betterFetch<SalesforceProfile>(
@@ -132,12 +129,17 @@ export const salesforce = (options: SalesforceOptions) => {
 
 				const userMap = await options.mapProfileToUser?.(user);
 
+				const hasImage =
+					user.photos != null &&
+					(!!user.photos.picture || !!user.photos.thumbnail);
 				return {
 					user: {
 						id: user.user_id,
 						name: user.name,
 						email: user.email,
-						image: user.photos?.picture || user.photos?.thumbnail,
+						...(hasImage && {
+							image: user.photos!.picture || user.photos!.thumbnail,
+						}),
 						emailVerified: user.email_verified ?? false,
 						...userMap,
 					},
@@ -150,5 +152,5 @@ export const salesforce = (options: SalesforceOptions) => {
 		},
 
 		options,
-	} satisfies OAuthProvider<SalesforceProfile>;
+	} satisfies OAuthProvider;
 };

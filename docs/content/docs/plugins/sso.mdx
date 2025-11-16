@@ -14,17 +14,17 @@ Single Sign-On (SSO) allows users to authenticate with multiple applications usi
         ### Install the plugin
 
         ```bash
-        npm install @better-auth/sso
+        npm install @faire-auth/sso
         ```
     </Step>
     <Step>
         ### Add Plugin to the server
 
         ```ts title="auth.ts"
-        import { betterAuth } from "better-auth"
-        import { sso } from "@better-auth/sso";
+        import { faireAuth } from "faire-auth"
+        import { sso } from "@faire-auth/sso";
 
-        const auth = betterAuth({
+        const auth = faireAuth({
             plugins: [ // [!code highlight]
                 sso() // [!code highlight]
             ] // [!code highlight]
@@ -39,12 +39,12 @@ Single Sign-On (SSO) allows users to authenticate with multiple applications usi
         <Tabs items={["migrate", "generate"]}>
             <Tab value="migrate">
             ```bash
-            npx @better-auth/cli migrate
+            npx @faire-auth/cli migrate
             ```
             </Tab>
             <Tab value="generate">
             ```bash
-            npx @better-auth/cli generate
+            npx @faire-auth/cli generate
             ```
             </Tab>
         </Tabs>
@@ -54,8 +54,8 @@ Single Sign-On (SSO) allows users to authenticate with multiple applications usi
         ### Add the client plugin
 
         ```ts title="auth-client.ts"
-        import { createAuthClient } from "better-auth/client"
-        import { ssoClient } from "@better-auth/sso/client"
+        import { createAuthClient } from "faire-auth/client"
+        import { ssoClient } from "@faire-auth/sso/client"
 
         const authClient = createAuthClient({
             plugins: [ // [!code highlight]
@@ -341,43 +341,43 @@ const res = await auth.api.signInSSO({
 ```ts
 type signInSSO = {
     /**
-     * The email address to sign in with. This is used to identify the issuer to sign in with. It's optional if the issuer is provided. 
+     * The email address to sign in with. This is used to identify the issuer to sign in with. It's optional if the issuer is provided.
      */
     email?: string = "john@example.com"
     /**
-     * The slug of the organization to sign in with. 
+     * The slug of the organization to sign in with.
      */
     organizationSlug?: string = "example-org"
     /**
-     * The ID of the provider to sign in with. This can be provided instead of email or issuer. 
+     * The ID of the provider to sign in with. This can be provided instead of email or issuer.
      */
     providerId?: string = "example-provider"
     /**
-     * The domain of the provider. 
+     * The domain of the provider.
      */
     domain?: string = "example.com"
     /**
-     * The URL to redirect to after login. 
+     * The URL to redirect to after login.
      */
     callbackURL: string = "https://example.com/callback"
     /**
-     * The URL to redirect to after login. 
+     * The URL to redirect to after login.
      */
     errorCallbackURL?: string = "https://example.com/callback"
     /**
-     * The URL to redirect to after login if the user is new. 
+     * The URL to redirect to after login if the user is new.
      */
     newUserCallbackURL?: string = "https://example.com/new-user"
     /**
-     * Scopes to request from the provider. 
+     * Scopes to request from the provider.
      */
     scopes?: string[] = ["openid", "email", "profile", "offline_access"]
     /**
-     * Login hint to send to the identity provider (e.g., email or identifier). 
+     * Login hint to send to the identity provider (e.g., email or identifier).
      */
     loginHint?: string = "user@example.com"
     /**
-     * Explicitly request sign-up. Useful when disableImplicitSignUp is true for this provider. 
+     * Explicitly request sign-up. Useful when disableImplicitSignUp is true for this provider.
      */
     requestSignUp?: boolean = true
 }
@@ -389,7 +389,7 @@ Note: If email is provided and loginHint is not specified, email will be sent as
 When a user is authenticated, if the user does not exist, the user will be provisioned using the `provisionUser` function. If the organization provisioning is enabled and a provider is associated with an organization, the user will be added to the organization.
 
 ```ts title="auth.ts"
-const auth = betterAuth({
+const auth = faireAuth({
     plugins: [
         sso({
             provisionUser: async (user) => {
@@ -422,7 +422,7 @@ User provisioning allows you to run custom logic whenever a user signs in throug
 - Updating user information from the SSO provider
 
 ```ts title="auth.ts"
-const auth = betterAuth({
+const auth = faireAuth({
     plugins: [
         sso({
             provisionUser: async ({ user, userInfo, token, provider }) => {
@@ -473,7 +473,7 @@ Organization provisioning automatically manages user memberships in organization
 #### Basic Organization Provisioning
 
 ```ts title="auth.ts"
-const auth = betterAuth({
+const auth = faireAuth({
     plugins: [
         sso({
             organizationProvisioning: {
@@ -488,7 +488,7 @@ const auth = betterAuth({
 #### Advanced Organization Provisioning with Custom Roles
 
 ```ts title="auth.ts"
-const auth = betterAuth({
+const auth = faireAuth({
     plugins: [
         sso({
             organizationProvisioning: {
@@ -498,19 +498,19 @@ const auth = betterAuth({
                     // Assign roles based on SSO attributes
                     const department = userInfo.attributes?.department;
                     const jobTitle = userInfo.attributes?.jobTitle;
-                    
+
                     // Admins based on job title
-                    if (jobTitle?.toLowerCase().includes('manager') || 
+                    if (jobTitle?.toLowerCase().includes('manager') ||
                         jobTitle?.toLowerCase().includes('director') ||
                         jobTitle?.toLowerCase().includes('vp')) {
                         return "admin";
                     }
-                    
+
                     // Special roles for IT department
                     if (department?.toLowerCase() === 'it') {
                         return "admin";
                     }
-                    
+
                     // Default to member for everyone else
                     return "member";
                 },
@@ -593,7 +593,7 @@ provisionUser: async ({ user, userInfo }) => {
         await createUserResources(user.id);
         await markAsProvisioned(user.id);
     }
-    
+
     // Always update attributes (they might change)
     await updateUserAttributes(user.id, userInfo.attributes);
 },
@@ -636,7 +636,7 @@ organizationProvisioning: {
 ### Default SSO Provider
 
 ```ts title="auth.ts"
-const auth = betterAuth({
+const auth = faireAuth({
     plugins: [
         sso({
             defaultSSO: {

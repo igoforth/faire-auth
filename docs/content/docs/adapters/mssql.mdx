@@ -1,6 +1,6 @@
 ---
 title: MS SQL
-description: Integrate Better Auth with MS SQL.
+description: Integrate Faire Auth with MS SQL.
 ---
 
 Microsoft SQL Server is a relational database management system developed by Microsoft, designed for enterprise-level data storage, management, and analytics with robust security and scalability features.
@@ -9,10 +9,10 @@ Read more [here](https://en.wikipedia.org/wiki/Microsoft_SQL_Server).
 ## Example Usage
 
 Make sure you have MS SQL installed and configured.
-Then, you can connect it straight into Better Auth.
+Then, you can connect it straight into Faire Auth.
 
 ```ts title="auth.ts"
-import { betterAuth } from "better-auth";
+import { faireAuth } from "faire-auth";
 import { MssqlDialect } from "kysely";
 import * as Tedious from 'tedious'
 import * as Tarn from 'tarn'
@@ -49,7 +49,7 @@ const dialect = new MssqlDialect({
 	},
 })
 
-export const auth = betterAuth({
+export const auth = faireAuth({
   database: {
     dialect,
     type: "mssql"
@@ -64,8 +64,8 @@ export const auth = betterAuth({
 
 ## Schema generation & migration
 
-The [Better Auth CLI](/docs/concepts/cli) allows you to generate or migrate
-your database schema based on your Better Auth configuration and plugins.
+The [Faire Auth CLI](/docs/concepts/cli) allows you to generate or migrate
+your database schema based on your Faire Auth configuration and plugins.
 
 <table>
   <thead>
@@ -87,11 +87,11 @@ your database schema based on your Better Auth configuration and plugins.
 </table>
 
 ```bash title="Schema Generation"
-npx @better-auth/cli@latest generate
+npx @faire-auth/cli@latest generate
 ```
 
 ```bash title="Schema Migration"
-npx @better-auth/cli@latest migrate
+npx @faire-auth/cli@latest migrate
 ```
 
 ## Additional Information

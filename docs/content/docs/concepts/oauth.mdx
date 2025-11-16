@@ -1,9 +1,9 @@
 ---
 title: OAuth
-description: How Better Auth handles OAuth
+description: How Faire Auth handles OAuth
 ---
 
-Better Auth comes with built-in support for OAuth 2.0 and OpenID Connect. This allows you to authenticate users via popular OAuth providers like Google, Facebook, GitHub, and more.
+Faire Auth comes with built-in support for OAuth 2.0 and OpenID Connect. This allows you to authenticate users via popular OAuth providers like Google, Facebook, GitHub, and more.
 
 If your desired provider isn't directly supported, you can use the [Generic OAuth Plugin](/docs/plugins/generic-oauth) for custom integrations.
 
@@ -14,9 +14,9 @@ To enable a social provider, you need to provide `clientId` and `clientSecret` f
 Here's an example of how to configure Google as a provider:
 
 ```ts title="auth.ts"
-import { betterAuth } from "better-auth";
+import { faireAuth } from "faire-auth";
 
-export const auth = betterAuth({
+export const auth = faireAuth({
   // Other configurations...
   socialProviders: {
     google: {
@@ -129,7 +129,7 @@ const requestAdditionalScopes = async () => {
 ```
 
 <Callout>
-Make sure you're running Better Auth version 1.2.7 or later. Earlier versions (like 1.2.2) may show a "Social account already linked" error when trying to link with an existing provider for additional scopes.
+Make sure you're running Faire Auth version 1.2.7 or later. Earlier versions (like 1.2.2) may show a "Social account already linked" error when trying to link with an existing provider for additional scopes.
 </Callout>
 
 ## Provider Options
@@ -139,9 +139,9 @@ Make sure you're running Better Auth version 1.2.7 or later. Earlier versions (l
 The scope of the access request. For example, `email` or `profile`.
 
 ```ts title="auth.ts"
-import { betterAuth } from "better-auth";
+import { faireAuth } from "faire-auth";
 
-export const auth = betterAuth({
+export const auth = faireAuth({
   // Other configurations...
   socialProviders: {
     google: {
@@ -159,7 +159,7 @@ Custom redirect URI for the provider. By default, it uses `/api/auth/callback/${
 
 ```ts title="auth.ts"
 
-export const auth = betterAuth({
+export const auth = faireAuth({
   // Other configurations...
   socialProviders: {
     google: {
@@ -194,9 +194,9 @@ A custom function to map the user profile returned from the provider to the user
 Useful, if you have additional fields in your user object you want to populate from the provider's profile. Or if you want to change how by default the user object is mapped.
 
 ```ts title="auth.ts"
-import { betterAuth } from "better-auth";
+import { faireAuth } from "faire-auth";
 
-export const auth = betterAuth({
+export const auth = faireAuth({
   // Other configurations...
   socialProviders: {
     google: {
@@ -218,9 +218,9 @@ export const auth = betterAuth({
 A custom function to refresh the token. This feature is only supported for built-in social providers (Google, Facebook, GitHub, etc.) and is not currently supported for custom OAuth providers configured through the Generic OAuth Plugin. For built-in providers, you can provide a custom function to refresh the token if needed.
 
 ```ts title="auth.ts"
-import { betterAuth } from "better-auth";
+import { faireAuth } from "faire-auth";
 
-export const auth = betterAuth({
+export const auth = faireAuth({
   // Other configurations...
   socialProviders: {
     google: {
@@ -242,9 +242,9 @@ export const auth = betterAuth({
 The client key of your application. This is used by TikTok Social Provider instead of `clientId`.
 
 ```ts title="auth.ts"
-import { betterAuth } from "better-auth";
+import { faireAuth } from "faire-auth";
 
-export const auth = betterAuth({
+export const auth = faireAuth({
   // Other configurations...
   socialProviders: {
     tiktok: {
@@ -260,9 +260,9 @@ export const auth = betterAuth({
 A custom function to get user info from the provider. This allows you to override the default user info retrieval process.
 
 ```ts title="auth.ts"
-import { betterAuth } from "better-auth";
+import { faireAuth } from "faire-auth";
 
-export const auth = betterAuth({
+export const auth = faireAuth({
   // Other configurations...
   socialProviders: {
     google: {
@@ -297,9 +297,9 @@ export const auth = betterAuth({
 Disables implicit sign up for new users. When set to true for the provider, sign-in needs to be called with `requestSignUp` as true to create new users.
 
 ```ts title="auth.ts"
-import { betterAuth } from "better-auth";
+import { faireAuth } from "faire-auth";
 
-export const auth = betterAuth({
+export const auth = faireAuth({
   // Other configurations...
   socialProviders: {
     google: {
@@ -316,9 +316,9 @@ export const auth = betterAuth({
 The prompt to use for the authorization code request. This controls the authentication flow behavior.
 
 ```ts title="auth.ts"
-import { betterAuth } from "better-auth";
+import { faireAuth } from "faire-auth";
 
-export const auth = betterAuth({
+export const auth = faireAuth({
   // Other configurations...
   socialProviders: {
     google: {
@@ -335,9 +335,9 @@ export const auth = betterAuth({
 The response mode to use for the authorization code request. This determines how the authorization response is returned.
 
 ```ts title="auth.ts"
-import { betterAuth } from "better-auth";
+import { faireAuth } from "faire-auth";
 
-export const auth = betterAuth({
+export const auth = faireAuth({
   // Other configurations...
   socialProviders: {
     google: {
@@ -354,9 +354,9 @@ export const auth = betterAuth({
 Removes the default scopes of the provider. By default, providers include certain scopes like `email` and `profile`. Set this to `true` to remove these default scopes and use only the scopes you specify.
 
 ```ts title="auth.ts"
-import { betterAuth } from "better-auth";
+import { faireAuth } from "faire-auth";
 
-export const auth = betterAuth({
+export const auth = faireAuth({
   // Other configurations...
   socialProviders: {
     google: {

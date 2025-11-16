@@ -5,7 +5,7 @@
 If you believe you've found a security vulnerability, please follow these steps:
 
 1. Do not disclose the vulnerability publicly until it has been addressed by our team.
-2. Email your findings to `security@better-auth.com` Include:
+2. Email your findings to `security@faire-auth.com` Include:
     - A description of the vulnerability
     - Steps to reproduce the vulnerability
     - Potential impact of the vulnerability
@@ -20,4 +20,4 @@ If the issue is confirmed, we will release a patch as soon as possible. Once a p
 
 ## Supported Versions
 
-We only support the latest version of Better Auth. Older versions are not supported.
+We only support the latest version of Faire Auth. Older versions are not supported.

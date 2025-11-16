@@ -1,4 +1,4 @@
-import { getMigrations } from "better-auth/db";
+import { getMigrations } from "faire-auth/db";
 import type { SchemaGenerator } from "./types";
 
 export const generateMigrations: SchemaGenerator = async ({
@@ -11,7 +11,7 @@ export const generateMigrations: SchemaGenerator = async ({
 		code: migrations.trim() === ";" ? "" : migrations,
 		fileName:
 			file ||
-			`./better-auth_migrations/${new Date()
+			`./faire-auth_migrations/${new Date()
 				.toISOString()
 				.replace(/:/g, "-")}.sql`,
 	};

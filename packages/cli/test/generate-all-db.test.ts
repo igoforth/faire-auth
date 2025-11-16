@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
 import { generateDrizzleSchema } from "../src/generators/drizzle";
-import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { twoFactor, username } from "better-auth/plugins";
-import { passkey } from "better-auth/plugins/passkey";
-import type { BetterAuthOptions } from "better-auth";
+import { drizzleAdapter } from "faire-auth/adapters/drizzle";
+import { twoFactor, username } from "faire-auth/plugins";
+import { passkey } from "faire-auth/plugins/passkey";
+import type { FaireAuthOptions } from "faire-auth";
 
 describe("generate drizzle schema for all databases", async () => {
 	it("should generate drizzle schema for MySQL", async () => {
@@ -15,7 +15,7 @@ describe("generate drizzle schema for all databases", async () => {
 					provider: "mysql",
 					schema: {},
 				},
-			)({} as BetterAuthOptions),
+			)({} as FaireAuthOptions),
 			options: {
 				database: drizzleAdapter(
 					{},
@@ -39,7 +39,7 @@ describe("generate drizzle schema for all databases", async () => {
 				},
 			},
 		});
-		expect(schema.code).toMatchFileSnapshot(
+		await expect(schema.code).toMatchFileSnapshot(
 			"./__snapshots__/auth-schema-mysql.txt",
 		);
 	});
@@ -53,7 +53,7 @@ describe("generate drizzle schema for all databases", async () => {
 					provider: "sqlite",
 					schema: {},
 				},
-			)({} as BetterAuthOptions),
+			)({} as FaireAuthOptions),
 			options: {
 				database: drizzleAdapter(
 					{},
@@ -77,7 +77,7 @@ describe("generate drizzle schema for all databases", async () => {
 				},
 			},
 		});
-		expect(schema.code).toMatchFileSnapshot(
+		await expect(schema.code).toMatchFileSnapshot(
 			"./__snapshots__/auth-schema-sqlite.txt",
 		);
 	});
@@ -91,7 +91,7 @@ describe("generate drizzle schema for all databases", async () => {
 					provider: "mysql",
 					schema: {},
 				},
-			)({} as BetterAuthOptions),
+			)({} as FaireAuthOptions),
 			options: {
 				database: drizzleAdapter(
 					{},
@@ -120,7 +120,7 @@ describe("generate drizzle schema for all databases", async () => {
 				},
 			},
 		});
-		expect(schema.code).toMatchFileSnapshot(
+		await expect(schema.code).toMatchFileSnapshot(
 			"./__snapshots__/auth-schema-mysql-number-id.txt",
 		);
 	});
@@ -134,7 +134,7 @@ describe("generate drizzle schema for all databases", async () => {
 					provider: "sqlite",
 					schema: {},
 				},
-			)({} as BetterAuthOptions),
+			)({} as FaireAuthOptions),
 			options: {
 				database: drizzleAdapter(
 					{},
@@ -163,7 +163,7 @@ describe("generate drizzle schema for all databases", async () => {
 				},
 			},
 		});
-		expect(schema.code).toMatchFileSnapshot(
+		await expect(schema.code).toMatchFileSnapshot(
 			"./__snapshots__/auth-schema-sqlite-number-id.txt",
 		);
 	});
@@ -179,7 +179,7 @@ describe("generate drizzle schema for all databases with passkey plugin", async 
 					provider: "mysql",
 					schema: {},
 				},
-			)({} as BetterAuthOptions),
+			)({} as FaireAuthOptions),
 			options: {
 				database: drizzleAdapter(
 					{},
@@ -203,7 +203,7 @@ describe("generate drizzle schema for all databases with passkey plugin", async 
 				},
 			},
 		});
-		expect(schema.code).toMatchFileSnapshot(
+		await expect(schema.code).toMatchFileSnapshot(
 			"./__snapshots__/auth-schema-mysql-passkey.txt",
 		);
 	});
@@ -217,7 +217,7 @@ describe("generate drizzle schema for all databases with passkey plugin", async 
 					provider: "sqlite",
 					schema: {},
 				},
-			)({} as BetterAuthOptions),
+			)({} as FaireAuthOptions),
 			options: {
 				database: drizzleAdapter(
 					{},
@@ -241,7 +241,7 @@ describe("generate drizzle schema for all databases with passkey plugin", async 
 				},
 			},
 		});
-		expect(schema.code).toMatchFileSnapshot(
+		await expect(schema.code).toMatchFileSnapshot(
 			"./__snapshots__/auth-schema-sqlite-passkey.txt",
 		);
 	});
@@ -255,7 +255,7 @@ describe("generate drizzle schema for all databases with passkey plugin", async 
 					provider: "pg",
 					schema: {},
 				},
-			)({} as BetterAuthOptions),
+			)({} as FaireAuthOptions),
 			options: {
 				database: drizzleAdapter(
 					{},
@@ -279,7 +279,7 @@ describe("generate drizzle schema for all databases with passkey plugin", async 
 				},
 			},
 		});
-		expect(schema.code).toMatchFileSnapshot(
+		await expect(schema.code).toMatchFileSnapshot(
 			"./__snapshots__/auth-schema-pg-passkey.txt",
 		);
 	});
@@ -293,7 +293,7 @@ describe("generate drizzle schema for all databases with passkey plugin", async 
 					provider: "mysql",
 					schema: {},
 				},
-			)({} as BetterAuthOptions),
+			)({} as FaireAuthOptions),
 			options: {
 				database: drizzleAdapter(
 					{},
@@ -322,7 +322,7 @@ describe("generate drizzle schema for all databases with passkey plugin", async 
 				},
 			},
 		});
-		expect(schema.code).toMatchFileSnapshot(
+		await expect(schema.code).toMatchFileSnapshot(
 			"./__snapshots__/auth-schema-mysql-passkey-number-id.txt",
 		);
 	});
@@ -336,7 +336,7 @@ describe("generate drizzle schema for all databases with passkey plugin", async 
 					provider: "sqlite",
 					schema: {},
 				},
-			)({} as BetterAuthOptions),
+			)({} as FaireAuthOptions),
 			options: {
 				database: drizzleAdapter(
 					{},
@@ -365,7 +365,7 @@ describe("generate drizzle schema for all databases with passkey plugin", async 
 				},
 			},
 		});
-		expect(schema.code).toMatchFileSnapshot(
+		await expect(schema.code).toMatchFileSnapshot(
 			"./__snapshots__/auth-schema-sqlite-passkey-number-id.txt",
 		);
 	});

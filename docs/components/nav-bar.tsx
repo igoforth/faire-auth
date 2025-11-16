@@ -4,8 +4,8 @@ import { NavbarMobile, NavbarMobileBtn } from "./nav-mobile";
 import { NavLink } from "./nav-link";
 import { Logo } from "./logo";
 import LogoContextMenu from "./logo-context-menu";
-import DarkPng from "../public/branding/better-auth-logo-dark.png";
-import WhitePng from "../public/branding/better-auth-logo-light.png";
+import DarkPng from "../public/branding/faire-auth-logo-dark.png";
+import WhitePng from "../public/branding/faire-auth-logo-light.png";
 import { MobileSearchIcon } from "@/components/mobile-search-icon";
 export const Navbar = () => {
 	const logoAssets = {
@@ -66,7 +66,7 @@ export const Navbar = () => {
 							logo={
 								<div className="flex items-center gap-2">
 									<Logo />
-									<p className="select-none">BETTER-AUTH.</p>
+									<p className="select-none">FAIRE-AUTH.</p>
 								</div>
 							}
 							logoAssets={logoAssets}
@@ -81,7 +81,7 @@ export const Navbar = () => {
 							</NavLink>
 						))}
 						<NavLink
-							href="https://github.com/better-auth/better-auth"
+							href="https://github.com/igoforth/faire-auth"
 							className=" bg-muted/20"
 							external
 						>

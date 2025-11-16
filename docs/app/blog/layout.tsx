@@ -1,8 +1,8 @@
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-	title: "Blog - Better Auth",
-	description: "Latest updates, articles, and insights about Better Auth",
+	title: "Blog - Faire Auth",
+	description: "Latest updates, articles, and insights about Faire Auth",
 };
 
 interface BlogLayoutProps {

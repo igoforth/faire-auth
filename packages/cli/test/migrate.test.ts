@@ -1,13 +1,13 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { migrateAction } from "../src/commands/migrate";
 import * as config from "../src/utils/get-config";
-import { betterAuth, type BetterAuthPlugin } from "better-auth";
+import { faireAuth, type FaireAuthPlugin } from "faire-auth";
 import Database from "better-sqlite3";
 
 describe("migrate base auth instance", () => {
 	const db = new Database(":memory:");
 
-	const auth = betterAuth({
+	const auth = faireAuth({
 		baseURL: "http://localhost:3000",
 		database: db,
 		emailAndPassword: {
@@ -33,13 +33,13 @@ describe("migrate base auth instance", () => {
 			y: true,
 		});
 		const signUpRes = await auth.api.signUpEmail({
-			body: {
+			json: {
 				name: "test",
 				email: "test@email.com",
 				password: "password",
 			},
 		});
-		expect(signUpRes.token).toBeDefined();
+		expect(signUpRes.data.token).toBeDefined();
 	});
 });
 
@@ -57,9 +57,9 @@ describe("migrate auth instance with plugins", () => {
 				},
 			},
 		},
-	} satisfies BetterAuthPlugin;
+	} satisfies FaireAuthPlugin;
 
-	const auth = betterAuth({
+	const auth = faireAuth({
 		baseURL: "http://localhost:3000",
 		database: db,
 		emailAndPassword: {

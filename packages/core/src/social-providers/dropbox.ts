@@ -108,5 +108,5 @@ export const dropbox = (options: DropboxOptions) => {
 			};
 		},
 		options,
-	} satisfies OAuthProvider<DropboxProfile>;
+	} satisfies OAuthProvider;
 };

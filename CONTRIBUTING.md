@@ -1,6 +1,6 @@
-# Contributing to Better Auth
+# Contributing to Faire Auth
 
-Thank you for your interest in contributing to Better Auth. This guide will help you get started with the contribution process.
+Thank you for your interest in contributing to Faire Auth. This guide will help you get started with the contribution process.
 
 ## Code of Conduct
 
@@ -8,9 +8,9 @@ This project and everyone participating in it is governed by our [Code of Conduc
 
 ## Project Structure
 
-The Better Auth monorepo is organized as follows:
+The Faire Auth monorepo is organized as follows:
 
-- `/packages/better-auth` - Core authentication library
+- `/packages/faire-auth` - Core authentication library
 - `/packages/cli` - Command-line interface tools
 - `/packages/expo` - Expo integration
 - `/packages/stripe` - Stripe payment integration
@@ -21,7 +21,7 @@ The Better Auth monorepo is organized as follows:
 
 ## Development Guidelines
 
-When contributing to Better Auth:
+When contributing to Faire Auth:
 
 - Keep changes focused. Large PRs are harder to review and unlikely to be accepted. We recommend opening an issue and discussing it with us first.
 - Ensure all code is type-safe and takes full advantage of TypeScript features.
@@ -35,8 +35,8 @@ When contributing to Better Auth:
 1. Fork the repository to your GitHub account
 2. Clone your fork locally:
    ```bash
-   git clone https://github.com/your-username/better-auth.git
-   cd better-auth
+   git clone https://github.com/your-username/faire-auth.git
+   cd faire-auth
    ```
 3. Install Node.js (LTS version recommended)
 4. Install pnpm if you haven't already:
@@ -91,7 +91,7 @@ pnpm lint:fix
    git checkout -b type/description
    # Example: git checkout -b feat/oauth-provider
    ```
-   
+
    Branch type prefixes:
    - `feat/` - New features
    - `fix/` - Bug fixes
@@ -106,7 +106,7 @@ pnpm lint:fix
    ```bash
    # Run all tests
    pnpm test
-   
+
    # Run tests for a specific package
    pnpm -F "{packagename}" test
    ```
@@ -115,14 +115,14 @@ pnpm lint:fix
    For changes that need to be included in the changelog (excluding docs or chore changes), use the `fix` or `feat` format with a specific scope:
    ```
    fix(organization): fix incorrect member role assignment
-   
+
    feat(two-factor): add support for TOTP authentication
    ```
 
    For core library changes that don't have a specific plugin or scope, you can use `fix` and `feat` without a scope:
    ```
    fix: resolve memory leak in session handling
-   
+
    feat: add support for custom error messages
    ```
 
@@ -131,7 +131,7 @@ pnpm lint:fix
    docs: improve authentication flow explanation
    docs: fix typos in API reference
    ```
-   
+
    For changes that refactor or don't change the functionality of the library or docs, use `chore`:
    ```bash
    chore(refactor): reorganize authentication middleware
@@ -180,9 +180,9 @@ All contributions must include appropriate tests. Follow these guidelines:
 
 ## Component-Specific Guidelines
 
-### Core Library (`/packages/better-auth`)
+### Core Library (`/packages/faire-auth`)
 - Keep the core library focused on essential authentication functionality
-- Plugins in the core generally are made by core members. If you have a plugin idea consider open sourcing it yourself instead. 
+- Plugins in the core generally are made by core members. If you have a plugin idea consider open sourcing it yourself instead.
 - Ensure all public APIs are well-documented with JSDoc comments
 - Maintain backward compatibility. If it's super necessary, provide a clear migration path
 - Follow the existing patterns for error handling and logging
@@ -197,4 +197,4 @@ All contributions must include appropriate tests. Follow these guidelines:
 
 ## Security Issues
 
-For security-related issues, please email security@better-auth.com. Include a detailed description of the vulnerability and steps to reproduce it. All reports will be reviewed and addressed promptly. For more information, see our [security documentation](/docs/reference/security).
+For security-related issues, please email security@faire-auth.com. Include a detailed description of the vulnerability and steps to reproduce it. All reports will be reviewed and addressed promptly. For more information, see our [security documentation](/docs/reference/security).

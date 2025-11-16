@@ -23,7 +23,7 @@ const ChangelogPage = async () => {
 			prerelease: boolean;
 			published_at: string;
 		}[]
-	>("https://api.github.com/repos/better-auth/better-auth/releases");
+	>("https://api.github.com/repos/igoforth/faire-auth/releases");
 
 	const messages = releases
 		?.filter((release) => !release.prerelease)
@@ -79,7 +79,7 @@ const ChangelogPage = async () => {
 						<span className="">available here.</span>
 					</h1>
 					<p className="mt-4 text-sm text-gray-600 dark:text-gray-300">
-						Better Auth is comprehensive authentication library for TypeScript
+						Faire Auth is comprehensive authentication library for TypeScript
 						that provides a wide range of features to make authentication easier
 						and more secure.
 					</p>
@@ -93,14 +93,14 @@ const ChangelogPage = async () => {
 							Documentation
 						</IconLink>
 						<IconLink
-							href="https://github.com/better-auth/better-auth"
+							href="https://github.com/igoforth/faire-auth"
 							icon={GitHubIcon}
 							className="flex-none text-gray-600 dark:text-gray-300"
 						>
 							GitHub
 						</IconLink>
 						<IconLink
-							href="https://discord.gg/better-auth"
+							href="https://discord.gg/faire-auth"
 							icon={DiscordLogoIcon}
 							className="flex-none text-gray-600 dark:text-gray-300"
 						>
@@ -108,8 +108,8 @@ const ChangelogPage = async () => {
 						</IconLink>
 					</div>
 					<p className="flex items-baseline absolute bottom-4 max-md:left-1/2 max-md:-translate-x-1/2 gap-x-2 text-[0.8125rem]/6 text-gray-500">
-						<IconLink href="https://x.com/better_auth" icon={XIcon} compact>
-							BETTER-AUTH.
+						<IconLink href="https://x.com/faire_auth" icon={XIcon} compact>
+							FAIRE-AUTH.
 						</IconLink>
 					</p>
 				</div>

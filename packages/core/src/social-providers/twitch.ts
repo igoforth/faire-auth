@@ -1,5 +1,5 @@
 import type { OAuthProvider, ProviderOptions } from "../oauth2";
-import { logger } from "../env";
+import { logger } from "../env/logger";
 import {
 	createAuthorizationURL,
 	validateAuthorizationCode,
@@ -107,5 +107,5 @@ export const twitch = (options: TwitchOptions) => {
 			};
 		},
 		options,
-	} satisfies OAuthProvider<TwitchProfile>;
+	} satisfies OAuthProvider;
 };

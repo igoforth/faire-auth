@@ -1,19 +1,21 @@
 {
-  "name": "@better-auth/cli",
+  "name": "@faire-auth/cli",
   "version": "1.4.0-beta.11",
   "type": "module",
-  "description": "The CLI for Better Auth",
-  "module": "dist/index.js",
+  "description": "The CLI for Faire Auth",
   "repository": {
     "type": "git",
-    "url": "https://github.com/better-auth/better-auth",
+    "url": "git+https://github.com/igoforth/faire-auth.git",
     "directory": "packages/cli"
   },
-  "homepage": "https://www.better-auth.com/docs/concepts/cli",
-  "main": "./dist/index.js",
+  "homepage": "https://www.faire-auth.com/docs/concepts/cli",
+  "main": "./dist/index.mjs",
+  "module": "./dist/index.mjs",
+  "exports": "./dist/index.mjs",
+  "bin": "./dist/index.mjs",
   "scripts": {
     "build": "tsdown",
-    "start": "node ./dist/index.js",
+    "start": "node ./dist/index.mjs",
     "dev": "tsx ./src/index.ts",
     "test": "vitest",
     "typecheck": "tsc --project tsconfig.json"
@@ -21,7 +23,7 @@
   "publishConfig": {
     "access": "public",
     "executableFiles": [
-      "./dist/index.js"
+      "./dist/index.mjs"
     ]
   },
   "license": "MIT",
@@ -29,43 +31,40 @@
     "auth",
     "cli",
     "typescript",
-    "better-auth"
+    "faire-auth"
   ],
-  "exports": "./dist/index.js",
-  "bin": "./dist/index.js",
   "devDependencies": {
     "@types/semver": "^7.7.1",
-    "tsx": "^4.20.5",
-    "typescript": "catalog:",
+    "tsx": "catalog:",
     "tsdown": "catalog:"
   },
   "dependencies": {
     "@babel/core": "^7.28.4",
     "@babel/preset-react": "^7.27.1",
     "@babel/preset-typescript": "^7.27.1",
-    "@better-auth/utils": "0.3.0",
     "@clack/prompts": "^0.11.0",
+    "@faire-auth/core": "workspace:*",
     "@mrleebo/prisma-ast": "^0.13.0",
-    "@prisma/client": "^5.22.0",
-    "@types/better-sqlite3": "^7.6.13",
-    "@types/prompts": "^2.4.9",
-    "better-auth": "workspace:*",
-    "better-sqlite3": "^12.2.0",
+    "@prisma/client": "catalog:",
+    "@types/better-sqlite3": "catalog:",
+    "@types/prompts": "catalog:",
+    "faire-auth": "workspace:*",
+    "better-sqlite3": "catalog:",
     "c12": "^3.2.0",
     "chalk": "^5.6.2",
     "commander": "^12.1.0",
     "dotenv": "^17.2.2",
-    "drizzle-orm": "^0.33.0",
+    "drizzle-orm": "catalog:",
     "get-tsconfig": "^4.10.1",
     "jiti": "^2.6.0",
     "open": "^10.2.0",
     "prettier": "^3.6.2",
-    "prisma": "^5.22.0",
+    "prisma": "catalog:",
     "prompts": "^2.4.2",
     "semver": "^7.7.2",
     "tinyexec": "^0.3.2",
     "yocto-spinner": "^0.2.3",
-    "zod": "^4.1.5"
+    "zod": "catalog:"
   },
   "files": [
     "dist"

@@ -3,7 +3,7 @@ title: Captcha
 description: Captcha plugin
 ---
 
-The **Captcha Plugin** integrates bot protection into your Better Auth system by adding captcha verification for key endpoints. This plugin ensures that only human users can perform actions like signing up, signing in, or resetting passwords. The following providers are currently supported:
+The **Captcha Plugin** integrates bot protection into your Faire Auth system by adding captcha verification for key endpoints. This plugin ensures that only human users can perform actions like signing up, signing in, or resetting passwords. The following providers are currently supported:
 - [Google reCAPTCHA](https://developers.google.com/recaptcha)
 - [Cloudflare Turnstile](https://www.cloudflare.com/application-services/products/turnstile/)
 - [hCaptcha](https://www.hcaptcha.com/)
@@ -20,10 +20,10 @@ The **Captcha Plugin** integrates bot protection into your Better Auth system by
     ### Add the plugin to your **auth** config
 
     ```ts title="auth.ts"
-    import { betterAuth } from "better-auth";
-    import { captcha } from "better-auth/plugins";
+    import { faireAuth } from "faire-auth";
+    import { captcha } from "faire-auth/plugins";
 
-    export const auth = betterAuth({
+    export const auth = faireAuth({
         plugins: [ // [!code highlight]
             captcha({ // [!code highlight]
                 provider: "cloudflare-turnstile", // or google-recaptcha, hcaptcha, captchafox // [!code highlight]

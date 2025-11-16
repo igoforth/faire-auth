@@ -1,24 +1,24 @@
 ---
 title: Expo Integration
-description: Integrate Better Auth with Expo.
+description: Integrate Faire Auth with Expo.
 ---
 
-Expo is a popular framework for building cross-platform apps with React Native. Better Auth supports both Expo native and web apps.
+Expo is a popular framework for building cross-platform apps with React Native. Faire Auth supports both Expo native and web apps.
 
 ## Installation
 
 <Steps>
     <Step>
-        ## Configure A Better Auth Backend
-        Before using Better Auth with Expo, make sure you have a Better Auth backend set up. You can either use a separate server or leverage Expo's new [API Routes](https://docs.expo.dev/router/reference/api-routes) feature to host your Better Auth instance.
+        ## Configure A Faire Auth Backend
+        Before using Faire Auth with Expo, make sure you have a Faire Auth backend set up. You can either use a separate server or leverage Expo's new [API Routes](https://docs.expo.dev/router/reference/api-routes) feature to host your Faire Auth instance.
 
-        To get started, check out our [installation](/docs/installation) guide for setting up Better Auth on your server. If you prefer to check out the full example, you can find it [here](https://github.com/better-auth/examples/tree/main/expo-example).
+        To get started, check out our [installation](/docs/installation) guide for setting up Faire Auth on your server. If you prefer to check out the full example, you can find it [here](https://github.com/faire-auth/examples/tree/main/expo-example).
 
-        To use the new API routes feature in Expo to host your Better Auth instance you can create a new API route in your Expo app and mount the Better Auth handler.
+        To use the new API routes feature in Expo to host your Faire Auth instance you can create a new API route in your Expo app and mount the Faire Auth handler.
 
         ```ts title="app/api/auth/[...auth]+api.ts"
-        import { auth } from "@/lib/auth"; // import Better Auth handler
-        
+        import { auth } from "@/lib/auth"; // import Faire Auth handler
+
         const handler = auth.handler;
         export { handler as GET, handler as POST }; // export handler for both GET and POST requests
         ```
@@ -26,10 +26,10 @@ Expo is a popular framework for building cross-platform apps with React Native. 
     <Step>
         ## Install Server Dependencies
 
-        Install both the Better Auth package and Expo plugin into your server application.
+        Install both the Faire Auth package and Expo plugin into your server application.
 
         ```package-install
-        better-auth @better-auth/expo
+        faire-auth @faire-auth/expo
         ```
 
     </Step>
@@ -37,42 +37,42 @@ Expo is a popular framework for building cross-platform apps with React Native. 
     <Step>
         ## Install Client Dependencies
 
-        You also need to install both the Better Auth package and Expo plugin into your Expo application.
+        You also need to install both the Faire Auth package and Expo plugin into your Expo application.
 
         ```package-install
-        better-auth @better-auth/expo 
+        faire-auth @faire-auth/expo
         ```
 
         If you plan on using our social integrations (Google, Apple etc.) then there are a few more dependencies that are required in your Expo app. In the default Expo template these are already installed so you may be able to skip this step if you have these dependencies already.
 
         ```package-install
         expo-linking expo-web-browser expo-constants
-        
+
         ```
     </Step>
-    
+
     <Step>
         ## Add the Expo Plugin on Your Server
 
-        Add the Expo plugin to your Better Auth server.
+        Add the Expo plugin to your Faire Auth server.
 
         ```ts title="lib/auth.ts"
-        import { betterAuth } from "better-auth";
-        import { expo } from "@better-auth/expo";
+        import { faireAuth } from "faire-auth";
+        import { expo } from "@faire-auth/expo";
 
-        export const auth = betterAuth({
+        export const auth = faireAuth({
             plugins: [expo()],
-            emailAndPassword: { 
+            emailAndPassword: {
                 enabled: true, // Enable authentication using email and password.
-              }, 
+              },
         });
         ```
     </Step>
 
     <Step>
-        ## Initialize Better Auth Client
-        
-        To initialize Better Auth in your Expo app, you need to call `createAuthClient` with the base URL of your Better Auth backend. Make sure to import the client from `/react`.
+        ## Initialize Faire Auth Client
+
+        To initialize Faire Auth in your Expo app, you need to call `createAuthClient` with the base URL of your Faire Auth backend. Make sure to import the client from `/react`.
 
         Make sure you install the `expo-secure-store` package into your Expo app. This is used to store the session data and cookies securely.
 
@@ -80,7 +80,7 @@ Expo is a popular framework for building cross-platform apps with React Native. 
         expo-secure-store
         ```
 
-        You need to also import client plugin from `@better-auth/expo/client` and pass it to the `plugins` array when initializing the auth client.
+        You need to also import client plugin from `@faire-auth/expo/client` and pass it to the `plugins` array when initializing the auth client.
 
         This is important because:
 
@@ -88,12 +88,12 @@ Expo is a popular framework for building cross-platform apps with React Native. 
         - **Secure Cookie Management:** stores cookies securely and automatically adds them to the headers of your auth requests.
 
         ```ts title="lib/auth-client.ts"
-        import { createAuthClient } from "better-auth/react";
-        import { expoClient } from "@better-auth/expo/client";
+        import { createAuthClient } from "faire-auth/react";
+        import { expoClient } from "@faire-auth/expo/client";
         import * as SecureStore from "expo-secure-store";
 
         export const authClient = createAuthClient({
-            baseURL: "http://localhost:8081", // Base URL of your Better Auth backend.
+            baseURL: "http://localhost:8081", // Base URL of your Faire Auth backend.
             plugins: [
                 expoClient({
                     scheme: "myapp",
@@ -111,7 +111,7 @@ Expo is a popular framework for building cross-platform apps with React Native. 
      <Step>
         ## Scheme and Trusted Origins
 
-        Better Auth uses deep links to redirect users back to your app after authentication. To enable this, you need to add your app's scheme to the `trustedOrigins` list in your Better Auth config. 
+        Faire Auth uses deep links to redirect users back to your app after authentication. To enable this, you need to add your app's scheme to the `trustedOrigins` list in your Faire Auth config.
 
         First, make sure you have a scheme defined in your `app.json` file.
 
@@ -123,10 +123,10 @@ Expo is a popular framework for building cross-platform apps with React Native. 
         }
         ```
 
-        Then, update your Better Auth config to include the scheme in the `trustedOrigins` list.
+        Then, update your Faire Auth config to include the scheme in the `trustedOrigins` list.
 
         ```ts title="auth.ts"
-        export const auth = betterAuth({
+        export const auth = faireAuth({
             trustedOrigins: ["myapp://"]
         })
         ```
@@ -134,15 +134,15 @@ Expo is a popular framework for building cross-platform apps with React Native. 
         If you have multiple schemes or need to support deep linking with various paths, you can use specific patterns or wildcards:
 
         ```ts title="auth.ts"
-        export const auth = betterAuth({
+        export const auth = faireAuth({
             trustedOrigins: [
                 // Basic scheme
-                "myapp://", 
-                
+                "myapp://",
+
                 // Production & staging schemes
                 "myapp-prod://",
                 "myapp-staging://",
-                
+
                 // Wildcard support for all paths following the scheme
                 "myapp://*"
             ]
@@ -154,10 +154,10 @@ Expo is a popular framework for building cross-platform apps with React Native. 
         During development, Expo uses the `exp://` scheme with your device's local IP address. To support this, you can use wildcards to match common local IP ranges:
 
         ```ts title="auth.ts"
-        export const auth = betterAuth({
+        export const auth = faireAuth({
             trustedOrigins: [
                 "myapp://",
-                
+
                 // Development mode - Expo's exp:// scheme with local IP ranges
                 ...(process.env.NODE_ENV === "development" ? [
                     "exp://*/*",                 // Trust all Expo development URLs
@@ -174,11 +174,11 @@ Expo is a popular framework for building cross-platform apps with React Native. 
           The wildcard patterns for `exp://` should only be used in development. In production, use your app's specific scheme (e.g., `myapp://`).
         </Callout>
     </Step>
- 
+
     <Step>
         ## Configure Metro Bundler
 
-        To resolve Better Auth exports you'll need to enable `unstable_enablePackageExports` in your metro config. 
+        To resolve Faire Auth exports you'll need to enable `unstable_enablePackageExports` in your metro config.
 
         ```js title="metro.config.js"
         const { getDefaultConfig } = require("expo/metro-config");
@@ -191,7 +191,7 @@ Expo is a popular framework for building cross-platform apps with React Native. 
         ```
 
         <Callout>In case you don't have a `metro.config.js` file in your project run `npx expo customize metro.config.js`.</Callout>
-        
+
         If you can't enable `unstable_enablePackageExports` option, you can use [babel-plugin-module-resolver](https://github.com/tleunen/babel-plugin-module-resolver) to manually resolve the paths.
 
         ```ts title="babel.config.js"
@@ -204,9 +204,9 @@ Expo is a popular framework for building cross-platform apps with React Native. 
                         "module-resolver",
                         {
                             alias: {
-                                "better-auth/react": "./node_modules/better-auth/dist/client/react/index.cjs",
-                                "better-auth/client/plugins": "./node_modules/better-auth/dist/client/plugins/index.cjs",
-                                "@better-auth/expo/client": "./node_modules/@better-auth/expo/dist/client.cjs",
+                                "faire-auth/react": "./node_modules/faire-auth/dist/client/react/index.cjs",
+                                "faire-auth/client/plugins": "./node_modules/faire-auth/dist/client/plugins/index.cjs",
+                                "@faire-auth/expo/client": "./node_modules/@faire-auth/expo/dist/client.cjs",
                             },
                         },
                     ],
@@ -231,12 +231,12 @@ Expo is a popular framework for building cross-platform apps with React Native. 
 
 ### Authenticating Users
 
-With Better Auth initialized, you can now use the `authClient` to authenticate users in your Expo app.
+With Faire Auth initialized, you can now use the `authClient` to authenticate users in your Expo app.
 
 <Tabs items={["sign-in", "sign-up"]}>
     <Tab value="sign-in">
         ```tsx title="app/sign-in.tsx"
-        import { useState } from "react"; 
+        import { useState } from "react";
         import { View, TextInput, Button } from "react-native";
         import { authClient } from "@/lib/auth-client";
 
@@ -355,7 +355,7 @@ export default function SocialSignIn() {
 
 ### Session
 
-Better Auth provides a `useSession` hook to access the current user's session in your app.
+Faire Auth provides a `useSession` hook to access the current user's session in your app.
 
 ```tsx title="app/index.tsx"
 import { Text } from "react-native";
@@ -383,7 +383,7 @@ const makeAuthenticatedRequest = async () => {
   const headers = {
     "Cookie": cookies, // [!code highlight]
   };
-  const response = await fetch("http://localhost:8081/api/secure-endpoint", { 
+  const response = await fetch("http://localhost:8081/api/secure-endpoint", {
     headers,
     // 'include' can interfere with the cookies we just set manually in the headers
     credentials: "omit" // [!code highlight]
@@ -394,7 +394,7 @@ const makeAuthenticatedRequest = async () => {
 ```
 
 **Example: Usage With TRPC**
-    
+
 ```tsx title="lib/trpc-provider.tsx"
 //...other imports
 import { authClient } from "@/lib/auth-client"; // [!code highlight]
@@ -439,7 +439,7 @@ export function TRPCProvider(props: { children: React.ReactNode }) {
 **storage**: the storage mechanism used to cache the session data and cookies.
 
 ```ts title="lib/auth-client.ts"
-import { createAuthClient } from "better-auth/react";
+import { createAuthClient } from "faire-auth/react";
 import SecureStorage from "expo-secure-store";
 
 const authClient = createAuthClient({
@@ -448,10 +448,10 @@ const authClient = createAuthClient({
 });
 ```
 
-**scheme**: scheme is used to deep link back to your app after a user has authenticated using oAuth providers. By default, Better Auth tries to read the scheme from the `app.json` file. If you need to override this, you can pass the scheme option to the client.
+**scheme**: scheme is used to deep link back to your app after a user has authenticated using oAuth providers. By default, Faire Auth tries to read the scheme from the `app.json` file. If you need to override this, you can pass the scheme option to the client.
 
 ```ts title="lib/auth-client.ts"
-import { createAuthClient } from "better-auth/react";
+import { createAuthClient } from "faire-auth/react";
 
 const authClient = createAuthClient({
     baseURL: "http://localhost:8081",
@@ -462,7 +462,7 @@ const authClient = createAuthClient({
 **disableCache**: By default, the client will cache the session data in SecureStore. You can disable this behavior by passing the `disableCache` option to the client.
 
 ```ts title="lib/auth-client.ts"
-import { createAuthClient } from "better-auth/react";
+import { createAuthClient } from "faire-auth/react";
 
 const authClient = createAuthClient({
     baseURL: "http://localhost:8081",

@@ -1,15 +1,15 @@
-import { Command } from "commander";
-import { getConfig } from "../utils/get-config";
-import * as z from "zod/v4";
-import { existsSync } from "fs";
-import path from "path";
-import { logger, createTelemetry, getTelemetryAuthConfig } from "better-auth";
-import yoctoSpinner from "yocto-spinner";
-import prompts from "prompts";
-import fs from "fs/promises";
 import chalk from "chalk";
-import { getAdapter } from "better-auth/db";
+import { Command } from "commander";
+import { createTelemetry, getTelemetryAuthConfig, logger } from "faire-auth";
+import { getAdapter } from "faire-auth/db";
+import { existsSync } from "fs";
+import fs from "fs/promises";
+import path from "path";
+import prompts from "prompts";
+import yoctoSpinner from "yocto-spinner";
+import * as z from "zod";
 import { generateSchema } from "../generators";
+import { getConfig } from "../utils/get-config";
 
 export async function generateAction(opts: any) {
 	const options = z
@@ -29,7 +29,7 @@ export async function generateAction(opts: any) {
 	}
 	const config = await getConfig({
 		cwd,
-		configPath: options.config,
+		...(options.config && { configPath: options.config }),
 	});
 	if (!config) {
 		logger.error(
@@ -38,16 +38,19 @@ export async function generateAction(opts: any) {
 		return;
 	}
 
-	const adapter = await getAdapter(config).catch((e) => {
-		logger.error(e.message);
+	let adapter;
+	try {
+		adapter = getAdapter(config);
+	} catch (e) {
+		logger.error(e instanceof Error ? e.message : "Unknown getAdapter() error");
 		process.exit(1);
-	});
+	}
 
 	const spinner = yoctoSpinner({ text: "preparing schema..." }).start();
 
 	const schema = await generateSchema({
 		adapter,
-		file: options.output,
+		...(options.output && { file: options.output }),
 		options: config,
 	});
 
@@ -56,7 +59,7 @@ export async function generateAction(opts: any) {
 		logger.info("Your schema is already up to date.");
 		// telemetry: track generate attempted, no changes
 		try {
-			const telemetry = await createTelemetry(config);
+			const telemetry = createTelemetry(config);
 			await telemetry.publish({
 				type: "cli_generate",
 				payload: {
@@ -105,7 +108,7 @@ export async function generateAction(opts: any) {
 			);
 			// telemetry: track generate success overwrite/append
 			try {
-				const telemetry = await createTelemetry(config);
+				const telemetry = createTelemetry(config);
 				await telemetry.publish({
 					type: "cli_generate",
 					payload: {
@@ -119,7 +122,7 @@ export async function generateAction(opts: any) {
 			logger.error("Schema generation aborted.");
 			// telemetry: track generate aborted
 			try {
-				const telemetry = await createTelemetry(config);
+				const telemetry = createTelemetry(config);
 				await telemetry.publish({
 					type: "cli_generate",
 					payload: {
@@ -154,7 +157,7 @@ export async function generateAction(opts: any) {
 		logger.error("Schema generation aborted.");
 		// telemetry: track generate aborted before write
 		try {
-			const telemetry = await createTelemetry(config);
+			const telemetry = createTelemetry(config);
 			await telemetry.publish({
 				type: "cli_generate",
 				payload: { outcome: "aborted", config: getTelemetryAuthConfig(config) },
@@ -178,7 +181,7 @@ export async function generateAction(opts: any) {
 	logger.success(`🚀 Schema was generated successfully!`);
 	// telemetry: track generate success
 	try {
-		const telemetry = await createTelemetry(config);
+		const telemetry = createTelemetry(config);
 		await telemetry.publish({
 			type: "cli_generate",
 			payload: { outcome: "generated", config: getTelemetryAuthConfig(config) },

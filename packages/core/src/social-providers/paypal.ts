@@ -1,10 +1,10 @@
 import { betterFetch } from "@better-fetch/fetch";
-import { BetterAuthError } from "../error";
+import { FaireAuthError } from "../error";
 import type { OAuthProvider, ProviderOptions } from "../oauth2";
 import { createAuthorizationURL } from "../oauth2";
-import { logger } from "../env";
+import { logger } from "../env/logger";
 import { decodeJwt } from "jose";
-import { base64 } from "@better-auth/utils/base64";
+import { base64 } from "../datatypes/base64";
 
 export interface PayPalProfile {
 	user_id: string;
@@ -81,7 +81,7 @@ export const paypal = (options: PayPalOptions) => {
 				logger.error(
 					"Client Id and Client Secret is required for PayPal. Make sure to provide them in the options.",
 				);
-				throw new BetterAuthError("CLIENT_ID_AND_SECRET_REQUIRED");
+				throw new FaireAuthError("CLIENT_ID_AND_SECRET_REQUIRED");
 			}
 
 			/**
@@ -130,25 +130,24 @@ export const paypal = (options: PayPalOptions) => {
 					}).toString(),
 				});
 
-				if (!response.data) {
-					throw new BetterAuthError("FAILED_TO_GET_ACCESS_TOKEN");
-				}
+				if (!response.data)
+					throw new FaireAuthError("FAILED_TO_GET_ACCESS_TOKEN");
 
 				const data = response.data as PayPalTokenResponse;
 
 				const result = {
 					accessToken: data.access_token,
-					refreshToken: data.refresh_token,
-					accessTokenExpiresAt: data.expires_in
-						? new Date(Date.now() + data.expires_in * 1000)
-						: undefined,
-					idToken: data.id_token,
+					...(data.refresh_token && { refreshToken: data.refresh_token }),
+					...(data.expires_in && {
+						accessTokenExpiresAt: new Date(Date.now() + data.expires_in * 1000),
+					}),
+					...(data.id_token && { idToken: data.id_token }),
 				};
 
 				return result;
 			} catch (error) {
 				logger.error("PayPal token exchange failed:", error);
-				throw new BetterAuthError("FAILED_TO_GET_ACCESS_TOKEN");
+				throw new FaireAuthError("FAILED_TO_GET_ACCESS_TOKEN");
 			}
 		},
 
@@ -174,21 +173,22 @@ export const paypal = (options: PayPalOptions) => {
 							}).toString(),
 						});
 
-						if (!response.data) {
-							throw new BetterAuthError("FAILED_TO_REFRESH_ACCESS_TOKEN");
-						}
+						if (!response.data)
+							throw new FaireAuthError("FAILED_TO_REFRESH_ACCESS_TOKEN");
 
 						const data = response.data as any;
 						return {
 							accessToken: data.access_token,
 							refreshToken: data.refresh_token,
-							accessTokenExpiresAt: data.expires_in
-								? new Date(Date.now() + data.expires_in * 1000)
-								: undefined,
+							...(data.expires_in && {
+								accessTokenExpiresAt: new Date(
+									Date.now() + data.expires_in * 1000,
+								),
+							}),
 						};
 					} catch (error) {
 						logger.error("PayPal token refresh failed:", error);
-						throw new BetterAuthError("FAILED_TO_REFRESH_ACCESS_TOKEN");
+						throw new FaireAuthError("FAILED_TO_REFRESH_ACCESS_TOKEN");
 					}
 				},
 
@@ -209,9 +209,7 @@ export const paypal = (options: PayPalOptions) => {
 		},
 
 		async getUserInfo(token) {
-			if (options.getUserInfo) {
-				return options.getUserInfo(token);
-			}
+			if (options.getUserInfo) return options.getUserInfo(token);
 
 			if (!token.accessToken) {
 				logger.error("Access token is required to fetch PayPal user info");
@@ -242,7 +240,7 @@ export const paypal = (options: PayPalOptions) => {
 						id: userInfo.user_id,
 						name: userInfo.name,
 						email: userInfo.email,
-						image: userInfo.picture,
+						...(userInfo.picture && { image: userInfo.picture }),
 						emailVerified: userInfo.email_verified,
 						...userMap,
 					},
@@ -257,5 +255,5 @@ export const paypal = (options: PayPalOptions) => {
 		},
 
 		options,
-	} satisfies OAuthProvider<PayPalProfile>;
+	} satisfies OAuthProvider;
 };

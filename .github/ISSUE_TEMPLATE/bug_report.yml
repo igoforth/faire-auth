@@ -4,17 +4,17 @@ body:
   - type: checkboxes
     attributes:
       label: Is this suited for github?
-      description: Feel free to join the discord community [here](https://discord.gg/better-auth), we can usually respond faster to any questions.
+      description: Feel free to join the discord community [here](https://discord.gg/faire-auth), we can usually respond faster to any questions.
       options:
         - label: Yes, this is suited for github
   - type: markdown
     attributes:
       value: |
-        This template is used for reporting a issue with better-auth.
+        This template is used for reporting a issue with faire-auth.
 
-        Feature requests should be opened in [here](https://github.com/better-auth/better-auth/issues/new?assignees=&labels=&projects=&template=feature_request.md&title=).
+        Feature requests should be opened in [here](https://github.com/igoforth/faire-auth/issues/new?assignees=&labels=&projects=&template=feature_request.md&title=).
 
-        Before opening a new issue, please do a [search](https://github.com/better-auth/better-auth/issues) of existing issues and :+1: upvote the existing issue instead. This will result in a quicker resolution.
+        Before opening a new issue, please do a [search](https://github.com/igoforth/faire-auth/issues) of existing issues and :+1: upvote the existing issue instead. This will result in a quicker resolution.
   - type: textarea
     attributes:
       label: To Reproduce
@@ -38,17 +38,17 @@ body:
       required: true
   - type: input
     attributes:
-      label: What version of Better Auth are you using?
-      description: Please provide the current version of `better-auth` that you are reporting the bug on
+      label: What version of Faire Auth are you using?
+      description: Please provide the current version of `faire-auth` that you are reporting the bug on
       placeholder: "1.x.x"
     validations:
       required: true
   - type: textarea
     attributes:
       label: System info
-      description: Output of `npx @better-auth/cli info --json`
+      description: Output of `npx @faire-auth/cli info --json`
       render: bash
-      placeholder: System and Better Auth info
+      placeholder: System and Faire Auth info
     validations:
       required: true
   - type: dropdown
@@ -70,9 +70,9 @@ body:
       description: If you haven't already shared a reproducible example or don't think it's unrelated, please include your auth config. Make sure to remove any sensitive information.
       render: typescript
       value: |
-        import { betterAuth } from "better-auth"
-        export const auth = betterAuth({
-          emailAndPassword: {  
+        import { faireAuth } from "faire-auth"
+        export const auth = faireAuth({
+          emailAndPassword: {
             enabled: true
           },
         });

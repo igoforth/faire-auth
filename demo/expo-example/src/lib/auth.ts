@@ -1,8 +1,8 @@
-import { betterAuth } from "better-auth";
-import { expo } from "@better-auth/expo";
+import { defineOptions, faireAuth } from "faire-auth";
+import { expo } from "@faire-auth/expo";
 import { Pool } from "pg";
 
-export const auth = betterAuth({
+export const options = defineOptions({
 	database: new Pool({
 		connectionString: process.env.DATABASE_URL,
 	}),
@@ -22,3 +22,9 @@ export const auth = betterAuth({
 	},
 	trustedOrigins: ["exp://"],
 });
+
+export const auth = faireAuth(options);
+export const App = auth.$Infer.App(options);
+export const Api = auth.$Infer.Api(App);
+export const handler = auth.handler;
+export type App = typeof App;

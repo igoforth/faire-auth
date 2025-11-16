@@ -1,13 +1,13 @@
 import { loadConfig } from "c12";
-import type { BetterAuthOptions } from "better-auth";
-import { logger } from "better-auth";
+import type { FaireAuthOptions } from "faire-auth";
+import { logger } from "faire-auth";
 import path from "path";
 // @ts-expect-error
 import babelPresetTypeScript from "@babel/preset-typescript";
 // @ts-expect-error
 import babelPresetReact from "@babel/preset-react";
 import fs, { existsSync } from "fs";
-import { BetterAuthError } from "better-auth";
+import { FaireAuthError } from "faire-auth";
 import { addSvelteKitEnvModules } from "./add-svelte-kit-env-modules";
 import { getTsconfigInfo } from "./get-tsconfig-info";
 import type { JitiOptions } from "jiti";
@@ -122,7 +122,7 @@ function getPathAliases(cwd: string): Record<string, string> | null {
 		return result;
 	} catch (error) {
 		console.error(error);
-		throw new BetterAuthError("Error parsing tsconfig.json");
+		throw new FaireAuthError("Error parsing tsconfig.json");
 	}
 }
 /**
@@ -152,7 +152,7 @@ const jitiOptions = (cwd: string): JitiOptions => {
 
 const isDefaultExport = (
 	object: Record<string, unknown>,
-): object is BetterAuthOptions => {
+): object is FaireAuthOptions => {
 	return (
 		typeof object === "object" &&
 		object !== null &&
@@ -170,19 +170,22 @@ export async function getConfig({
 	configPath?: string;
 	shouldThrowOnError?: boolean;
 }) {
+	// set environment variable for options control flow
+	process.env.IS_FAIRE_AUTH_CLI_ACCESS = "true";
+
 	try {
-		let configFile: BetterAuthOptions | null = null;
+		let configFile: FaireAuthOptions | null = null;
 		if (configPath) {
 			let resolvedPath: string = path.join(cwd, configPath);
 			if (existsSync(configPath)) resolvedPath = configPath; // If the configPath is a file, use it as is, as it means the path wasn't relative.
 			const { config } = await loadConfig<
 				| {
 						auth: {
-							options: BetterAuthOptions;
+							options: FaireAuthOptions;
 						};
 				  }
 				| {
-						options: BetterAuthOptions;
+						options: FaireAuthOptions;
 				  }
 			>({
 				configFile: resolvedPath,
@@ -196,7 +199,7 @@ export async function getConfig({
 					);
 				}
 				logger.error(
-					`[#better-auth]: Couldn't read your auth config in ${resolvedPath}. Make sure to default export your auth instance or to export as a variable named auth.`,
+					`[#faire-auth]: Couldn't read your auth config in ${resolvedPath}. Make sure to default export your auth instance or to export as a variable named auth.`,
 				);
 				process.exit(1);
 			}
@@ -208,10 +211,10 @@ export async function getConfig({
 				try {
 					const { config } = await loadConfig<{
 						auth: {
-							options: BetterAuthOptions;
+							options: FaireAuthOptions;
 						};
 						default?: {
-							options: BetterAuthOptions;
+							options: FaireAuthOptions;
 						};
 					}>({
 						configFile: possiblePath,
@@ -227,10 +230,10 @@ export async function getConfig({
 									"Couldn't read your auth config. Make sure to default export your auth instance or to export as a variable named auth.",
 								);
 							}
-							logger.error("[#better-auth]: Couldn't read your auth config.");
+							logger.error("[#faire-auth]: Couldn't read your auth config.");
 							console.log("");
 							logger.info(
-								"[#better-auth]: Make sure to default export your auth instance or to export as a variable named auth.",
+								"[#faire-auth]: Make sure to default export your auth instance or to export as a variable named auth.",
 							);
 							process.exit(1);
 						}
@@ -259,7 +262,7 @@ export async function getConfig({
 					if (shouldThrowOnError) {
 						throw e;
 					}
-					logger.error("[#better-auth]: Couldn't read your auth config.", e);
+					logger.error("[#faire-auth]: Couldn't read your auth config.", e);
 					process.exit(1);
 				}
 			}
@@ -291,6 +294,9 @@ export async function getConfig({
 
 		logger.error("Couldn't read your auth config.", e);
 		process.exit(1);
+	} finally {
+		// unset environment variable for options control flow
+		delete process.env.IS_FAIRE_AUTH_CLI_ACCESS;
 	}
 }
 

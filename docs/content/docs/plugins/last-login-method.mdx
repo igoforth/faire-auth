@@ -12,10 +12,10 @@ The last login method plugin tracks the most recent authentication method used b
         ### Add the plugin to your auth config
 
         ```ts title="auth.ts"
-        import { betterAuth } from "better-auth"
-        import { lastLoginMethod } from "better-auth/plugins" // [!code highlight]
+        import { faireAuth } from "faire-auth"
+        import { lastLoginMethod } from "faire-auth/plugins" // [!code highlight]
 
-        export const auth = betterAuth({
+        export const auth = faireAuth({
             // ... other config options
             plugins: [
                 lastLoginMethod() // [!code highlight]
@@ -27,8 +27,8 @@ The last login method plugin tracks the most recent authentication method used b
         ### Add the client plugin to your auth client
 
         ```ts title="auth-client.ts"
-        import { createAuthClient } from "better-auth/client"
-        import { lastLoginMethodClient } from "better-auth/client/plugins" // [!code highlight]
+        import { createAuthClient } from "faire-auth/client"
+        import { lastLoginMethodClient } from "faire-auth/client/plugins" // [!code highlight]
 
         export const authClient = createAuthClient({
             plugins: [
@@ -72,14 +72,14 @@ import { Badge } from "@/components/ui/badge"
 
 export function SignInPage() {
     const lastMethod = authClient.getLastUsedLoginMethod()
-    
+
     return (
         <div className="space-y-4">
             <h1>Sign In</h1>
-            
+
             {/* Email sign in */}
             <div className="relative">
-                <Button 
+                <Button
                     onClick={() => authClient.signIn.email({...})}
                     variant={lastMethod === "email" ? "default" : "outline"}
                     className="w-full"
@@ -90,10 +90,10 @@ export function SignInPage() {
                     )}
                 </Button>
             </div>
-            
+
             {/* OAuth providers */}
             <div className="relative">
-                <Button 
+                <Button
                     onClick={() => authClient.signIn.social({ provider: "google" })}
                     variant={lastMethod === "google" ? "default" : "outline"}
                     className="w-full"
@@ -104,9 +104,9 @@ export function SignInPage() {
                     )}
                 </Button>
             </div>
-            
+
             <div className="relative">
-                <Button 
+                <Button
                     onClick={() => authClient.signIn.social({ provider: "github" })}
                     variant={lastMethod === "github" ? "default" : "outline"}
                     className="w-full"
@@ -133,10 +133,10 @@ By default, the last login method is stored only in cookies. For more persistent
         Set `storeInDatabase` to `true` in your plugin configuration:
 
         ```ts title="auth.ts"
-        import { betterAuth } from "better-auth"
-        import { lastLoginMethod } from "better-auth/plugins"
+        import { faireAuth } from "faire-auth"
+        import { lastLoginMethod } from "faire-auth/plugins"
 
-        export const auth = betterAuth({
+        export const auth = faireAuth({
             plugins: [
                 lastLoginMethod({
                     storeInDatabase: true // [!code highlight]
@@ -153,12 +153,12 @@ By default, the last login method is stored only in cookies. For more persistent
         <Tabs items={["migrate", "generate"]}>
             <Tab value="migrate">
             ```bash
-            npx @better-auth/cli migrate
+            npx @faire-auth/cli migrate
             ```
             </Tab>
             <Tab value="generate">
             ```bash
-            npx @better-auth/cli generate
+            npx @faire-auth/cli generate
             ```
             </Tab>
         </Tabs>
@@ -199,10 +199,10 @@ Table: `user`
 You can customize the database field name:
 
 ```ts title="auth.ts"
-import { betterAuth } from "better-auth"
-import { lastLoginMethod } from "better-auth/plugins"
+import { faireAuth } from "faire-auth"
+import { lastLoginMethod } from "faire-auth/plugins"
 
-export const auth = betterAuth({
+export const auth = faireAuth({
     plugins: [
         lastLoginMethod({
             storeInDatabase: true,
@@ -223,19 +223,19 @@ The last login method plugin accepts the following options:
 ### Server Options
 
 ```ts title="auth.ts"
-import { betterAuth } from "better-auth"
-import { lastLoginMethod } from "better-auth/plugins"
+import { faireAuth } from "faire-auth"
+import { lastLoginMethod } from "faire-auth/plugins"
 
-export const auth = betterAuth({
+export const auth = faireAuth({
     plugins: [
         lastLoginMethod({
             // Cookie configuration
-            cookieName: "better-auth.last_used_login_method", // Default: "better-auth.last_used_login_method"
+            cookieName: "faire-auth.last_used_login_method", // Default: "faire-auth.last_used_login_method"
             maxAge: 60 * 60 * 24 * 30, // Default: 30 days in seconds
-            
+
             // Database persistence
             storeInDatabase: false, // Default: false
-            
+
             // Custom method resolution
             customResolveMethod: (ctx) => {
                 // Custom logic to determine the login method
@@ -245,7 +245,7 @@ export const auth = betterAuth({
                 // Return null to use default resolution
                 return null
             },
-            
+
             // Schema customization (when storeInDatabase is true)
             schema: {
                 user: {
@@ -259,10 +259,10 @@ export const auth = betterAuth({
 
 **cookieName**: `string`
 - The name of the cookie used to store the last login method
-- Default: `"better-auth.last_used_login_method"`
+- Default: `"faire-auth.last_used_login_method"`
 - **Note**: This cookie is `httpOnly: false` to allow client-side JavaScript access for UI features
 
-**maxAge**: `number`  
+**maxAge**: `number`
 - Cookie expiration time in seconds
 - Default: `2592000` (30 days)
 
@@ -283,13 +283,13 @@ export const auth = betterAuth({
 ### Client Options
 
 ```ts title="auth-client.ts"
-import { createAuthClient } from "better-auth/client"
-import { lastLoginMethodClient } from "better-auth/client/plugins"
+import { createAuthClient } from "faire-auth/client"
+import { lastLoginMethodClient } from "faire-auth/client/plugins"
 
 export const authClient = createAuthClient({
     plugins: [
         lastLoginMethodClient({
-            cookieName: "better-auth.last_used_login_method" // Default: "better-auth.last_used_login_method"
+            cookieName: "faire-auth.last_used_login_method" // Default: "faire-auth.last_used_login_method"
         })
     ]
 })
@@ -298,7 +298,7 @@ export const authClient = createAuthClient({
 **cookieName**: `string`
 - The name of the cookie to read the last login method from
 - Must match the server-side `cookieName` configuration
-- Default: `"better-auth.last_used_login_method"`
+- Default: `"faire-auth.last_used_login_method"`
 
 ### Default Method Resolution
 
@@ -311,18 +311,18 @@ By default, the plugin tracks these authentication methods:
 
 The plugin automatically detects the method from these endpoints:
 - `/callback/:id` - OAuth callback with provider ID
-- `/oauth2/callback/:id` - OAuth2 callback with provider ID  
+- `/oauth2/callback/:id` - OAuth2 callback with provider ID
 - `/sign-in/email` - Email sign in
 - `/sign-up/email` - Email sign up
 
 ## Cross-Domain Support
 
-The plugin automatically inherits cookie settings from Better Auth's centralized cookie system. This solves the problem where the last login method wouldn't persist across:
+The plugin automatically inherits cookie settings from Faire Auth's centralized cookie system. This solves the problem where the last login method wouldn't persist across:
 
 - **Cross-subdomain setups**: `auth.example.com` → `app.example.com`
 - **Cross-origin setups**: `api.company.com` → `app.different.com`
 
-When you enable `crossSubDomainCookies` or `crossOriginCookies` in your Better Auth config, the plugin will automatically use the same domain, secure, and sameSite settings as your session cookies, ensuring consistent behavior across your application.
+When you enable `crossSubDomainCookies` or `crossOriginCookies` in your Faire Auth config, the plugin will automatically use the same domain, secure, and sameSite settings as your session cookies, ensuring consistent behavior across your application.
 
 ## Advanced Examples
 
@@ -331,10 +331,10 @@ When you enable `crossSubDomainCookies` or `crossOriginCookies` in your Better A
 If you have custom OAuth providers or authentication methods, you can use the `customResolveMethod` option:
 
 ```ts title="auth.ts"
-import { betterAuth } from "better-auth"
-import { lastLoginMethod } from "better-auth/plugins"
+import { faireAuth } from "faire-auth"
+import { lastLoginMethod } from "faire-auth/plugins"
 
-export const auth = betterAuth({
+export const auth = faireAuth({
     plugins: [
         lastLoginMethod({
             customResolveMethod: (ctx) => {
@@ -342,17 +342,17 @@ export const auth = betterAuth({
                 if (ctx.path === "/saml/callback") {
                     return "saml"
                 }
-                
+
                 // Track magic link authentication
                 if (ctx.path === "/magic-link/verify") {
                     return "magic-link"
                 }
-                
+
                 // Track phone authentication
                 if (ctx.path === "/sign-in/phone") {
                     return "phone"
                 }
-                
+
                 // Return null to use default logic
                 return null
             }
@@ -360,5 +360,3 @@ export const auth = betterAuth({
     ]
 })
 ```
-
-

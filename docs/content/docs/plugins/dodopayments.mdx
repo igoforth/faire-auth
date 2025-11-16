@@ -1,6 +1,6 @@
 ---
 title: Dodo Payments
-description: Better Auth Plugin for Dodo Payments
+description: Faire Auth Plugin for Dodo Payments
 ---
 
 [Dodo Payments](https://dodopayments.com) is a global Merchant-of-Record platform that lets AI, SaaS and digital businesses sell in 150+ countries without touching tax, fraud, or compliance. A single, developer-friendly API powers checkout, billing, and payouts so you can launch worldwide in minutes.
@@ -30,9 +30,9 @@ description: Better Auth Plugin for Dodo Payments
   <Step title="Install dependencies">
     Run the following command in your project root:
 ```bash
-npm install @dodopayments/better-auth dodopayments better-auth zod
+npm install @dodopayments/faire-auth dodopayments faire-auth zod
 ```
-  
+
   </Step>
   <Step title="Configure environment variables">
     Add these to your `.env` file:
@@ -45,13 +45,13 @@ DODO_PAYMENTS_WEBHOOK_SECRET=your_webhook_secret_here
   <Step title="Set up server-side integration">
     Create or update `src/lib/auth.ts`:
 ```typescript
-import { betterAuth } from "better-auth";
+import { faireAuth } from "faire-auth";
 import {
   dodopayments,
   checkout,
   portal,
   webhooks,
-} from "@dodopayments/better-auth";
+} from "@dodopayments/faire-auth";
 import DodoPayments from "dodopayments";
 
 export const dodoPayments = new DodoPayments({
@@ -59,7 +59,7 @@ export const dodoPayments = new DodoPayments({
   environment: "test_mode"
 });
 
-export const auth = betterAuth({
+export const auth = faireAuth({
   plugins: [
     dodopayments({
       client: dodoPayments,
@@ -95,10 +95,10 @@ export const auth = betterAuth({
   <Step title="Set up client-side integration">
     Create or update `src/lib/auth-client.ts`:
 ```typescript
-import { dodopaymentsClient } from "@dodopayments/better-auth";
+import { dodopaymentsClient } from "@dodopayments/faire-auth";
 
 export const authClient = createAuthClient({
-  baseURL: process.env.BETTER_AUTH_URL || "http://localhost:3000",
+  baseURL: process.env.FAIRE_AUTH_URL || "http://localhost:3000",
   plugins: [dodopaymentsClient()],
 });
 ```
@@ -195,7 +195,7 @@ webhooks({
 ### Plugin Options
 
 - **client** (required): DodoPayments client instance
-- **createCustomerOnSignUp** (optional): Auto-create customers on user signup  
+- **createCustomerOnSignUp** (optional): Auto-create customers on user signup
 - **use** (required): Array of plugins to enable (checkout, portal, webhooks)
 
 ### Checkout Plugin Options

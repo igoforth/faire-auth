@@ -1,6 +1,6 @@
 ---
 title: Email OTP
-description: Email OTP plugin for Better Auth.
+description: Email OTP plugin for Faire Auth.
 ---
 
 The Email OTP plugin allows user to sign in, verify their email, or reset their password using a one-time password (OTP) sent to their email address.
@@ -15,10 +15,10 @@ The Email OTP plugin allows user to sign in, verify their email, or reset their 
     Add the `emailOTP` plugin to your auth config and implement the `sendVerificationOTP()` method.
 
     ```ts title="auth.ts"
-    import { betterAuth } from "better-auth"
-    import { emailOTP } from "better-auth/plugins" // [!code highlight]
-    
-    export const auth = betterAuth({
+    import { faireAuth } from "faire-auth"
+    import { emailOTP } from "faire-auth/plugins" // [!code highlight]
+
+    export const auth = faireAuth({
         // ... other config options
         plugins: [
             emailOTP({ // [!code highlight]
@@ -40,9 +40,9 @@ The Email OTP plugin allows user to sign in, verify their email, or reset their 
     ### Add the client plugin
 
     ```ts title="auth-client.ts"
-    import { createAuthClient } from "better-auth/client"
-    import { emailOTPClient } from "better-auth/client/plugins"
-    
+    import { createAuthClient } from "faire-auth/client"
+    import { emailOTPClient } from "faire-auth/client/plugins"
+
     export const authClient = createAuthClient({
         plugins: [
             emailOTPClient()
@@ -62,11 +62,11 @@ Use the `sendVerificationOtp()` method to send an OTP to the user's email addres
 ```ts
 type sendVerificationOTP = {
     /**
-     * Email address to send the OTP. 
+     * Email address to send the OTP.
      */
     email: string = "user@example.com"
     /**
-     * Type of the OTP. `sign-in`, `email-verification`, or `forget-password`. 
+     * Type of the OTP. `sign-in`, `email-verification`, or `forget-password`.
      */
     type: "email-verification" | "sign-in" | "forget-password" = "sign-in"
 }
@@ -81,15 +81,15 @@ Use the `checkVerificationOtp()` method to check if an OTP is valid.
 ```ts
 type checkVerificationOTP = {
     /**
-     * Email address to send the OTP. 
+     * Email address to send the OTP.
      */
     email: string = "user@example.com"
     /**
-     * Type of the OTP. `sign-in`, `email-verification`, or `forget-password`. 
+     * Type of the OTP. `sign-in`, `email-verification`, or `forget-password`.
      */
     type: "email-verification" | "sign-in" | "forget-password" = "sign-in"
     /**
-     * OTP sent to the email. 
+     * OTP sent to the email.
      */
     otp: string = "123456"
 }
@@ -104,7 +104,7 @@ To sign in with OTP, use the `sendVerificationOtp()` method to send a "sign-in" 
 ```ts
 type sendVerificationOTP = {
     /**
-     * Email address to send the OTP. 
+     * Email address to send the OTP.
      */
     email: string = "user@example.com"
     /**
@@ -121,11 +121,11 @@ Once the user provides the OTP, you can sign in the user using the `signIn.email
 ```ts
 type signInEmailOTP = {
     /**
-     * Email address to sign in. 
+     * Email address to sign in.
      */
     email: string = "user@example.com"
     /**
-     * OTP sent to the email. 
+     * OTP sent to the email.
      */
     otp: string = "123456"
 }
@@ -144,7 +144,7 @@ To verify the user's email address with OTP, use the `sendVerificationOtp()` met
 ```ts
 type sendVerificationOTP = {
     /**
-     * Email address to send the OTP. 
+     * Email address to send the OTP.
      */
     email: string = "user@example.com"
     /**
@@ -161,11 +161,11 @@ Once the user provides the OTP, use the `verifyEmail()` method to complete email
 ```ts
 type verifyEmailOTP = {
     /**
-     * Email address to verify. 
+     * Email address to verify.
      */
     email: string = "user@example.com"
     /**
-     * OTP to verify. 
+     * OTP to verify.
      */
     otp: string = "123456"
 }
@@ -180,7 +180,7 @@ To reset the user's password with OTP, use the `forgetPassword.emailOTP()` metho
 ```ts
 type forgetPasswordEmailOTP = {
     /**
-     * Email address to send the OTP. 
+     * Email address to send the OTP.
      */
     email: string = "user@example.com"
 }
@@ -193,7 +193,7 @@ Once the user provides the OTP, use the `checkVerificationOtp()` method to check
 ```ts
 type checkVerificationOTP = {
     /**
-     * Email address to send the OTP. 
+     * Email address to send the OTP.
      */
     email: string = "user@example.com"
     /**
@@ -201,7 +201,7 @@ type checkVerificationOTP = {
      */
     type: "forget-password" = "forget-password"
     /**
-     * OTP sent to the email. 
+     * OTP sent to the email.
      */
     otp: string = "123456"
 }
@@ -214,15 +214,15 @@ Then, use the `resetPassword()` method to reset the user's password.
 ```ts
 type resetPasswordEmailOTP = {
     /**
-     * Email address to reset the password. 
+     * Email address to reset the password.
      */
     email: string = "user@example.com"
     /**
-     * OTP sent to the email. 
+     * OTP sent to the email.
      */
     otp: string = "123456"
     /**
-     * New password. 
+     * New password.
      */
     password: string = "new-secure-password"
 }
@@ -234,9 +234,9 @@ type resetPasswordEmailOTP = {
 To override the default email verification, pass `overrideDefaultEmailVerification: true` in the options. This will make the system use an email OTP instead of the default verification link whenever email verification is triggered. In other words, the user will verify their email using an OTP rather than clicking a link.
 
 ```ts title="auth.ts"
-import { betterAuth } from "better-auth";
+import { faireAuth } from "faire-auth";
 
-export const auth = betterAuth({
+export const auth = faireAuth({
   plugins: [
     emailOTP({
       overrideDefaultEmailVerification: true, // [!code highlight]
@@ -261,9 +261,9 @@ export const auth = betterAuth({
 - `expiresIn`: The expiry time of the OTP in seconds. Defaults to `300` seconds.
 
 ```ts title="auth.ts"
-import { betterAuth } from "better-auth"
+import { faireAuth } from "faire-auth"
 
-export const auth = betterAuth({
+export const auth = faireAuth({
     plugins: [
         emailOTP({
             otpLength: 8,
@@ -282,9 +282,9 @@ export const auth = betterAuth({
 - `allowedAttempts`: The maximum number of attempts allowed for verifying an OTP. Defaults to `3`. After exceeding this limit, the OTP becomes invalid and the user needs to request a new one.
 
 ```ts title="auth.ts"
-import { betterAuth } from "better-auth"
+import { faireAuth } from "faire-auth"
 
-export const auth = betterAuth({
+export const auth = faireAuth({
     plugins: [
         emailOTP({
             allowedAttempts: 5, // Allow 5 attempts before invalidating the OTP
@@ -308,7 +308,7 @@ Alternatively, you can pass a custom encryptor or hasher to store the OTP in you
 
 ```ts title="auth.ts"
 emailOTP({
-    storeOTP: { 
+    storeOTP: {
         encrypt: async (otp) => {
             return myCustomEncryptor(otp);
         },

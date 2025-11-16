@@ -1,34 +1,36 @@
-import * as z from "zod";
+import type { UnionToTuple } from "type-fest";
+import type { OAuthProvider, ProviderOptions } from "../oauth2";
+import type { LiteralStringUnion, Prettify } from "../types/helper";
 import { apple } from "./apple";
 import { atlassian } from "./atlassian";
 import { cognito } from "./cognito";
 import { discord } from "./discord";
+import { dropbox } from "./dropbox";
 import { facebook } from "./facebook";
 import { figma } from "./figma";
 import { github } from "./github";
+import { gitlab } from "./gitlab";
 import { google } from "./google";
-import { kick } from "./kick";
 import { huggingface } from "./huggingface";
-import { microsoft } from "./microsoft-entra-id";
-import { slack } from "./slack";
-import { notion } from "./notion";
-import { spotify } from "./spotify";
-import { twitch } from "./twitch";
-import { twitter } from "./twitter";
-import { dropbox } from "./dropbox";
+import { kakao } from "./kakao";
+import { kick } from "./kick";
+import { line } from "./line";
 import { linear } from "./linear";
 import { linkedin } from "./linkedin";
-import { gitlab } from "./gitlab";
-import { tiktok } from "./tiktok";
+import { microsoft } from "./microsoft-entra-id";
+import { naver } from "./naver";
+import { notion } from "./notion";
+import { paypal } from "./paypal";
 import { reddit } from "./reddit";
 import { roblox } from "./roblox";
 import { salesforce } from "./salesforce";
+import { slack } from "./slack";
+import { spotify } from "./spotify";
+import { tiktok } from "./tiktok";
+import { twitch } from "./twitch";
+import { twitter } from "./twitter";
 import { vk } from "./vk";
 import { zoom } from "./zoom";
-import { kakao } from "./kakao";
-import { naver } from "./naver";
-import { line } from "./line";
-import { paypal } from "./paypal";
 
 export const socialProviders = {
 	apple,
@@ -62,25 +64,41 @@ export const socialProviders = {
 	line,
 	paypal,
 };
+// TODO: satisfies causes circular references
+// satisfies {
+// 	[key: string]: (
+// 		// todo: fix any here
+// 		config: any,
+// 	) => OAuthProvider;
+// };
 
-export const socialProviderList = Object.keys(socialProviders) as [
-	"github",
-	...(keyof typeof socialProviders)[],
-];
+export type StrictSocialProvider = keyof typeof socialProviders;
+export type SocialProvider = LiteralStringUnion<StrictSocialProvider>;
 
-export const SocialProviderListEnum = z
-	.enum(socialProviderList)
-	.or(z.string()) as z.ZodType<SocialProviderList[number] | (string & {})>;
+export const socialProviderList = Object.keys(
+	socialProviders,
+) as UnionToTuple<StrictSocialProvider>;
 
-export type SocialProvider = z.infer<typeof SocialProviderListEnum>;
+export type SocialProviderList = typeof socialProviderList;
 
-export type SocialProviders = {
-	[K in SocialProviderList[number]]?: Parameters<
-		(typeof socialProviders)[K]
-	>[0] & {
-		enabled?: boolean;
-	};
-};
+export type SocialProviders<Profile extends Record<string, any> = any> =
+	Prettify<{
+		[K in SocialProvider]?: K extends StrictSocialProvider
+			? (typeof socialProviders)[K] extends (...args: infer A) => infer R
+				? { enabled?: boolean } & Parameters<(...args: A) => R>[0]
+				: never
+			: { enabled?: boolean } & ProviderOptions<Profile>;
+	}>;
+
+export type OAuthProviders = (ReturnType<
+	(typeof socialProviders)[keyof typeof socialProviders]
+> extends infer X
+	? X extends OAuthProvider<any, infer O>
+		? O extends ProviderOptions<infer P>
+			? OAuthProvider<P, O>
+			: never
+		: never
+	: never)[];
 
 export * from "./apple";
 export * from "./atlassian";
@@ -90,29 +108,25 @@ export * from "./dropbox";
 export * from "./facebook";
 export * from "./figma";
 export * from "./github";
-export * from "./linear";
-export * from "./linkedin";
 export * from "./gitlab";
 export * from "./google";
+export * from "./huggingface";
+export * from "./kakao";
 export * from "./kick";
+export * from "./line";
+export * from "./linear";
 export * from "./linkedin";
 export * from "./microsoft-entra-id";
+export * from "./naver";
 export * from "./notion";
+export * from "./paypal";
 export * from "./reddit";
 export * from "./roblox";
 export * from "./salesforce";
+export * from "./slack";
 export * from "./spotify";
 export * from "./tiktok";
 export * from "./twitch";
 export * from "./twitter";
 export * from "./vk";
 export * from "./zoom";
-export * from "./kick";
-export * from "./huggingface";
-export * from "./slack";
-export * from "./kakao";
-export * from "./naver";
-export * from "./line";
-export * from "./paypal";
-
-export type SocialProviderList = typeof socialProviderList;

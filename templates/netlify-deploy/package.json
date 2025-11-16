@@ -1,0 +1,40 @@
+{
+  "name": "faire-auth-netlify-template",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./client": {
+      "import": {
+        "types": "./dist/client/index.d.mts",
+        "default": "./dist/client/index.mjs"
+      },
+      "require": {
+        "types": "./dist/client/index.d.cts",
+        "default": "./dist/client/index.cjs"
+      }
+    }
+  },
+  "scripts": {
+    "build": "tsdown",
+    "postbuild": "npm run cli:generate -y && npm run drizzle:generate && npm run db:migrate",
+    "cli:generate": "cli generate --output src/schema.ts",
+    "drizzle:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate"
+  },
+  "dependencies": {
+    "@libsql/client": "^0.15.14",
+    "drizzle-orm": "^0.44.7",
+    "faire-auth": "latest",
+    "hono": "^4.9.8"
+  },
+  "devDependencies": {
+    "@better-fetch/fetch": "^1.1.18",
+    "@faire-auth/cli": "latest",
+    "@faire-auth/core": "latest",
+    "drizzle-kit": "^0.31.4",
+    "nanostores": "^1.0.1",
+    "tsdown": "^0.16.0",
+    "typescript": "^5.9.3"
+  }
+}

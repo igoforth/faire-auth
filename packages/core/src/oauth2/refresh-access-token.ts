@@ -1,8 +1,8 @@
 import { betterFetch } from "@better-fetch/fetch";
+import { base64Url } from "../datatypes/base64";
 import type { OAuth2Tokens, ProviderOptions } from "./oauth-provider";
-import { base64 } from "@better-auth/utils/base64";
 
-export function createRefreshAccessTokenRequest({
+export const createRefreshAccessTokenRequest = ({
 	refreshToken,
 	options,
 	authentication,
@@ -11,10 +11,10 @@ export function createRefreshAccessTokenRequest({
 }: {
 	refreshToken: string;
 	options: Partial<ProviderOptions>;
-	authentication?: "basic" | "post";
-	extraParams?: Record<string, string>;
-	resource?: string | string[];
-}) {
+	authentication?: "basic" | "post" | undefined;
+	extraParams?: Record<string, string> | undefined;
+	resource?: string | string[] | undefined;
+}) => {
 	const body = new URLSearchParams();
 	const headers: Record<string, any> = {
 		"content-type": "application/x-www-form-urlencoded",
@@ -32,43 +32,35 @@ export function createRefreshAccessTokenRequest({
 		if (primaryClientId) {
 			headers["authorization"] =
 				"Basic " +
-				base64.encode(`${primaryClientId}:${options.clientSecret ?? ""}`);
+				base64Url.encode(`${primaryClientId}:${options.clientSecret ?? ""}`);
 		} else {
 			headers["authorization"] =
-				"Basic " + base64.encode(`:${options.clientSecret ?? ""}`);
+				"Basic " + base64Url.encode(`:${options.clientSecret ?? ""}`);
 		}
 	} else {
 		const primaryClientId = Array.isArray(options.clientId)
 			? options.clientId[0]
 			: options.clientId;
 		body.set("client_id", primaryClientId);
-		if (options.clientSecret) {
-			body.set("client_secret", options.clientSecret);
-		}
+		if (options.clientSecret) body.set("client_secret", options.clientSecret);
 	}
 
 	if (resource) {
-		if (typeof resource === "string") {
-			body.append("resource", resource);
-		} else {
-			for (const _resource of resource) {
-				body.append("resource", _resource);
-			}
-		}
+		if (typeof resource === "string") body.append("resource", resource);
+		else for (const _resource of resource) body.append("resource", _resource);
 	}
-	if (extraParams) {
-		for (const [key, value] of Object.entries(extraParams)) {
+
+	if (extraParams)
+		for (const [key, value] of Object.entries(extraParams))
 			body.set(key, value);
-		}
-	}
 
 	return {
 		body,
 		headers,
 	};
-}
+};
 
-export async function refreshAccessToken({
+export const refreshAccessToken = async ({
 	refreshToken,
 	options,
 	tokenEndpoint,
@@ -78,11 +70,13 @@ export async function refreshAccessToken({
 	refreshToken: string;
 	options: Partial<ProviderOptions>;
 	tokenEndpoint: string;
-	authentication?: "basic" | "post";
-	extraParams?: Record<string, string>;
+	// TODO: maybe remove undefined union in future to assert no properties
+	// will ever be undefined
+	authentication?: "basic" | "post" | undefined;
+	extraParams?: Record<string, string> | undefined;
 	/** @deprecated always "refresh_token" */
-	grantType?: string;
-}): Promise<OAuth2Tokens> {
+	grantType?: string | undefined;
+}): Promise<OAuth2Tokens> => {
 	const { body, headers } = createRefreshAccessTokenRequest({
 		refreshToken,
 		options,
@@ -97,23 +91,18 @@ export async function refreshAccessToken({
 		token_type?: string;
 		scope?: string;
 		id_token?: string;
-	}>(tokenEndpoint, {
-		method: "POST",
-		body,
-		headers,
-	});
-	if (error) {
-		throw error;
-	}
+	}>(tokenEndpoint, { method: "POST", body, headers });
+	if (error) throw error;
+
 	const tokens: OAuth2Tokens = {
 		accessToken: data.access_token,
-		refreshToken: data.refresh_token,
-		tokenType: data.token_type,
-		scopes: data.scope?.split(" "),
-		idToken: data.id_token,
+		...(data.refresh_token != null && { refreshToken: data.refresh_token }),
+		...(data.token_type != null && { tokenType: data.token_type }),
+		...(data.scope != null && { scopes: data.scope.split(" ") }),
+		...(data.id_token != null && { idToken: data.id_token }),
 	};
 
-	if (data.expires_in) {
+	if (data.expires_in != null) {
 		const now = new Date();
 		tokens.accessTokenExpiresAt = new Date(
 			now.getTime() + data.expires_in * 1000,
@@ -121,4 +110,4 @@ export async function refreshAccessToken({
 	}
 
 	return tokens;
-}
+};

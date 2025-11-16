@@ -156,7 +156,7 @@ export async function GET(req: Request) {
 							tw="flex text-xl"
 							style={{ fontFamily: "GeistSans", fontWeight: "semibold" }}
 						>
-							Better Auth.
+							Faire Auth.
 						</div>
 						<div tw="flex gap-2 items-center text-xl">
 							<svg
@@ -176,7 +176,7 @@ export async function GET(req: Request) {
 								}}
 								tw="flex ml-2"
 							>
-								github.com/better-auth/better-auth
+								github.com/igoforth/faire-auth
 							</span>
 						</div>
 					</div>

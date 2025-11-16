@@ -71,7 +71,7 @@ export function Support() {
 			<CardHeader>
 				<CardTitle>Dedicated Support</CardTitle>
 				<CardDescription>
-					We're now offering on demand support for Better Auth and Auth.js.
+					We're now offering on demand support for Faire Auth and Auth.js.
 					Including help out migrations, consultations, premium dedicated
 					support and more. If you're interested, please get in touch.
 				</CardDescription>

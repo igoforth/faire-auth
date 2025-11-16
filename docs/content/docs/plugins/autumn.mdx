@@ -1,6 +1,6 @@
 ---
 title: Autumn Billing
-description: Better Auth Plugin for Autumn Billing
+description: Faire Auth Plugin for Autumn Billing
 ---
 
 import { HomeIcon } from "lucide-react";
@@ -54,9 +54,9 @@ import { Accordion, Accordions } from "fumadocs-ui/components/accordion";
     <Tab value="User">
 
     ```ts title="auth.ts"
-    import { autumn } from "autumn-js/better-auth";
+    import { autumn } from "autumn-js/faire-auth";
 
-    export const auth = betterAuth({
+    export const auth = faireAuth({
       // ...
       plugins: [autumn()],
     });
@@ -66,10 +66,10 @@ import { Accordion, Accordions } from "fumadocs-ui/components/accordion";
     <Tab value="Organization">
 
     ```ts title="auth.ts"
-    import { autumn } from "autumn-js/better-auth";
-    import { organization } from "better-auth/plugins";
+    import { autumn } from "autumn-js/faire-auth";
+    import { organization } from "faire-auth/plugins";
 
-    export const auth = betterAuth({
+    export const auth = faireAuth({
       // ...
       plugins: [organization(), autumn({ customerScope: "organization" })],
     });
@@ -79,10 +79,10 @@ import { Accordion, Accordions } from "fumadocs-ui/components/accordion";
     <Tab value="User & Organization">
 
     ```ts title="auth.ts"
-    import { autumn } from "autumn-js/better-auth";
-    import { organization } from "better-auth/plugins";
+    import { autumn } from "autumn-js/faire-auth";
+    import { organization } from "faire-auth/plugins";
 
-    export const auth = betterAuth({
+    export const auth = faireAuth({
       // ...
       plugins: [
         organization(),
@@ -95,10 +95,10 @@ import { Accordion, Accordions } from "fumadocs-ui/components/accordion";
     <Tab value="Custom">
 
     ```ts title="auth.ts"
-    import { autumn } from "autumn-js/better-auth";
-    import { organization } from "better-auth/plugins";
+    import { autumn } from "autumn-js/faire-auth";
+    import { organization } from "faire-auth/plugins";
 
-    export const auth = betterAuth({
+    export const auth = faireAuth({
       // ...
       plugins: [
         organization(),
@@ -129,7 +129,7 @@ import { Accordion, Accordions } from "fumadocs-ui/components/accordion";
   <Step>
       ### Add `<AutumnProvider />`
 
-      Client side, wrap your application with the AutumnProvider component, and pass in the `baseUrl` that you define within better-auth's `authClient`.
+      Client side, wrap your application with the AutumnProvider component, and pass in the `baseUrl` that you define within faire-auth's `authClient`.
 
       ```tsx title="app/layout.tsx"
       import { AutumnProvider } from "autumn-js/react";
@@ -142,8 +142,8 @@ import { Accordion, Accordions } from "fumadocs-ui/components/accordion";
         return (
           <html>
             <body>
-              {/* or meta.env.BETTER_AUTH_URL for vite */}
-              <AutumnProvider betterAuthUrl={process.env.NEXT_PUBLIC_BETTER_AUTH_URL}>
+              {/* or meta.env.FAIRE_AUTH_URL for vite */}
+              <AutumnProvider faireAuthUrl={process.env.NEXT_PUBLIC_FAIRE_AUTH_URL}>
                 {children}
               </AutumnProvider>
             </body>
@@ -151,7 +151,7 @@ import { Accordion, Accordions } from "fumadocs-ui/components/accordion";
         );
       }
       ```
-  </Step>  
+  </Step>
 </Steps>
 
 ## Usage

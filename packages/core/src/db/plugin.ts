@@ -1,11 +1,11 @@
 import type { DBFieldAttribute } from "./type";
 
-export type BetterAuthPluginDBSchema = {
+export type FaireAuthPluginDBSchema = {
 	[table in string]: {
 		fields: {
-			[field in string]: DBFieldAttribute;
+			[field: string]: DBFieldAttribute;
 		};
-		disableMigration?: boolean;
-		modelName?: string;
+		disableMigration?: boolean | undefined;
+		modelName?: string | undefined;
 	};
 };

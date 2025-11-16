@@ -1,73 +1,65 @@
+import type { Context, Env } from "hono";
 import type {
 	Account,
-	BetterAuthDBSchema,
+	AccountInput,
+	DBPreservedModels,
+	FaireAuthDBSchema,
 	SecondaryStorage,
 	Session,
+	StrictAccount,
+	StrictUser,
 	User,
+	UserInput,
 	Verification,
+	VerificationInput,
 } from "../db";
-import type { OAuthProvider } from "../oauth2";
-import { createLogger } from "../env";
 import type { DBAdapter, Where } from "../db/adapter";
-import type { BetterAuthCookies } from "./cookie";
-import type { DBPreservedModels } from "../db";
-import type { LiteralUnion } from "./helper";
-import type { CookieOptions, EndpointContext } from "better-call";
-import type {
-	BetterAuthOptions,
-	BetterAuthRateLimitOptions,
-} from "./init-options";
-
-export type GenericEndpointContext<
-	Options extends BetterAuthOptions = BetterAuthOptions,
-> = EndpointContext<string, any> & {
-	context: AuthContext<Options>;
-};
+import { createLogger } from "../env";
+import type { OAuthProviders } from "../social-providers";
+import type { CookieOptions, FaireAuthCookies } from "./cookie";
+import type { ExK, LiteralStringUnion, OmitId } from "./helper";
+import type { JSONRespondReturn } from "./json";
+import type { FaireAuthOptions, FaireAuthRateLimitOptions } from "./options";
 
 export interface InternalAdapter<
-	Options extends BetterAuthOptions = BetterAuthOptions,
+	Options extends FaireAuthOptions = FaireAuthOptions,
 > {
 	createOAuthUser(
-		user: Omit<User, "id" | "createdAt" | "updatedAt">,
-		account: Omit<Account, "userId" | "id" | "createdAt" | "updatedAt"> &
-			Partial<Account>,
-	): Promise<{ user: User; account: Account }>;
+		user: OmitId<UserInput>,
+		account: ExK<AccountInput, "userId" | "id">,
+	): Promise<{ user: User | null; account: Account | null }>;
 
 	createUser<T extends Record<string, any>>(
-		user: Omit<User, "id" | "createdAt" | "updatedAt" | "emailVerified"> &
-			Partial<User> &
-			Record<string, any>,
-	): Promise<T & User>;
+		user: OmitId<UserInput>,
+	): Promise<T & StrictUser>;
 
 	createAccount<T extends Record<string, any>>(
-		account: Omit<Account, "id" | "createdAt" | "updatedAt"> &
-			Partial<Account> &
-			T,
-	): Promise<T & Account>;
+		account: OmitId<AccountInput>,
+	): Promise<T & StrictAccount>;
 
 	listSessions(userId: string): Promise<Session[]>;
 
 	listUsers(
-		limit?: number,
-		offset?: number,
-		sortBy?: { field: string; direction: "asc" | "desc" },
-		where?: Where[],
+		limit?: number | undefined,
+		offset?: number | undefined,
+		sortBy?: { field: string; direction: "asc" | "desc" } | undefined,
+		where?: Where[] | undefined,
 	): Promise<User[]>;
 
-	countTotalUsers(where?: Where[]): Promise<number>;
+	countTotalUsers(where?: Where[] | undefined): Promise<number>;
 
 	deleteUser(userId: string): Promise<void>;
 
 	createSession(
 		userId: string,
-		dontRememberMe?: boolean,
-		override?: Partial<Session> & Record<string, any>,
-		overrideAll?: boolean,
+		dontRememberMe?: boolean | undefined,
+		override?: Partial<Session> | undefined,
+		overrideAll?: boolean | undefined,
 	): Promise<Session>;
 
 	findSession(token: string): Promise<{
-		session: Session & Record<string, any>;
-		user: User & Record<string, any>;
+		session: Session;
+		user: User;
 	} | null>;
 
 	findSessions(
@@ -76,7 +68,7 @@ export interface InternalAdapter<
 
 	updateSession(
 		sessionToken: string,
-		session: Partial<Session> & Record<string, any>,
+		session: Partial<Session>,
 	): Promise<Session | null>;
 
 	deleteSession(token: string): Promise<void>;
@@ -95,25 +87,17 @@ export interface InternalAdapter<
 
 	findUserByEmail(
 		email: string,
-		options?: { includeAccounts: boolean },
+		options?: { includeAccounts: boolean } | undefined,
 	): Promise<{ user: User; accounts: Account[] } | null>;
 
 	findUserById(userId: string): Promise<User | null>;
 
-	linkAccount(
-		account: Omit<Account, "id" | "createdAt" | "updatedAt"> & Partial<Account>,
-	): Promise<Account>;
+	linkAccount(account: OmitId<AccountInput>): Promise<Account>;
 
 	// fixme: any type
-	updateUser(
-		userId: string,
-		data: Partial<User> & Record<string, any>,
-	): Promise<any>;
+	updateUser(userId: string, data: Partial<User>): Promise<any>;
 
-	updateUserByEmail(
-		email: string,
-		data: Partial<User & Record<string, any>>,
-	): Promise<User>;
+	updateUserByEmail(email: string, data: Partial<User>): Promise<User>;
 
 	updatePassword(userId: string, password: string): Promise<void>;
 
@@ -131,8 +115,7 @@ export interface InternalAdapter<
 	updateAccount(id: string, data: Partial<Account>): Promise<Account>;
 
 	createVerificationValue(
-		data: Omit<Verification, "createdAt" | "id" | "updatedAt"> &
-			Partial<Verification>,
+		data: OmitId<VerificationInput>,
 	): Promise<Verification>;
 
 	findVerificationValue(identifier: string): Promise<Verification | null>;
@@ -147,88 +130,117 @@ export interface InternalAdapter<
 	): Promise<Verification>;
 }
 
+type CheckPasswordFn<E extends Env = any> = (
+	userId: string,
+	ctx: Context<E>,
+) => Promise<
+	boolean | JSONRespondReturn<{ success: false; message: string }, 400>
+>;
+
 type CreateCookieGetterFn = (
 	cookieName: string,
-	overrideAttributes?: Partial<CookieOptions>,
+	overrideAttributes?: Partial<CookieOptions> | undefined,
 ) => {
 	name: string;
 	attributes: CookieOptions;
 };
 
-type CheckPasswordFn<Options extends BetterAuthOptions = BetterAuthOptions> = (
-	userId: string,
-	ctx: GenericEndpointContext<Options>,
-) => Promise<boolean>;
-
-export type AuthContext<Options extends BetterAuthOptions = BetterAuthOptions> =
-	{
-		options: Options;
-		appName: string;
-		baseURL: string;
-		trustedOrigins: string[];
-		oauthConfig?: {
-			/**
-			 * This is dangerous and should only be used in dev or staging environments.
-			 */
-			skipStateCookieCheck?: boolean;
-		};
-		/**
-		 * New session that will be set after the request
-		 * meaning: there is a `set-cookie` header that will set
-		 * the session cookie. This is the fetched session. And it's set
-		 * by `setNewSession` method.
-		 */
-		newSession: {
-			session: Session & Record<string, any>;
-			user: User & Record<string, any>;
-		} | null;
-		session: {
-			session: Session & Record<string, any>;
-			user: User & Record<string, any>;
-		} | null;
-		setNewSession: (
-			session: {
-				session: Session & Record<string, any>;
-				user: User & Record<string, any>;
-			} | null,
-		) => void;
-		socialProviders: OAuthProvider[];
-		authCookies: BetterAuthCookies;
-		logger: ReturnType<typeof createLogger>;
-		rateLimit: {
-			enabled: boolean;
-			window: number;
-			max: number;
-			storage: "memory" | "database" | "secondary-storage";
-		} & BetterAuthRateLimitOptions;
-		adapter: DBAdapter<Options>;
-		internalAdapter: InternalAdapter<Options>;
-		createAuthCookie: CreateCookieGetterFn;
-		secret: string;
-		sessionConfig: {
-			updateAge: number;
-			expiresIn: number;
-			freshAge: number;
-		};
-		generateId: (options: {
-			model: LiteralUnion<DBPreservedModels, string>;
-			size?: number;
-		}) => string | false;
-		secondaryStorage: SecondaryStorage | undefined;
-		password: {
-			hash: (password: string) => Promise<string>;
-			verify: (data: { password: string; hash: string }) => Promise<boolean>;
-			config: {
-				minPasswordLength: number;
-				maxPasswordLength: number;
-			};
-			checkPassword: CheckPasswordFn<Options>;
-		};
-		tables: BetterAuthDBSchema;
-		runMigrations: () => Promise<void>;
-		publishTelemetry: (event: {
-			type: string;
-			anonymousId?: string;
-			payload: Record<string, any>;
-		}) => Promise<void>;
+export interface AuthContext<
+	E extends Env = any,
+	Options extends FaireAuthOptions<E> = FaireAuthOptions<E>,
+> {
+	appName: string;
+	baseURL: string;
+	trustedOrigins: Set<string>;
+	// oauthConfig: {
+	// 	/**
+	// 	 * This is dangerous and should only be used in dev or staging environments.
+	// 	 */
+	// 	skipStateCookieCheck?: boolean | undefined;
+	// 	/**
+	// 	 * Strategy for storing OAuth state
+	// 	 *
+	// 	 * - "cookie": Store state in an encrypted cookie (stateless)
+	// 	 * - "database": Store state in the database
+	// 	 *
+	// 	 * @default "cookie"
+	// 	 */
+	// 	storeStateStrategy: "database" | "cookie";
+	// };
+	/**
+	 * New session that will be set after the request
+	 * meaning: there is a `set-cookie` header that will set
+	 * the session cookie. This is the fetched session. And it's set
+	 * by `setNewSession` method.
+	 */
+	newSession: {
+		session: Session;
+		user: User;
+	} | null;
+	socialProviders: OAuthProviders;
+	authCookies: FaireAuthCookies;
+	logger: ReturnType<typeof createLogger>;
+	rateLimit: {
+		enabled: boolean;
+		window: number;
+		max: number;
+		storage: "memory" | "database" | "secondary-storage";
+	} & FaireAuthRateLimitOptions;
+	adapter: DBAdapter<Options>;
+	internalAdapter: InternalAdapter<Options>;
+	createAuthCookie: CreateCookieGetterFn;
+	secret: string;
+	sessionConfig: {
+		updateAge: number;
+		expiresIn: number;
+		freshAge: number;
+		cookieRefreshCache:
+			| false
+			| {
+					enabled: true;
+					updateAge: number;
+			  };
 	};
+	generateId: (options: {
+		model: LiteralStringUnion<DBPreservedModels>;
+		size?: number | undefined;
+	}) => string | false;
+	secondaryStorage?: SecondaryStorage;
+	password: {
+		hash: (password: string) => Promise<string>;
+		verify: (data: { password: string; hash: string }) => Promise<boolean>;
+		config: {
+			minPasswordLength: number;
+			maxPasswordLength: number;
+		};
+		checkPassword: CheckPasswordFn<E>;
+	};
+	tables: FaireAuthDBSchema;
+	runMigrations: () => Promise<void>;
+	publishTelemetry: (event: {
+		type: string;
+		anonymousId?: string | undefined;
+		payload: Record<string, any>;
+	}) => Promise<void>;
+	// /**
+	//  * This skips the origin check for all requests.
+	//  *
+	//  * set to true by default for `test` environments and `false`
+	//  * for other environments.
+	//  *
+	//  * It's inferred from the `options.advanced?.disableCSRFCheck`
+	//  * option or `options.advanced?.disableOriginCheck` option.
+	//  *
+	//  * @default false
+	//  */
+	// skipOriginCheck: boolean;
+	// /**
+	//  * This skips the CSRF check for all requests.
+	//  *
+	//  * This is inferred from the `options.advanced?.
+	//  * disableCSRFCheck` option.
+	//  *
+	//  * @default false
+	//  */
+	// skipCSRFCheck: boolean;
+}

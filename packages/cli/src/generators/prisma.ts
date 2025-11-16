@@ -1,10 +1,13 @@
-import { getAuthTables, type FieldType } from "better-auth/db";
+import type { FieldType } from "@faire-auth/core/types";
 import { produceSchema } from "@mrleebo/prisma-ast";
+import { getAuthTables } from "faire-auth/db";
 import { existsSync } from "fs";
-import path from "path";
 import fs from "fs/promises";
-import { capitalizeFirstLetter } from "better-auth";
+import path from "path";
 import type { SchemaGenerator } from "./types";
+
+const capitalizeFirstLetter = <T extends string>(str: T): Capitalize<T> =>
+	(str.charAt(0).toUpperCase() + str.slice(1)) as Capitalize<T>;
 
 export const generatePrismaSchema: SchemaGenerator = async ({
 	adapter,
@@ -224,7 +227,7 @@ export const generatePrismaSchema: SchemaGenerator = async ({
 					const fieldName = `${relatedModel.toLowerCase()}s`;
 					const existingField = builder.findByType("field", {
 						name: fieldName,
-						within: prismaModel?.properties,
+						...(prismaModel?.properties && { within: prismaModel.properties }),
 					});
 					if (!existingField) {
 						builder.model(modelName).field(fieldName, `${relatedModel}[]`);
@@ -234,7 +237,7 @@ export const generatePrismaSchema: SchemaGenerator = async ({
 
 			const hasAttribute = builder.findByType("attribute", {
 				name: "map",
-				within: prismaModel?.properties,
+				...(prismaModel?.properties && { within: prismaModel.properties }),
 			});
 			const hasChanged = customModelName !== originalTableName;
 			if (!hasAttribute) {
@@ -260,7 +263,7 @@ export const generatePrismaSchema: SchemaGenerator = async ({
 const getNewPrisma = (provider: string) => `generator client {
     provider = "prisma-client-js"
   }
-  
+
   datasource db {
     provider = "${provider}"
     url      = ${

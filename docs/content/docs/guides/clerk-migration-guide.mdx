@@ -1,9 +1,9 @@
 ---
-title: Migrating from Clerk to Better Auth
-description: A step-by-step guide to transitioning from Clerk to Better Auth.
+title: Migrating from Clerk to Faire Auth
+description: A step-by-step guide to transitioning from Clerk to Faire Auth.
 ---
 
-In this guide, we'll walk through the steps to migrate a project from Clerk to Better Auth — including email/password with proper hashing, social/external accounts, phone number, two-factor data, and more.
+In this guide, we'll walk through the steps to migrate a project from Clerk to Faire Auth — including email/password with proper hashing, social/external accounts, phone number, two-factor data, and more.
 
 <Callout type="warn">
 This migration will invalidate all active sessions. This guide doesn't currently show you how to migrate Organization but it should be possible with additional steps and the [Organization](/docs/plugins/organization) Plugin.
@@ -11,7 +11,7 @@ This migration will invalidate all active sessions. This guide doesn't currently
 
 ## Before You Begin
 
-Before starting the migration process, set up Better Auth in your project. Follow the [installation guide](/docs/installation) to get started. And go to 
+Before starting the migration process, set up Faire Auth in your project. Follow the [installation guide](/docs/installation) to get started. And go to
 
 <Steps>
 <Step>
@@ -28,9 +28,9 @@ And then you can use the following code to connect to your database.
 ```ts title="auth.ts"
 import { Pool } from "pg";
 
-export const auth = betterAuth({
-    database: new Pool({ 
-        connectionString: process.env.DATABASE_URL 
+export const auth = faireAuth({
+    database: new Pool({
+        connectionString: process.env.DATABASE_URL
     }),
 })
 ```
@@ -41,11 +41,11 @@ export const auth = betterAuth({
 Enable the email and password in your auth config and implement your own logic for sending verification emails, reset password emails, etc.
 
 ```ts title="auth.ts"
-import { betterAuth } from "better-auth";
+import { faireAuth } from "faire-auth";
 
-export const auth = betterAuth({
-    database: new Pool({ 
-        connectionString: process.env.DATABASE_URL 
+export const auth = faireAuth({
+    database: new Pool({
+        connectionString: process.env.DATABASE_URL
     }),
     emailAndPassword: { // [!code highlight]
         enabled: true, // [!code highlight]
@@ -66,13 +66,13 @@ See [Email and Password](/docs/authentication/email-password) for more configura
 Add social providers you have enabled in your Clerk project in your auth config.
 
 ```ts title="auth.ts"
-import { betterAuth } from "better-auth";
+import { faireAuth } from "faire-auth";
 
-export const auth = betterAuth({
-    database: new Pool({ 
-        connectionString: process.env.DATABASE_URL 
+export const auth = faireAuth({
+    database: new Pool({
+        connectionString: process.env.DATABASE_URL
     }),
-    emailAndPassword: { 
+    emailAndPassword: {
         enabled: true,
     },
     socialProviders: { // [!code highlight]
@@ -99,14 +99,14 @@ You can add the following plugins to your auth config based on your needs.
 
 ```ts title="auth.ts"
 import { Pool } from "pg";
-import { betterAuth } from "better-auth";
-import { admin, twoFactor, phoneNumber, username } from "better-auth/plugins";
+import { faireAuth } from "faire-auth";
+import { admin, twoFactor, phoneNumber, username } from "faire-auth/plugins";
 
-export const auth = betterAuth({
-    database: new Pool({ 
-        connectionString: process.env.DATABASE_URL 
+export const auth = faireAuth({
+    database: new Pool({
+        connectionString: process.env.DATABASE_URL
     }),
-    emailAndPassword: { 
+    emailAndPassword: {
         enabled: true,
     },
     socialProviders: {
@@ -125,13 +125,13 @@ export const auth = betterAuth({
   If you're using a custom database adapter, generate the schema:
 
   ```sh
-  npx @better-auth/cli generate
+  npx @faire-auth/cli generate
   ```
 
   or if you're using the default adapter, you can use the following command:
 
   ```sh
-  npx @better-auth/cli migrate
+  npx @faire-auth/cli migrate
   ```
   </Step>
   <Step>
@@ -144,7 +144,7 @@ export const auth = betterAuth({
   Create a new file called `migrate-clerk.ts` in the `scripts` folder and add the following code:
 
   ```ts title="scripts/migrate-clerk.ts"
-import { generateRandomString, symmetricEncrypt } from "better-auth/crypto";
+import { generateRandomString, symmetricEncrypt } from "faire-auth/crypto";
 
 import { auth } from "@/lib/auth"; // import your auth instance
 
@@ -302,7 +302,7 @@ async function migrateFromClerk() {
                 ...(isUsernameEnabled ? {
                     username: username,
                 } : {}),
-                // # Phone Number (if you enabled phone number plugin)  
+                // # Phone Number (if you enabled phone number plugin)
                 ...(isPhoneNumberEnabled ? {
                     phoneNumber: primary_phone_number,
                     phoneNumberVerified: verified_phone_numbers.length > 0,
@@ -383,7 +383,7 @@ migrateFromClerk()
   ```
   Make sure to replace the `process.env.CLERK_SECRET_KEY` with your own Clerk secret key. Feel free to customize the script to your needs.
  </Step>
-  
+
 <Step>
   ### Run the migration
 
@@ -397,7 +397,7 @@ migrateFromClerk()
   Make sure to:
   1. Test the migration in a development environment first
   2. Monitor the migration process for any errors
-  3. Verify the migrated data in Better Auth before proceeding
+  3. Verify the migrated data in Faire Auth before proceeding
   4. Keep Clerk installed and configured until the migration is complete
   </Callout>
 
@@ -410,10 +410,10 @@ migrateFromClerk()
   <Step>
   ### Update your components
 
-  Now that the data is migrated, you can start updating your components to use Better Auth. Here's an example for the sign-in component:
+  Now that the data is migrated, you can start updating your components to use Faire Auth. Here's an example for the sign-in component:
 
   ```tsx title="components/auth/sign-in.tsx"
-  import { authClient } from "better-auth/client";
+  import { authClient } from "faire-auth/client";
 
   export const SignIn = () => {
     const handleSignIn = async () => {
@@ -421,7 +421,7 @@ migrateFromClerk()
         email: "user@example.com",
         password: "password",
       });
-      
+
       if (error) {
         console.error(error);
         return;
@@ -440,12 +440,12 @@ migrateFromClerk()
 <Step>
   ### Update the middleware
 
-  Replace your Clerk middleware with Better Auth's middleware:
+  Replace your Clerk middleware with Faire Auth's middleware:
 
   ```ts title="middleware.ts"
 
   import { NextRequest, NextResponse } from "next/server";
-  import { getSessionCookie } from "better-auth/cookies";
+  import { getSessionCookie } from "faire-auth/cookies";
   export async function middleware(request: NextRequest) {
     const sessionCookie = getSessionCookie(request);
     const { pathname } = request.nextUrl;
@@ -466,7 +466,7 @@ migrateFromClerk()
   <Step>
   ### Remove Clerk Dependencies
 
-  Once you've verified that everything is working correctly with Better Auth, you can remove Clerk:
+  Once you've verified that everything is working correctly with Faire Auth, you can remove Clerk:
 
   ```bash title="Remove Clerk"
   pnpm remove @clerk/nextjs @clerk/themes @clerk/types
@@ -476,10 +476,10 @@ migrateFromClerk()
 
 ## Additional Resources
 
-[Goodbye Clerk, Hello Better Auth – Full Migration Guide!](https://www.youtube.com/watch?v=Za_QihbDSuk)
+[Goodbye Clerk, Hello Faire Auth – Full Migration Guide!](https://www.youtube.com/watch?v=Za_QihbDSuk)
 
 ## Wrapping Up
 
-Congratulations! You've successfully migrated from Clerk to Better Auth.
+Congratulations! You've successfully migrated from Clerk to Faire Auth.
 
-Better Auth offers greater flexibility and more features—be sure to explore the [documentation](/docs) to unlock its full potential.
+Faire Auth offers greater flexibility and more features—be sure to explore the [documentation](/docs) to unlock its full potential.

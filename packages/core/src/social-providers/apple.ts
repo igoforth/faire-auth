@@ -1,5 +1,4 @@
 import { betterFetch } from "@better-fetch/fetch";
-import { APIError } from "better-call";
 import { decodeJwt, decodeProtectedHeader, importJWK, jwtVerify } from "jose";
 import type { OAuthProvider, ProviderOptions } from "../oauth2";
 import {
@@ -7,6 +6,8 @@ import {
 	createAuthorizationURL,
 	validateAuthorizationCode,
 } from "../oauth2";
+import { APIError } from "../error";
+
 export interface AppleProfile {
 	/**
 	 * The subject registered claim identifies the principal that’s the subject
@@ -150,16 +151,11 @@ export const apple = (options: AppleOptions) => {
 					});
 				},
 		async getUserInfo(token) {
-			if (options.getUserInfo) {
-				return options.getUserInfo(token);
-			}
-			if (!token.idToken) {
-				return null;
-			}
+			if (options.getUserInfo) return options.getUserInfo(token);
+			if (!token.idToken) return null;
 			const profile = decodeJwt<AppleProfile>(token.idToken);
-			if (!profile) {
-				return null;
-			}
+			if (!profile) return null;
+
 			const name = token.user
 				? `${token.user.name?.firstName} ${token.user.name?.lastName}`
 				: profile.name || profile.email;
@@ -184,7 +180,7 @@ export const apple = (options: AppleOptions) => {
 			};
 		},
 		options,
-	} satisfies OAuthProvider<AppleProfile>;
+	} satisfies OAuthProvider;
 };
 
 export const getApplePublicKey = async (kid: string) => {
@@ -200,14 +196,13 @@ export const getApplePublicKey = async (kid: string) => {
 			e: string;
 		}>;
 	}>(`${APPLE_BASE_URL}${JWKS_APPLE_URI}`);
-	if (!data?.keys) {
+	if (!data?.keys)
 		throw new APIError("BAD_REQUEST", {
 			message: "Keys not found",
 		});
-	}
+
 	const jwk = data.keys.find((key) => key.kid === kid);
-	if (!jwk) {
-		throw new Error(`JWK with kid ${kid} not found`);
-	}
+	if (!jwk) throw new Error(`JWK with kid ${kid} not found`);
+
 	return await importJWK(jwk, jwk.alg);
 };

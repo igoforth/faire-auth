@@ -1,9 +1,9 @@
 ---
 title: Open API
-description: Open API reference for Better Auth.
+description: Open API reference for Faire Auth.
 ---
 
-This is a plugin that provides an Open API reference for Better Auth. It shows all endpoints added by plugins and the core. It also provides a way to test the endpoints. It uses [Scalar](https://scalar.com/) to display the Open API reference.
+This is a plugin that provides an Open API reference for Faire Auth. It shows all endpoints added by plugins and the core. It also provides a way to test the endpoints. It uses [Scalar](https://scalar.com/) to display the Open API reference.
 
 
 <Callout>
@@ -17,10 +17,10 @@ This plugin is still in the early stages of development. We are working on addin
     <Step>
     ### Add the plugin to your **auth** config
     ```ts title="auth.ts"
-    import { betterAuth } from "better-auth"
-    import { openAPI } from "better-auth/plugins"
+    import { faireAuth } from "faire-auth"
+    import { openAPI } from "faire-auth/plugins"
 
-    export const auth = betterAuth({
+    export const auth = faireAuth({
         plugins: [ // [!code highlight]
             openAPI(), // [!code highlight]
         ] // [!code highlight]
@@ -29,16 +29,16 @@ This plugin is still in the early stages of development. We are working on addin
     </Step>
     <Step>
     ### Navigate to `/api/auth/reference` to view the Open API reference
-    
+
     Each plugin endpoints are grouped by the plugin name. The core endpoints are grouped under the `Default` group. And Model schemas are grouped under the `Models` group.
 
     ![Open API reference](/open-api-reference.png)
     </Step>
-</Steps>    
+</Steps>
 
 
 
-## Usage 
+## Usage
 
 The Open API reference is generated using the [OpenAPI 3.0](https://swagger.io/specification/) specification. You can use the reference to generate client libraries, documentation, and more.
 
@@ -59,16 +59,16 @@ console.log(openAPISchema)
 
 ### Using Scalar with Multiple Sources
 
-If you're using Scalar for your API documentation, you can add Better Auth as an additional source alongside your main API:
+If you're using Scalar for your API documentation, you can add Faire Auth as an additional source alongside your main API:
 
-When using Hono with Scalar for OpenAPI documentation, you can integrate Better Auth by adding it as a source:
+When using Hono with Scalar for OpenAPI documentation, you can integrate Faire Auth by adding it as a source:
 
 ```ts
 app.get("/docs", Scalar({
-  pageTitle: "API Documentation", 
+  pageTitle: "API Documentation",
   sources: [
     { url: "/api/open-api", title: "API" },
-    // Better Auth schema generation endpoint
+    // Faire Auth schema generation endpoint
     { url: "/api/auth/open-api/generate-schema", title: "Auth" },
   ],
 }));
@@ -80,6 +80,6 @@ app.get("/docs", Scalar({
 
 `disableDefaultReference` - If set to `true`, the default Open API reference UI by Scalar will be disabled. Default is `false`.
 
-This allows you to display both your application's API and Better Auth's authentication endpoints in a unified documentation interface.
+This allows you to display both your application's API and Faire Auth's authentication endpoints in a unified documentation interface.
 
 `theme` - Allows you to change the theme of the OpenAPI reference page. Default is `default`.

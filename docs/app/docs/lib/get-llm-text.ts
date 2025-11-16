@@ -277,12 +277,12 @@ export async function getLLMText(docPage: any) {
 
 	return `# ${category}: ${docPage.data.title}
 URL: ${docPage.url}
-Source: https://raw.githubusercontent.com/better-auth/better-auth/refs/heads/main/docs/content/docs/${
+Source: https://raw.githubusercontent.com/igoforth/faire-auth/refs/heads/main/docs/content/docs/${
 		docPage.file.path
 	}
 
 ${docPage.data.description}
-        
+
 ${processed.toString()}
 `;
 }

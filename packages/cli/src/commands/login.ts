@@ -1,22 +1,26 @@
-import { Command } from "commander";
-import { logger } from "better-auth";
-import { createAuthClient } from "better-auth/client";
-import { deviceAuthorizationClient } from "better-auth/client/plugins";
+import { cancel, confirm, intro, isCancel, outro } from "@clack/prompts";
+import { NotImplementedError } from "@faire-auth/core/error";
 import chalk from "chalk";
-import open from "open";
-import yoctoSpinner from "yocto-spinner";
-import * as z from "zod/v4";
-import { intro, outro, confirm, isCancel, cancel } from "@clack/prompts";
+import { Command } from "commander";
+import { logger } from "faire-auth";
+import { createAuthClient } from "faire-auth/client";
 import fs from "fs/promises";
-import path from "path";
+import open from "open";
 import os from "os";
+import path from "path";
+import yoctoSpinner from "yocto-spinner";
+import * as z from "zod";
 
-const DEMO_URL = "https://demo.better-auth.com";
-const CLIENT_ID = "better-auth-cli";
-const CONFIG_DIR = path.join(os.homedir(), ".better-auth");
+const DEMO_URL = "https://demo.faire-auth.com";
+const CLIENT_ID = "faire-auth-cli";
+const CONFIG_DIR = path.join(os.homedir(), ".faire-auth");
 const TOKEN_FILE = path.join(CONFIG_DIR, "token.json");
 
 export async function loginAction(opts: any) {
+	throw new NotImplementedError("CLI Login Demo");
+
+	const clientPlugins: any = await import("faire-auth/client/plugins");
+
 	const options = z
 		.object({
 			serverUrl: z.string().optional(),
@@ -27,16 +31,16 @@ export async function loginAction(opts: any) {
 	const serverUrl = options.serverUrl || DEMO_URL;
 	const clientId = options.clientId || CLIENT_ID;
 
-	intro(chalk.bold("🔐 Better Auth CLI Login (Demo)"));
+	intro(chalk.bold("🔐 Faire Auth CLI Login (Demo)"));
 
 	console.log(
 		chalk.yellow(
-			"⚠️  This is a demo feature for testing device authorization flow.",
+			"!  This is a demo feature for testing device authorization flow.",
 		),
 	);
 	console.log(
 		chalk.gray(
-			"   It connects to the Better Auth demo server for testing purposes.\n",
+			"   It connects to the Faire Auth demo server for testing purposes.\n",
 		),
 	);
 
@@ -55,9 +59,9 @@ export async function loginAction(opts: any) {
 	}
 
 	// Create the auth client
-	const authClient = createAuthClient({
+	const authClient: any = createAuthClient()({
 		baseURL: serverUrl,
-		plugins: [deviceAuthorizationClient()],
+		plugins: [clientPlugins.deviceAuthorizationClient()],
 	});
 
 	const spinner = yoctoSpinner({ text: "Requesting device authorization..." });
@@ -65,9 +69,11 @@ export async function loginAction(opts: any) {
 
 	try {
 		// Request device code
-		const { data, error } = await authClient.device.code({
-			client_id: clientId,
-			scope: "openid profile email",
+		const { data, error } = await authClient.device.code.$post({
+			json: {
+				client_id: clientId,
+				scope: "openid profile email",
+			},
 		});
 
 		spinner.stop();
@@ -126,17 +132,18 @@ export async function loginAction(opts: any) {
 			await storeToken(token);
 
 			// Get user info
-			const { data: session } = await authClient.getSession({
-				fetchOptions: {
+			const { data: session } = await authClient.getSession.$get(
+				{ query: {} },
+				{
 					headers: {
 						Authorization: `Bearer ${token.access_token}`,
 					},
 				},
-			});
+			);
 
 			outro(
 				chalk.green(
-					`✅ Demo login successful! Logged in as ${session?.user?.name || session?.user?.email || "User"}`,
+					`✅ Demo login successful! Logged in as ${session?.data.user?.name || session?.data.user?.email || "User"}`,
 				),
 			);
 
@@ -148,14 +155,14 @@ export async function loginAction(opts: any) {
 
 			console.log(
 				chalk.blue(
-					"\nFor more information, visit: https://better-auth.com/docs/plugins/device-authorization",
+					"\nFor more information, visit: https://faire-auth.com/docs/plugins/device-authorization",
 				),
 			);
 		}
 	} catch (err) {
 		spinner.stop();
 		logger.error(
-			`Login failed: ${err instanceof Error ? err.message : "Unknown error"}`,
+			`Login failed: ${err instanceof Error ? (err as Error).message : "Unknown error"}`,
 		);
 		process.exit(1);
 	}
@@ -181,16 +188,20 @@ async function pollForToken(
 			if (!spinner.isSpinning) spinner.start();
 
 			try {
-				const { data, error } = await authClient.device.token({
-					grant_type: "urn:ietf:params:oauth:grant-type:device_code",
-					device_code: deviceCode,
-					client_id: clientId,
-					fetchOptions: {
-						headers: {
-							"user-agent": `Better Auth CLI`,
+				const { data, error } = await authClient.device.token.$post(
+					{
+						json: {
+							grant_type: "urn:ietf:params:oauth:grant-type:device_code",
+							device_code: deviceCode,
+							client_id: clientId,
 						},
 					},
-				});
+					{
+						headers: {
+							"user-agent": `Faire Auth CLI`,
+						},
+					},
+				);
 
 				if (data?.access_token) {
 					spinner.stop();
@@ -269,8 +280,8 @@ async function getStoredToken(): Promise<any> {
 
 export const login = new Command("login")
 	.description(
-		"Demo: Test device authorization flow with Better Auth demo server",
+		"Demo: Test device authorization flow with Faire Auth demo server",
 	)
-	.option("--server-url <url>", "The Better Auth server URL", DEMO_URL)
+	.option("--server-url <url>", "The Faire Auth server URL", DEMO_URL)
 	.option("--client-id <id>", "The OAuth client ID", CLIENT_ID)
 	.action(loginAction);

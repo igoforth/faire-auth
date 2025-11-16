@@ -1,55 +1,69 @@
 {
-  "name": "@better-auth/core",
+  "name": "@faire-auth/core",
   "version": "1.4.0-beta.11",
   "description": "The most comprehensive authentication library for TypeScript.",
   "type": "module",
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
   "exports": {
-    ".": {
+    "./crypto": {
+      "dev-source": "./src/crypto/index.ts",
       "import": {
-        "types": "./dist/index.d.ts",
-        "default": "./dist/index.js"
+        "types": "./dist/crypto/index.d.mts",
+        "default": "./dist/crypto/index.mjs"
       },
       "require": {
-        "types": "./dist/index.d.cts",
-        "default": "./dist/index.cjs"
+        "types": "./dist/crypto/index.d.cts",
+        "default": "./dist/crypto/index.cjs"
       }
     },
-    "./api": {
+    "./datatypes": {
+      "dev-source": "./src/datatypes/index.ts",
       "import": {
-        "types": "./dist/api/index.d.ts",
-        "default": "./dist/api/index.js"
+        "types": "./dist/datatypes/index.d.mts",
+        "default": "./dist/datatypes/index.mjs"
       },
       "require": {
-        "types": "./dist/api/index.d.cts",
-        "default": "./dist/api/index.cjs"
+        "types": "./dist/datatypes/index.d.cts",
+        "default": "./dist/datatypes/index.cjs"
       }
     },
-    "./async_hooks": {
+    "./factory": {
+      "dev-source": "./src/factory/index.ts",
       "import": {
-        "types": "./dist/async_hooks/index.d.ts",
-        "default": "./dist/async_hooks/index.js"
+        "types": "./dist/factory/index.d.mts",
+        "default": "./dist/factory/index.mjs"
       },
       "require": {
-        "types": "./dist/async_hooks/index.d.cts",
-        "default": "./dist/async_hooks/index.cjs"
+        "types": "./dist/factory/index.d.cts",
+        "default": "./dist/factory/index.cjs"
       }
     },
-    "./context": {
+    "./static": {
+      "dev-source": "./src/static/index.ts",
       "import": {
-        "types": "./dist/context/index.d.ts",
-        "default": "./dist/context/index.js"
+        "types": "./dist/static/index.d.mts",
+        "default": "./dist/static/index.mjs"
       },
       "require": {
-        "types": "./dist/context/index.d.cts",
-        "default": "./dist/context/index.cjs"
+        "types": "./dist/static/index.d.cts",
+        "default": "./dist/static/index.cjs"
+      }
+    },
+    "./types": {
+      "dev-source": "./src/types/index.ts",
+      "import": {
+        "types": "./dist/types/index.d.mts",
+        "default": "./dist/types/index.mjs"
+      },
+      "require": {
+        "types": "./dist/types/index.d.cts",
+        "default": "./dist/types/index.cjs"
       }
     },
     "./env": {
+      "dev-source": "./src/env/index.ts",
       "import": {
-        "types": "./dist/env/index.d.ts",
-        "default": "./dist/env/index.js"
+        "types": "./dist/env/index.d.mts",
+        "default": "./dist/env/index.mjs"
       },
       "require": {
         "types": "./dist/env/index.d.cts",
@@ -57,9 +71,10 @@
       }
     },
     "./error": {
+      "dev-source": "./src/error/index.ts",
       "import": {
-        "types": "./dist/error/index.d.ts",
-        "default": "./dist/error/index.js"
+        "types": "./dist/error/index.d.mts",
+        "default": "./dist/error/index.mjs"
       },
       "require": {
         "types": "./dist/error/index.d.cts",
@@ -67,9 +82,10 @@
       }
     },
     "./utils": {
+      "dev-source": "./src/utils/index.ts",
       "import": {
-        "types": "./dist/utils/index.d.ts",
-        "default": "./dist/utils/index.js"
+        "types": "./dist/utils/index.d.mts",
+        "default": "./dist/utils/index.mjs"
       },
       "require": {
         "types": "./dist/utils/index.d.cts",
@@ -77,9 +93,10 @@
       }
     },
     "./social-providers": {
+      "dev-source": "./src/social-providers/index.ts",
       "import": {
-        "types": "./dist/social-providers/index.d.ts",
-        "default": "./dist/social-providers/index.js"
+        "types": "./dist/social-providers/index.d.mts",
+        "default": "./dist/social-providers/index.mjs"
       },
       "require": {
         "types": "./dist/social-providers/index.d.cts",
@@ -87,9 +104,10 @@
       }
     },
     "./db": {
+      "dev-source": "./src/db/index.ts",
       "import": {
-        "types": "./dist/db/index.d.ts",
-        "default": "./dist/db/index.js"
+        "types": "./dist/db/index.d.mts",
+        "default": "./dist/db/index.mjs"
       },
       "require": {
         "types": "./dist/db/index.d.cts",
@@ -97,9 +115,10 @@
       }
     },
     "./db/adapter": {
+      "dev-source": "./src/db/adapter/index.ts",
       "import": {
-        "types": "./dist/db/adapter/index.d.ts",
-        "default": "./dist/db/adapter/index.js"
+        "types": "./dist/db/adapter/index.d.mts",
+        "default": "./dist/db/adapter/index.mjs"
       },
       "require": {
         "types": "./dist/db/adapter/index.d.cts",
@@ -107,9 +126,10 @@
       }
     },
     "./oauth2": {
+      "dev-source": "./src/oauth2/index.ts",
       "import": {
-        "types": "./dist/oauth2/index.d.ts",
-        "default": "./dist/oauth2/index.js"
+        "types": "./dist/oauth2/index.d.mts",
+        "default": "./dist/oauth2/index.mjs"
       },
       "require": {
         "types": "./dist/oauth2/index.d.cts",
@@ -117,66 +137,33 @@
       }
     }
   },
-  "typesVersions": {
-    "*": {
-      "index": [
-        "dist/index.d.ts"
-      ],
-      "async_hooks": [
-        "dist/async_hooks.d.ts"
-      ],
-      "db": [
-        "dist/db.d.ts"
-      ],
-      "db/adapter": [
-        "dist/db/adapter/index.d.ts"
-      ],
-      "env": [
-        "dist/env.d.ts"
-      ],
-      "error": [
-        "dist/error.d.ts"
-      ],
-      "middleware": [
-        "dist/middleware.d.ts"
-      ],
-      "oauth2": [
-        "dist/oauth2.d.ts"
-      ],
-      "social-providers": [
-        "dist/social-providers.d.ts"
-      ],
-      "utils": [
-        "dist/utils.d.ts"
-      ]
-    }
-  },
   "scripts": {
+    "test": "NODE_OPTIONS='--experimental-sqlite' vitest",
     "build": "tsdown",
     "dev": "tsdown --watch",
     "typecheck": "tsc --project tsconfig.json"
   },
   "devDependencies": {
-    "@better-auth/utils": "0.3.0",
-    "@better-fetch/fetch": "catalog:",
-    "@types/better-sqlite3": "^7.6.13",
-    "better-call": "catalog:",
-    "better-sqlite3": "^12.4.1",
-    "jose": "^6.1.0",
-    "kysely": "^0.28.5",
-    "nanostores": "^1.0.1",
+    "@asteasolutions/zod-to-openapi": "catalog:",
+    "@types/bun": "catalog:",
+    "openapi3-ts": "catalog:",
+    "publint": "catalog:",
     "tsdown": "catalog:"
   },
   "dependencies": {
-    "zod": "^4.1.5"
+    "@noble/ciphers": "^2.0.0",
+    "@noble/hashes": "^2.0.0"
+  },
+  "optionalDependencies": {
+    "cbor-x": "catalog:"
   },
   "peerDependencies": {
-    "@better-auth/utils": "0.3.0",
     "@better-fetch/fetch": "catalog:",
-    "better-call": "catalog:",
-    "better-sqlite3": "^12.4.1",
-    "jose": "^6.1.0",
-    "kysely": "^0.28.5",
-    "nanostores": "^1.0.1"
+    "@hono/zod-validator": "catalog:",
+    "hono": ">=4.3.6",
+    "jose": "catalog:",
+    "kysely": "catalog:",
+    "type-fest": "catalog:",
+    "zod": "catalog:"
   }
 }

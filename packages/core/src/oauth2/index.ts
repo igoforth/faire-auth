@@ -1,5 +1,6 @@
 export type {
 	OAuth2Tokens,
+	OAuth2TokensInput,
 	OAuthProvider,
 	OAuth2UserInfo,
 	ProviderOptions,

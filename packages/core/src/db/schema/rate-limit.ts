@@ -1,4 +1,5 @@
 import * as z from "zod";
+import type { ExV } from "../../types/helper";
 
 export const rateLimitSchema = z.object({
 	/**
@@ -14,8 +15,11 @@ export const rateLimitSchema = z.object({
 	 */
 	lastRequest: z.number(),
 });
+export const looseRateLimitSchema = rateLimitSchema.loose();
 
 /**
- * Rate limit schema type used by better-auth for rate limiting
+ * Rate limit schema type used by faire-auth for rate limiting
  */
-export type RateLimit = z.infer<typeof rateLimitSchema>;
+export type RateLimit = ExV<z.output<typeof looseRateLimitSchema>, undefined>;
+export type StrictRateLimit = ExV<z.output<typeof rateLimitSchema>, undefined>;
+export type RateLimitInput = z.input<typeof looseRateLimitSchema>;

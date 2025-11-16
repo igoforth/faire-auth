@@ -1,9 +1,9 @@
 ---
 title: Polar
-description: Better Auth Plugin for Payment and Checkouts using Polar
+description: Faire Auth Plugin for Payment and Checkouts using Polar
 ---
 
-[Polar](https://polar.sh) is a developer first payment infrastructure. Out of the box it provides a lot of developer first integrations for payments, checkouts and more. This plugin helps you integrate Polar with Better Auth to make your auth + payments flow seamless.
+[Polar](https://polar.sh) is a developer first payment infrastructure. Out of the box it provides a lot of developer first integrations for payments, checkouts and more. This plugin helps you integrate Polar with Faire Auth to make your auth + payments flow seamless.
 
 <Callout>
   This plugin is maintained by Polar team. For bugs, issues or feature requests,
@@ -23,7 +23,7 @@ description: Better Auth Plugin for Payment and Checkouts using Polar
 ## Installation
 
 ```bash
-pnpm add better-auth @polar-sh/better-auth @polar-sh/sdk
+pnpm add faire-auth @polar-sh/faire-auth @polar-sh/sdk
 ```
 
 ## Preparation
@@ -35,7 +35,7 @@ Go to your Polar Organization Settings, and create an Organization Access Token.
 POLAR_ACCESS_TOKEN=...
 ```
 
-### Configuring BetterAuth Server
+### Configuring FaireAuth Server
 
 The Polar plugin comes with a handful additional plugins which adds functionality to your stack.
 
@@ -45,8 +45,8 @@ The Polar plugin comes with a handful additional plugins which adds functionalit
 - Webhooks - Listen for relevant Polar webhooks
 
 ```typescript
-import { betterAuth } from "better-auth";
-import { polar, checkout, portal, usage, webhooks } from "@polar-sh/better-auth";
+import { faireAuth } from "faire-auth";
+import { polar, checkout, portal, usage, webhooks } from "@polar-sh/faire-auth";
 import { Polar } from "@polar-sh/sdk";
 
 const polarClient = new Polar({
@@ -57,8 +57,8 @@ const polarClient = new Polar({
     server: 'sandbox'
 });
 
-const auth = betterAuth({
-    // ... Better Auth config
+const auth = faireAuth({
+    // ... Faire Auth config
     plugins: [
         polar({
             client: polarClient,
@@ -89,16 +89,16 @@ const auth = betterAuth({
 });
 ```
 
-### Configuring BetterAuth Client
+### Configuring FaireAuth Client
 
-You will be using the BetterAuth Client to interact with the Polar functionalities.
+You will be using the FaireAuth Client to interact with the Polar functionalities.
 
 ```typescript
-import { createAuthClient } from "better-auth/react";
-import { polarClient } from "@polar-sh/better-auth";
+import { createAuthClient } from "faire-auth/react";
+import { polarClient } from "@polar-sh/faire-auth";
 
 // This is all that is needed
-// All Polar plugins, etc. should be attached to the server-side BetterAuth config
+// All Polar plugins, etc. should be attached to the server-side FaireAuth config
 export const authClient = createAuthClient({
   plugins: [polarClient()],
 });
@@ -107,14 +107,14 @@ export const authClient = createAuthClient({
 ## Configuration Options
 
 ```typescript
-import { betterAuth } from "better-auth";
+import { faireAuth } from "faire-auth";
 import {
   polar,
   checkout,
   portal,
   usage,
   webhooks,
-} from "@polar-sh/better-auth";
+} from "@polar-sh/faire-auth";
 import { Polar } from "@polar-sh/sdk";
 
 const polarClient = new Polar({
@@ -125,8 +125,8 @@ const polarClient = new Polar({
   server: "sandbox",
 });
 
-const auth = betterAuth({
-  // ... Better Auth config
+const auth = faireAuth({
+  // ... Faire Auth config
   plugins: [
     polar({
       client: polarClient,
@@ -155,7 +155,7 @@ const auth = betterAuth({
 
 ### Customers
 
-When `createCustomerOnSignUp` is enabled, a new Polar Customer is automatically created when a new User is added in the Better-Auth Database.
+When `createCustomerOnSignUp` is enabled, a new Polar Customer is automatically created when a new User is added in the Faire Auth Database.
 
 All new customers are created with an associated `externalId`, which is the ID of your User in the Database. This allows us to skip any Polar to User mapping in your Database.
 
@@ -164,10 +164,10 @@ All new customers are created with an associated `externalId`, which is the ID o
 To support checkouts in your app, simply pass the Checkout plugin to the use-property.
 
 ```typescript
-import { polar, checkout } from "@polar-sh/better-auth";
+import { polar, checkout } from "@polar-sh/faire-auth";
 
-const auth = betterAuth({
-    // ... Better Auth config
+const auth = faireAuth({
+    // ... Faire Auth config
     plugins: [
         polar({
             ...
@@ -186,7 +186,7 @@ const auth = betterAuth({
 });
 ```
 
-When checkouts are enabled, you're able to initialize Checkout Sessions using the checkout-method on the BetterAuth Client. This will redirect the user to the Product Checkout.
+When checkouts are enabled, you're able to initialize Checkout Sessions using the checkout-method on the FaireAuth Client. This will redirect the user to the Product Checkout.
 
 ```typescript
 await authClient.checkout({
@@ -223,10 +223,10 @@ await authClient.checkout({
 A plugin which enables customer management of their purchases, orders and subscriptions.
 
 ```typescript
-import { polar, checkout, portal } from "@polar-sh/better-auth";
+import { polar, checkout, portal } from "@polar-sh/faire-auth";
 
-const auth = betterAuth({
-    // ... Better Auth config
+const auth = faireAuth({
+    // ... Faire Auth config
     plugins: [
         polar({
             ...
@@ -239,7 +239,7 @@ const auth = betterAuth({
 });
 ```
 
-The portal-plugin gives the BetterAuth Client a set of customer management methods, scoped under `authClient.customer`.
+The portal-plugin gives the FaireAuth Client a set of customer management methods, scoped under `authClient.customer`.
 
 ### Customer Portal Management
 
@@ -346,10 +346,10 @@ const userShouldHaveAccess = subscriptions.some(
 A simple plugin for Usage Based Billing.
 
 ```typescript
-import { polar, checkout, portal, usage } from "@polar-sh/better-auth";
+import { polar, checkout, portal, usage } from "@polar-sh/faire-auth";
 
-const auth = betterAuth({
-    // ... Better Auth config
+const auth = faireAuth({
+    // ... Faire Auth config
     plugins: [
         polar({
             ...
@@ -407,10 +407,10 @@ const { data: customerMeters } = await authClient.usage.meters.list({
 The Webhooks plugin can be used to capture incoming events from your Polar organization.
 
 ```typescript
-import { polar, webhooks } from "@polar-sh/better-auth";
+import { polar, webhooks } from "@polar-sh/faire-auth";
 
-const auth = betterAuth({
-    // ... Better Auth config
+const auth = faireAuth({
+    // ... Faire Auth config
     plugins: [
         polar({
             ...

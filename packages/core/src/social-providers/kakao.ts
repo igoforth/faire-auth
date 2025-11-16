@@ -142,9 +142,8 @@ export const kakao = (options: KakaoOptions) => {
 					});
 				},
 		async getUserInfo(token) {
-			if (options.getUserInfo) {
-				return options.getUserInfo(token);
-			}
+			if (options.getUserInfo) return options.getUserInfo(token);
+
 			const { data: profile, error } = await betterFetch<KakaoProfile>(
 				"https://kapi.kakao.com/v2/user/me",
 				{
@@ -153,18 +152,22 @@ export const kakao = (options: KakaoOptions) => {
 					},
 				},
 			);
-			if (error || !profile) {
-				return null;
-			}
+			if (error || !profile) return null;
+
 			const userMap = await options.mapProfileToUser?.(profile);
-			const account = profile.kakao_account || {};
-			const kakaoProfile = account.profile || {};
+			const account = profile.kakao_account ?? {};
+			const kakaoProfile = account.profile ?? {};
+			const hasName = !!kakaoProfile.nickname || !!account.name;
+			const hasImage =
+				!!kakaoProfile.profile_image_url || !!kakaoProfile.thumbnail_image_url;
 			const user = {
-				id: String(profile.id),
-				name: kakaoProfile.nickname || account.name || undefined,
-				email: account.email,
-				image:
-					kakaoProfile.profile_image_url || kakaoProfile.thumbnail_image_url,
+				id: profile.id,
+				...(hasName && { name: kakaoProfile.nickname || account.name }),
+				...(account.email && { email: account.email }),
+				...(hasImage && {
+					image:
+						kakaoProfile.profile_image_url || kakaoProfile.thumbnail_image_url,
+				}),
 				emailVerified: !!account.is_email_valid && !!account.is_email_verified,
 				...userMap,
 			};
@@ -174,5 +177,5 @@ export const kakao = (options: KakaoOptions) => {
 			};
 		},
 		options,
-	} satisfies OAuthProvider<KakaoProfile>;
+	} satisfies OAuthProvider;
 };

@@ -103,5 +103,5 @@ export const roblox = (options: RobloxOptions) => {
 			};
 		},
 		options,
-	} satisfies OAuthProvider<RobloxProfile>;
+	} satisfies OAuthProvider;
 };

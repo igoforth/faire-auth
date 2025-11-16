@@ -4,7 +4,7 @@ description: Zoom provider setup and usage.
 ---
 
 <Steps>
-  <Step> 
+  <Step>
     ### Create a Zoom App from Marketplace
     1. Visit [Zoom Marketplace](https://marketplace.zoom.us).
 
@@ -14,9 +14,9 @@ description: Zoom provider setup and usage.
 
   </Step>
 
-  <Step> 
+  <Step>
     ### Configure your Zoom App
-    
+
     Ensure that you are in the `Basic Information` of your app settings.
 
     1. Under `Select how the app is managed`, choose `User-managed`
@@ -46,9 +46,9 @@ description: Zoom provider setup and usage.
     To configure the provider, you need to import the provider and pass it to the `socialProviders` option of the auth instance.
 
     ```ts title="auth.ts"
-    import { betterAuth } from "better-auth"
+    import { faireAuth } from "faire-auth"
 
-    export const auth = betterAuth({
+    export const auth = faireAuth({
       socialProviders: {
         zoom: { // [!code highlight]
           clientId: process.env.ZOOM_CLIENT_ID as string, // [!code highlight]
@@ -61,12 +61,12 @@ description: Zoom provider setup and usage.
   </Step>
 
   <Step>
-    ### Sign In with Zoom 
+    ### Sign In with Zoom
     To sign in with Zoom, you can use the `signIn.social` function provided by the client.
     You will need to specify `zoom` as the provider.
 
     ```ts title="auth-client.ts"
-    import { createAuthClient } from "better-auth/client"
+    import { createAuthClient } from "faire-auth/client"
     const authClient =  createAuthClient()
 
     const signIn = async () => {

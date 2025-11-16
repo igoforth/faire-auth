@@ -26,7 +26,7 @@ description: Salesforce provider setup and usage.
 
     <Callout type="info">
         - For development, you can use `http://localhost:3000` URLs, but production requires HTTPS
-        - The callback URL must exactly match what's configured in Better Auth
+        - The callback URL must exactly match what's configured in Faire Auth
         - PKCE (Proof Key for Code Exchange) is required by Salesforce and is automatically handled by the provider
     </Callout>
 
@@ -41,9 +41,9 @@ description: Salesforce provider setup and usage.
     To configure the provider, you need to import the provider and pass it to the `socialProviders` option of the auth instance.
 
     ```ts title="auth.ts"
-    import { betterAuth } from "better-auth"
+    import { faireAuth } from "faire-auth"
 
-    export const auth = betterAuth({
+    export const auth = faireAuth({
         socialProviders: {
             salesforce: { // [!code highlight]
                 clientId: process.env.SALESFORCE_CLIENT_ID as string, // [!code highlight]
@@ -57,7 +57,7 @@ description: Salesforce provider setup and usage.
     #### Configuration Options
 
     - `clientId`: Your Connected App's Consumer Key
-    - `clientSecret`: Your Connected App's Consumer Secret  
+    - `clientSecret`: Your Connected App's Consumer Secret
     - `environment`: `"production"` (default) or `"sandbox"`
     - `loginUrl`: Custom My Domain URL (without `https://`) - overrides environment setting
     - `redirectURI`: Override the auto-generated redirect URI if needed
@@ -65,7 +65,7 @@ description: Salesforce provider setup and usage.
     #### Advanced Configuration
 
     ```ts title="auth.ts"
-    export const auth = betterAuth({
+    export const auth = faireAuth({
         socialProviders: {
             salesforce: {
                 clientId: process.env.SALESFORCE_CLIENT_ID as string,
@@ -84,7 +84,7 @@ description: Salesforce provider setup and usage.
         - The `redirectURI` option helps resolve redirect URI mismatch errors
     </Callout>
     </Step>
-        
+
    <Step>
     ### Environment Variables
     Add the following environment variables to your `.env.local` file:
@@ -92,14 +92,14 @@ description: Salesforce provider setup and usage.
     ```bash title=".env.local"
     SALESFORCE_CLIENT_ID=your_consumer_key_here
     SALESFORCE_CLIENT_SECRET=your_consumer_secret_here
-    BETTER_AUTH_URL=http://localhost:3000 # Important for redirect URI generation
+    FAIRE_AUTH_URL=http://localhost:3000 # Important for redirect URI generation
     ```
 
     For production:
     ```bash title=".env"
     SALESFORCE_CLIENT_ID=your_consumer_key_here
     SALESFORCE_CLIENT_SECRET=your_consumer_secret_here
-    BETTER_AUTH_URL=https://yourdomain.com
+    FAIRE_AUTH_URL=https://yourdomain.com
     ```
     </Step>
 
@@ -109,7 +109,7 @@ description: Salesforce provider setup and usage.
     - `provider`: The provider to use. It should be set to `salesforce`.
 
     ```ts title="auth-client.ts"
-    import { createAuthClient } from "better-auth/client"
+    import { createAuthClient } from "faire-auth/client"
     const authClient = createAuthClient()
 
     const signIn = async () => {
@@ -125,7 +125,7 @@ description: Salesforce provider setup and usage.
     #### Redirect URI Mismatch Error
     If you encounter a `redirect_uri_mismatch` error:
 
-    1. **Check Callback URL**: Ensure the Callback URL in your Salesforce Connected App exactly matches your Better Auth callback URL
+    1. **Check Callback URL**: Ensure the Callback URL in your Salesforce Connected App exactly matches your Faire Auth callback URL
     2. **Protocol**: Make sure you're using the same protocol (`http://` vs `https://`)
     3. **Port**: Verify the port number matches (e.g., `:3000`)
     4. **Override if needed**: Use the `redirectURI` option to explicitly set the redirect URI

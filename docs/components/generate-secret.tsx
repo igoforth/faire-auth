@@ -1,7 +1,8 @@
 "use client";
-import { createRandomStringGenerator } from "@better-auth/utils/random";
+import { createRandomStringGenerator } from "@faire-auth/core/utils";
 import { useState } from "react";
 import { Button } from "./ui/button";
+
 export const GenerateSecret = () => {
 	const [generated, setGenerated] = useState(false);
 	const generateRandomString = createRandomStringGenerator("a-z", "0-9", "A-Z");
@@ -14,12 +15,12 @@ export const GenerateSecret = () => {
 				onClick={() => {
 					const elements = document.querySelectorAll("pre code span.line span");
 					for (let i = 0; i < elements.length; i++) {
-						if (elements[i].textContent === "BETTER_AUTH_SECRET=") {
+						if (elements[i].textContent === "FAIRE_AUTH_SECRET=") {
 							elements[i].textContent =
-								`BETTER_AUTH_SECRET=${generateRandomString(32)}`;
+								`FAIRE_AUTH_SECRET=${generateRandomString(32)}`;
 							setGenerated(true);
 							setTimeout(() => {
-								elements[i].textContent = "BETTER_AUTH_SECRET=";
+								elements[i].textContent = "FAIRE_AUTH_SECRET=";
 								setGenerated(false);
 							}, 5000);
 						}

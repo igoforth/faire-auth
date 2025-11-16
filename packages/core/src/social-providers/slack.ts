@@ -107,5 +107,5 @@ export const slack = (options: SlackOptions) => {
 			};
 		},
 		options,
-	} satisfies OAuthProvider<SlackProfile>;
+	} satisfies OAuthProvider;
 };

@@ -107,7 +107,7 @@ export const github = (options: GithubOptions) => {
 				"https://api.github.com/user",
 				{
 					headers: {
-						"User-Agent": "better-auth",
+						"User-Agent": "faire-auth",
 						authorization: `Bearer ${token.accessToken}`,
 					},
 				},
@@ -125,7 +125,7 @@ export const github = (options: GithubOptions) => {
 			>("https://api.github.com/user/emails", {
 				headers: {
 					Authorization: `Bearer ${token.accessToken}`,
-					"User-Agent": "better-auth",
+					"User-Agent": "faire-auth",
 				},
 			});
 
@@ -150,5 +150,5 @@ export const github = (options: GithubOptions) => {
 			};
 		},
 		options,
-	} satisfies OAuthProvider<GithubProfile>;
+	} satisfies OAuthProvider;
 };

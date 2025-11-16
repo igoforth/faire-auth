@@ -1,5 +1,5 @@
 import { betterFetch } from "@better-fetch/fetch";
-import { base64Url } from "@better-auth/utils/base64";
+import { base64Url } from "../datatypes/base64";
 import type { OAuth2Tokens, ProviderOptions } from "./oauth-provider";
 
 export function createClientCredentialsTokenRequest({
@@ -10,8 +10,8 @@ export function createClientCredentialsTokenRequest({
 }: {
 	options: ProviderOptions & { clientSecret: string };
 	scope?: string;
-	authentication?: "basic" | "post";
-	resource?: string | string[];
+	authentication?: "basic" | "post" | undefined;
+	resource?: string | string[] | undefined;
 }) {
 	const body = new URLSearchParams();
 	const headers: Record<string, any> = {
@@ -22,13 +22,8 @@ export function createClientCredentialsTokenRequest({
 	body.set("grant_type", "client_credentials");
 	scope && body.set("scope", scope);
 	if (resource) {
-		if (typeof resource === "string") {
-			body.append("resource", resource);
-		} else {
-			for (const _resource of resource) {
-				body.append("resource", _resource);
-			}
-		}
+		if (typeof resource === "string") body.append("resource", resource);
+		else for (const _resource of resource) body.append("resource", _resource);
 	}
 	if (authentication === "basic") {
 		const primaryClientId = Array.isArray(options.clientId)
@@ -62,8 +57,8 @@ export async function clientCredentialsToken({
 	options: ProviderOptions & { clientSecret: string };
 	tokenEndpoint: string;
 	scope: string;
-	authentication?: "basic" | "post";
-	resource?: string | string[];
+	authentication?: "basic" | "post" | undefined;
+	resource?: string | string[] | undefined;
 }): Promise<OAuth2Tokens> {
 	const { body, headers } = createClientCredentialsTokenRequest({
 		options,
@@ -82,9 +77,8 @@ export async function clientCredentialsToken({
 		body,
 		headers,
 	});
-	if (error) {
-		throw error;
-	}
+	if (error) throw error;
+
 	const tokens: OAuth2Tokens = {
 		accessToken: data.access_token,
 		tokenType: data.token_type,

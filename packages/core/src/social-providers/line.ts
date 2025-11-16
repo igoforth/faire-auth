@@ -165,5 +165,5 @@ export const line = (options: LineOptions) => {
 			};
 		},
 		options,
-	} satisfies OAuthProvider<LineUserInfo | LineIdTokenPayload, LineOptions>;
+	} satisfies OAuthProvider;
 };

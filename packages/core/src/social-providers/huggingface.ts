@@ -83,9 +83,8 @@ export const huggingface = (options: HuggingFaceOptions) => {
 					});
 				},
 		async getUserInfo(token) {
-			if (options.getUserInfo) {
-				return options.getUserInfo(token);
-			}
+			if (options.getUserInfo) return options.getUserInfo(token);
+
 			const { data: profile, error } = await betterFetch<HuggingFaceProfile>(
 				"https://huggingface.co/oauth/userinfo",
 				{
@@ -95,15 +94,15 @@ export const huggingface = (options: HuggingFaceOptions) => {
 					},
 				},
 			);
-			if (error) {
-				return null;
-			}
+			if (error) return null;
+
 			const userMap = await options.mapProfileToUser?.(profile);
+			const hasName = !!profile.name || !!profile.preferred_username;
 			return {
 				user: {
 					id: profile.sub,
-					name: profile.name || profile.preferred_username,
-					email: profile.email,
+					...(hasName && { name: profile.name || profile.preferred_username }),
+					...(profile.email && { email: profile.email }),
 					image: profile.picture,
 					emailVerified: profile.email_verified ?? false,
 					...userMap,
@@ -112,5 +111,5 @@ export const huggingface = (options: HuggingFaceOptions) => {
 			};
 		},
 		options,
-	} satisfies OAuthProvider<HuggingFaceProfile>;
+	} satisfies OAuthProvider;
 };

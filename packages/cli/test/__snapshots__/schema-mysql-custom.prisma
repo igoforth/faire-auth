@@ -15,7 +15,7 @@ model User {
   emailVerified        Boolean               @default(false)
   image                String?               @db.Text
   createdAt            DateTime              @default(now())
-  updatedAt            DateTime              @updatedAt
+  updatedAt            DateTime              @default(now()) @updatedAt
   twoFactorEnabled     Boolean?              @default(false)
   username             String?
   displayUsername      String?               @db.Text
@@ -71,7 +71,7 @@ model Verification {
   value      String   @db.Text
   expiresAt  DateTime
   createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  updatedAt  DateTime @default(now()) @updatedAt
 
   @@map("verification")
 }
@@ -89,7 +89,7 @@ model TwoFactor {
 model Workspace {
   id                   String                @id
   name                 String                @db.Text
-  slug                 String
+  slug                 String?
   logo                 String?               @db.Text
   createdAt            DateTime
   metadata             String?               @db.Text
@@ -120,7 +120,6 @@ model WorkspaceInvitation {
   role           String?   @db.Text
   status         String    @db.Text
   expiresAt      DateTime
-  createdAt      DateTime  @default(now())
   inviterId      String
   user           User      @relation(fields: [inviterId], references: [id], onDelete: Cascade)
 

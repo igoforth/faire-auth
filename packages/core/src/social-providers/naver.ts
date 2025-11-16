@@ -108,5 +108,5 @@ export const naver = (options: NaverOptions) => {
 			};
 		},
 		options,
-	} satisfies OAuthProvider<NaverProfile>;
+	} satisfies OAuthProvider;
 };

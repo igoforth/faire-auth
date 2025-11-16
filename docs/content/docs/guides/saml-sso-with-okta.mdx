@@ -1,18 +1,18 @@
 ---
 title: SAML SSO with Okta
-description: A guide to integrating SAML Single Sign-On (SSO) with Better Auth, featuring Okta
+description: A guide to integrating SAML Single Sign-On (SSO) with Faire Auth, featuring Okta
 ---
 
 This guide walks you through setting up SAML Single Sign-On (SSO) with your Identity Provider (IdP), using Okta as an example. For advanced configuration details and the full API reference, check out the [SSO Plugin Documentation](/docs/plugins/sso).
 
 ## What is SAML?
 
-SAML (Security Assertion Markup Language) is an XML-based standard for exchanging authentication and authorization data between an Identity Provider (IdP) (e.g., Okta, Azure AD, OneLogin) and a Service Provider (SP) (in this case, Better Auth).
+SAML (Security Assertion Markup Language) is an XML-based standard for exchanging authentication and authorization data between an Identity Provider (IdP) (e.g., Okta, Azure AD, OneLogin) and a Service Provider (SP) (in this case, Faire Auth).
 
 In this setup:
 
 - **IdP (Okta)**: Authenticates users and sends assertions about their identity.
-- **SP (Better Auth)**: Validates assertions and logs the user in.up.
+- **SP (Faire Auth)**: Validates assertions and logs the user in.up.
 
 ### Step 1: Create a SAML Application in Okta
 
@@ -22,13 +22,13 @@ In this setup:
 4. Select "SAML 2.0" as the Sign-in method
 5. Configure the following settings:
 
-   - **Single Sign-on URL**: Your Better Auth ACS endpoint (e.g., `http://localhost:3000/api/auth/sso/saml2/sp/acs/sso`). while `sso` being your providerId
-   - **Audience URI (SP Entity ID)**: Your Better Auth metadata URL (e.g., `http://localhost:3000/api/auth/sso/saml2/sp/metadata`)
+   - **Single Sign-on URL**: Your Faire Auth ACS endpoint (e.g., `http://localhost:3000/api/auth/sso/saml2/sp/acs/sso`). while `sso` being your providerId
+   - **Audience URI (SP Entity ID)**: Your Faire Auth metadata URL (e.g., `http://localhost:3000/api/auth/sso/saml2/sp/metadata`)
    - **Name ID format**: Email Address or any of your choice.
 
 6. Download the IdP metadata XML file and certificate
 
-### Step 2: Configure Better Auth
+### Step 2: Configure Faire Auth
 
 Here’s an example configuration for Okta in a dev environment:
 
@@ -42,7 +42,7 @@ const ssoConfig = {
       issuer: "http://localhost:3000/api/auth/sso/saml2/sp/metadata",
       entryPoint: "https://trial-1076874.okta.com/app/trial-1076874_samltest_1/exktofb0a62hqLAUL697/sso/saml",
       callbackUrl: "/dashboard", // Redirect after successful authentication
-      
+
       // IdP Configuration
       idpMetadata: {
         entityID: "https://trial-1076874.okta.com/app/exktofb0a62hqLAUL697/sso/saml/metadata",
@@ -57,10 +57,10 @@ MIIDqjCCApKgAwIBAgIGAZhVGMeUMA0GCSqGSIb3DQEBCwUAMIGVMQswCQYDVQQGEwJVUzETMBEG
 ...
 -----END CERTIFICATE-----`
       },
-      
+
       // SP Metadata
       spMetadata: {
-        metadata: `<md:EntityDescriptor xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata" 
+        metadata: `<md:EntityDescriptor xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata"
           entityID="http://localhost:3000/api/sso/saml2/sp/metadata">
           ...
           [Your SP Metadata XML]
@@ -87,7 +87,7 @@ const ssoConfig = {
       }
     },
     {
-      domain: "partner.com", 
+      domain: "partner.com",
       providerId: "partner-adfs",
       samlConfig: {
         // ADFS SAML configuration for partner.com

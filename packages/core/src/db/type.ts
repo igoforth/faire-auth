@@ -1,5 +1,4 @@
 import type { ZodType } from "zod";
-import type { LiteralString } from "../types";
 
 export type DBPreservedModels =
 	| "user"
@@ -21,7 +20,7 @@ export type DBFieldType =
 	| "date"
 	| "json"
 	| `${"string" | "number"}[]`
-	| Array<LiteralString>;
+	| Array<string>;
 
 export type DBPrimitive =
 	| string
@@ -108,7 +107,7 @@ export type DBFieldAttributeConfig = {
 	/**
 	 * The name of the field on the database.
 	 */
-	fieldName?: string;
+	fieldName?: string | undefined;
 	/**
 	 * If the field should be sortable.
 	 *
@@ -122,7 +121,7 @@ export type DBFieldAttribute<T extends DBFieldType = DBFieldType> = {
 	type: T;
 } & DBFieldAttributeConfig;
 
-export type BetterAuthDBSchema = Record<
+export type FaireAuthDBSchema = Record<
 	string,
 	{
 		/**

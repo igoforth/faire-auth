@@ -78,12 +78,12 @@ const formatMessage = (
 	if (colorsEnabled) {
 		return `${TTY_COLORS.dim}${timestamp}${TTY_COLORS.reset} ${
 			levelColors[level]
-		}${level.toUpperCase()}${TTY_COLORS.reset} ${TTY_COLORS.bright}[Better Auth]:${
+		}${level.toUpperCase()}${TTY_COLORS.reset} ${TTY_COLORS.bright}[Faire Auth]:${
 			TTY_COLORS.reset
 		} ${message}`;
 	}
 
-	return `${timestamp} ${level.toUpperCase()} [Better Auth]: ${message}`;
+	return `${timestamp} ${level.toUpperCase()} [Faire Auth]: ${message}`;
 };
 
 export type InternalLogger = {
