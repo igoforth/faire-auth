@@ -33,7 +33,7 @@ import type {
 	JSONParsed,
 	JSONPrimitive,
 } from "hono/utils/types";
-import type { AuthRouteConfig, ExecOpts, ExecRet } from "./hono";
+import type { AuthRouteConfig, Exec, execHelper, MinRouteConfig } from "./hono";
 
 export type Awaitable<T> = Promise<T> | T;
 
@@ -556,7 +556,7 @@ export type ConvertPathType<T extends string> =
 // loop with raw AuthRouteConfig to RouteConfigToTypedResponse ?
 
 export type RouteHook<
-	R extends AuthRouteConfig,
+	R extends MinRouteConfig,
 	E extends Env = RouteConfigToEnv<R>,
 	I extends Input = InferInput<R>,
 	P extends string = ConvertPathType<R["path"]>,
@@ -724,42 +724,22 @@ type AddExtra<C extends AuthRouteConfig, BasePath extends string = ""> = {
 		[K2 in C["method"] as `$${Lowercase<K2>}`]: Pick<
 			C,
 			"operationId" | "isAction" | "SERVER_ONLY" | "client"
-		> & {
-			// we copy most of the impl of execute instead of using type directly to simplify the resulting function while adding generic
-			_api: <
-				AsResponse extends boolean = false,
-				ReturnHeaders extends boolean = false,
-			>(
-				...args: CustomIO<C, "in"> extends undefined
-					? [ctx?: Context | ExecOpts<AsResponse, ReturnHeaders>]
-					: [
-							input: CustomIO<C, "in"> & {},
-							ctx?: Context | ExecOpts<AsResponse, ReturnHeaders>,
-						]
-			) => Promise<
-				AsResponse extends true
-					? Response
-					: ReturnHeaders extends true
-						? {
-								headers: Headers;
-								response: ExecRet<C>;
-							}
-						: ExecRet<C>
-			>;
-		};
+		> & { _api: ReturnType<typeof execHelper<C, Env>> };
 	};
 };
 
 export type ConfigToSchema<
 	C extends AuthRouteConfig,
 	BasePath extends string = "",
-> = ToSchema<
-	C["method"],
-	MergePath<BasePath, ConvertPathType<C["path"]>>,
-	InferInput<C>,
-	RouteConfigToTypedResponse<C>
-> &
-	AddExtra<C, BasePath>;
+> = Prettify<
+	ToSchema<
+		C["method"],
+		MergePath<BasePath, ConvertPathType<C["path"]>>,
+		InferInput<C>,
+		RouteConfigToTypedResponse<C>
+	> &
+		AddExtra<C, BasePath>
+>;
 
 export type BuildSchema<
 	C,

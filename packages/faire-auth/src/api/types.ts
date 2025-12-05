@@ -59,13 +59,13 @@ import type {
 	verifyEmailRoute,
 } from "./routes";
 
-export type APIFromRoutes<C extends AuthRouteConfig> = {
-	[K in C as K["operationId"]]: FromFn<Execute<K>> extends (
-		...args: infer A
-	) => infer R
-		? (...args: A) => R
-		: never;
-};
+// export type APIFromRoutes<C extends AuthRouteConfig> = {
+// 	[K in C as K["operationId"]]: FromFn<Execute<K>> extends (
+// 		...args: infer A
+// 	) => infer R
+// 		? (...args: A) => R
+// 		: never;
+// };
 
 export type AllPluginConfigs<O> = O extends { plugins: readonly (infer P)[] }
 	? P extends { routes: infer R }
@@ -174,6 +174,23 @@ export type InferAPI<
 		? UnionToIntersection<S>
 		: never
 	: never;
+// export type InferAPI<
+// 	A extends AnyHono,
+// 	HideCallbacks extends boolean = true,
+// > = UnionToIntersection<
+// 	{
+// 		[Path in keyof ExtractSchema<A>]: {
+// 			[Method in keyof ExtractSchema<A>[Path] as ExtractSchema<A>[Path][Method] extends {
+// 				operationId: infer K extends string;
+// 				isAction: HideCallbacks extends true ? true : boolean;
+// 			}
+// 				? K
+// 				: never]: ExtractSchema<A>[Path][Method] extends { _api: infer Api }
+// 				? Api
+// 				: never;
+// 		}[keyof ExtractSchema<A>[Path]];
+// 	}[keyof ExtractSchema<A>]
+// >;
 
 type Session<C, Opts extends ClientOptions> = C extends {
 	getSession: { $get: infer GetSession };
@@ -231,7 +248,7 @@ export type InferClient<
 		: never
 	: never;
 
-export type DefaultAPI = APIFromRoutes<Configs>;
+// export type DefaultAPI = APIFromRoutes<Configs>;
 
 export type DefaultApp = OpenAPIHono<
 	ContextVars,

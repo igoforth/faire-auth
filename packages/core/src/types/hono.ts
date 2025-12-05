@@ -17,8 +17,9 @@ import type {
 	RouteConfigToEnv,
 	RouteConfigToTypedResponse,
 	ExK,
-	Prettify,
 	LiteralString,
+	Fn,
+	CustomIO,
 } from "./helper";
 
 export type AnyHono = Hono<any, any, any>;
@@ -29,27 +30,25 @@ export type BasePath<Options> = Options extends { basePath: infer BasePath }
 		: BasePath
 	: "/api/auth";
 
-export type AuthRouteConfig = Prettify<
-	{
-		operationId: LiteralString;
-		path: LiteralString;
-		method:
-			| "get"
-			| "post"
-			| "put"
-			| "delete"
-			| "patch"
-			| "head"
-			| "options"
-			| "trace";
-		hide?: boolean;
-		$Infer?: { body?: unknown; [x: number]: unknown };
-		isAction?: false;
-		SERVER_ONLY?: true;
-		client?: false;
-		middleware?: MiddlewareHandler | MiddlewareHandler[];
-	} & ExK<RouteConfigBase, "operationId" | "path" | "method">
->;
+export interface AuthRouteConfig extends RouteConfigBase {
+	operationId: LiteralString;
+	path: LiteralString;
+	method:
+		| "get"
+		| "post"
+		| "put"
+		| "delete"
+		| "patch"
+		| "head"
+		| "options"
+		| "trace";
+	hide?: boolean;
+	$Infer?: { body?: unknown; [x: number]: unknown };
+	isAction?: false;
+	SERVER_ONLY?: true;
+	client?: false;
+	middleware?: MiddlewareHandler | MiddlewareHandler[];
+}
 export type DecorativeKeys =
 	| `x-${string}`
 	| "tags"
@@ -63,6 +62,7 @@ export type DecorativeKeys =
 	| "security"
 	| "servers"
 	| "$Infer";
+export interface MinRouteConfig extends ExK<AuthRouteConfig, DecorativeKeys> {}
 
 // just middleware handler but without next() so we can enforce before/after context
 export type HookHandler<
@@ -121,3 +121,38 @@ export type ExecRet<C extends AuthRouteConfig> =
 				: D
 			: X
 		: never;
+
+export type Exec<C extends AuthRouteConfig, E extends Env> = Fn<
+	CustomIO<C, "in"> extends undefined
+		? [ctx?: Context<E> | ExecOpts<boolean, boolean>]
+		: [
+				input: NonNullable<CustomIO<C, "in">>,
+				ctx?: Context<E> | ExecOpts<boolean, boolean>,
+			],
+	Promise<ExecRet<C>>
+>;
+
+export interface AuthExecute {
+	<C extends MinRouteConfig, E extends Env>(): <
+		AsResponse extends boolean = false,
+		ReturnHeaders extends boolean = false,
+	>(
+		...args: CustomIO<C, "in"> extends undefined
+			? [ctx?: Context<E> | ExecOpts<AsResponse, ReturnHeaders>]
+			: [
+					input: CustomIO<C, "in"> & {},
+					ctx?: Context<E> | ExecOpts<AsResponse, ReturnHeaders>,
+				]
+	) => Promise<
+		AsResponse extends true
+			? Response
+			: ReturnHeaders extends true
+				? {
+						headers: Headers;
+						response: ExecRet<C>;
+					}
+				: ExecRet<C>
+	>;
+}
+
+export declare const execHelper: AuthExecute;

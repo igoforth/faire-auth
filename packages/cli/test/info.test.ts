@@ -8,7 +8,7 @@ const execAsync = promisify(exec);
 
 let tmpDir = ".";
 
-describe("info command", () => {
+describe("info command", (test) => {
 	beforeEach(async () => {
 		const tmp = path.join(
 			process.cwd(),
@@ -31,7 +31,9 @@ describe("info command", () => {
 		vi.restoreAllMocks();
 	});
 
-	it("should display system information without auth config", async () => {
+	test("should display system information without auth config", async ({
+		expect,
+	}) => {
 		// Create a minimal package.json
 		await fs.writeFile(
 			path.join(tmpDir, "package.json"),
@@ -70,7 +72,7 @@ describe("info command", () => {
 		expect(output.faireAuth.config).toBeNull();
 	});
 
-	it("should load and sanitize auth configuration", async () => {
+	test("should load and sanitize auth configuration", async ({ expect }) => {
 		// Create package.json with dependencies
 		await fs.writeFile(
 			path.join(tmpDir, "package.json"),
@@ -142,7 +144,7 @@ describe("info command", () => {
 		expect(output.faireAuth.config.baseURL).toBe("https://example.com");
 	});
 
-	it("should detect installed frameworks", async () => {
+	test("should detect installed frameworks", async ({ expect }) => {
 		// Create package.json with various frameworks
 		await fs.writeFile(
 			path.join(tmpDir, "package.json"),
@@ -187,7 +189,7 @@ describe("info command", () => {
 		});
 	});
 
-	it("should detect database clients", async () => {
+	test("should detect database clients", async ({ expect }) => {
 		// Create package.json with database clients
 		await fs.writeFile(
 			path.join(tmpDir, "package.json"),
@@ -232,7 +234,7 @@ describe("info command", () => {
 		});
 	});
 
-	it("should support custom config path", async () => {
+	test("should support custom config path", async ({ expect }) => {
 		// Create package.json
 		await fs.writeFile(
 			path.join(tmpDir, "package.json"),
@@ -280,7 +282,7 @@ describe("info command", () => {
 		});
 	});
 
-	it("should sanitize plugin configurations", async () => {
+	test("should sanitize plugin configurations", async ({ expect }) => {
 		// Create package.json
 		await fs.writeFile(
 			path.join(tmpDir, "package.json"),
@@ -336,7 +338,7 @@ describe("info command", () => {
 		});
 	});
 
-	it("should handle missing package.json gracefully", async () => {
+	test("should handle missing package.json gracefully", async ({ expect }) => {
 		// Don't create package.json
 		const cliPath = path.join(process.cwd(), "dist", "index.mjs");
 		const { stdout } = await execAsync(`node ${cliPath} info --json`, {

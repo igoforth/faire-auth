@@ -2,8 +2,10 @@ import { describe, expect, it, vi } from "vitest";
 
 import { createOTP } from "./otp";
 
-describe("HOTP and TOTP Generation Tests", () => {
-	it("should generate a valid HOTP for a given counter", async () => {
+describe("HOTP and TOTP Generation Tests", (test) => {
+	test("should generate a valid HOTP for a given counter", async ({
+		expect,
+	}) => {
 		const key = "1234567890";
 		const counter = 1;
 		const digits = 6;
@@ -12,7 +14,9 @@ describe("HOTP and TOTP Generation Tests", () => {
 		expect(otp.length).toBe(digits);
 	});
 
-	it("should throw error if digits is not between 1 and 8", async () => {
+	test("should throw error if digits is not between 1 and 8", async ({
+		expect,
+	}) => {
 		const key = "1234567890";
 		const counter = 1;
 
@@ -24,7 +28,9 @@ describe("HOTP and TOTP Generation Tests", () => {
 		);
 	});
 
-	it("should generate a valid TOTP based on current time", async () => {
+	test("should generate a valid TOTP based on current time", async ({
+		expect,
+	}) => {
 		const secret = "1234567890";
 		const digits = 6;
 
@@ -33,7 +39,9 @@ describe("HOTP and TOTP Generation Tests", () => {
 		expect(otp.length).toBe(digits);
 	});
 
-	it("should generate different OTPs after each time window", async () => {
+	test("should generate different OTPs after each time window", async ({
+		expect,
+	}) => {
 		const secret = "1234567890";
 		const seconds = 30;
 		const digits = 6;
@@ -45,14 +53,16 @@ describe("HOTP and TOTP Generation Tests", () => {
 		expect(otp1).not.toBe(otp2);
 	});
 
-	it("should verify correct TOTP against generated value", async () => {
+	test("should verify correct TOTP against generated value", async ({
+		expect,
+	}) => {
 		const secret = "1234567890";
 		const totp = await createOTP(secret).totp();
 		const isValid = await createOTP(secret).verify(totp);
 		expect(isValid).toBe(true);
 	});
 
-	it("should return false for incorrect TOTP", async () => {
+	test("should return false for incorrect TOTP", async ({ expect }) => {
 		const secret = "1234567890";
 		const invalidTOTP = "000000";
 
@@ -61,21 +71,23 @@ describe("HOTP and TOTP Generation Tests", () => {
 		expect(isValid).toBe(false);
 	});
 
-	it("should verify TOTP within the window", async () => {
+	test("should verify TOTP within the window", async ({ expect }) => {
 		const secret = "1234567890";
 		const totp = await createOTP(secret).totp();
 		const isValid = await createOTP(secret).verify(totp, { window: 1 });
 		expect(isValid).toBe(true);
 	});
 
-	it("should return false for TOTP outside the window", async () => {
+	test("should return false for TOTP outside the window", async ({
+		expect,
+	}) => {
 		const secret = "1234567890";
 		const totp = await createOTP(secret).totp();
 		const isValid = await createOTP(secret).verify(totp, { window: -1 });
 		expect(isValid).toBe(false);
 	});
 
-	it("should generate a valid QR code URL", () => {
+	test("should generate a valid QR code URL", ({ expect }) => {
 		const secret = "1234567890";
 		const issuer = "my-site.com";
 		const account = "account";

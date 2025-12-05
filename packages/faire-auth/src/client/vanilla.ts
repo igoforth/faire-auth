@@ -66,6 +66,7 @@ export const createAuthClient =
 		const honoClient = createHonoClient(
 			{ baseURL, createFetchOptions: options.fetchOptions },
 			routes,
+			// LoggerAPI.wrap(, "fetch", "immediate")
 			LoggerAPI.wrap($fetch, "fetch", "immediate"),
 			pluginsAtoms,
 			atomListeners,

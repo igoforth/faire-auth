@@ -147,8 +147,8 @@ We use Vitest for testing. Place test files next to the source files they test:
 import { describe, it, expect } from "vitest";
 import { getTestInstance } from "./test-utils/test-instance";
 
-describe("Feature", () => {
-    it("should work as expected", async () => {
+describe("Feature", (test) => {
+    test("should work as expected", async ({ expect }) => {
         const { client } = await getTestInstance();
         // Test code here
         expect(result).toBeDefined();

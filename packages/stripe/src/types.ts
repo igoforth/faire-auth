@@ -1,7 +1,8 @@
-import type { ContextVars, InferOptionSchema, Session, User } from "faire-auth";
+import type { ContextVars, InferOptionSchema } from "faire-auth";
 import type { Context } from "@faire-auth/core/types";
 import type Stripe from "stripe";
 import type { subscriptions, user } from "./schema";
+import type { Session, User } from "faire-auth/db";
 
 export type StripePlan = {
 	/**
@@ -67,11 +68,11 @@ export type StripePlan = {
 		 * @param subscription - Subscription
 		 * @returns
 		 */
-		onTrialEnd?: (
+		onTrialEnd?: <V extends object>(
 			data: {
 				subscription: Subscription;
 			},
-			ctx: Context<ContextVars>,
+			ctx: Context<ContextVars<V>>,
 		) => Promise<void>;
 		/**
 		 * A function that will be called when the trial
@@ -79,9 +80,9 @@ export type StripePlan = {
 		 * @param subscription - Subscription
 		 * @returns
 		 */
-		onTrialExpired?: (
+		onTrialExpired?: <V extends object>(
 			subscription: Subscription,
-			ctx: Context<ContextVars>,
+			ctx: Context<ContextVars<V>>,
 		) => Promise<void>;
 	};
 };
@@ -160,6 +161,117 @@ export interface Subscription {
 	seats?: number;
 }
 
+export interface SubscriptionOptions {
+	enabled: boolean;
+	/**
+	 * Subscription Configuration
+	 */
+	/**
+	 * List of plan
+	 */
+	plans: StripePlan[] | (() => StripePlan[] | Promise<StripePlan[]>);
+	/**
+	 * Require email verification before a user is allowed to upgrade
+	 * their subscriptions
+	 *
+	 * @default false
+	 */
+	requireEmailVerification?: boolean;
+	/**
+	 * A callback to run after a user has subscribed to a package
+	 * @param event - Stripe Event
+	 * @param subscription - Subscription Data
+	 * @returns
+	 */
+	onSubscriptionComplete?: <V extends object>(
+		data: {
+			event: Stripe.Event;
+			stripeSubscription: Stripe.Subscription;
+			subscription: Subscription;
+			plan: StripePlan;
+		},
+		ctx: Context<ContextVars<V>>,
+	) => Promise<void>;
+	/**
+	 * A callback to run after a user is about to cancel their subscription
+	 * @returns
+	 */
+	onSubscriptionUpdate?: (data: {
+		event: Stripe.Event;
+		subscription: Subscription;
+	}) => Promise<void>;
+	/**
+	 * A callback to run after a user is about to cancel their subscription
+	 * @returns
+	 */
+	onSubscriptionCancel?: (data: {
+		event?: Stripe.Event | undefined;
+		subscription: Subscription;
+		stripeSubscription: Stripe.Subscription;
+		cancellationDetails?: Stripe.Subscription.CancellationDetails | null;
+	}) => Promise<void>;
+	/**
+	 * A function to check if the reference id is valid
+	 * and belongs to the user
+	 *
+	 * @param data - data containing user, session and referenceId
+	 * @param ctx - the context object
+	 * @returns
+	 */
+	authorizeReference?: <V extends object>(
+		data: {
+			user: User;
+			session: Session;
+			referenceId: string;
+			action:
+				| "upgrade-subscription"
+				| "list-subscription"
+				| "cancel-subscription"
+				| "restore-subscription"
+				| "billing-portal";
+		},
+		ctx: Context<ContextVars<V>>,
+	) => Promise<boolean>;
+	/**
+	 * A callback to run after a user has deleted their subscription
+	 * @returns
+	 */
+	onSubscriptionDeleted?: (data: {
+		event: Stripe.Event;
+		stripeSubscription: Stripe.Subscription;
+		subscription: Subscription;
+	}) => Promise<void>;
+	/**
+	 * parameters for session create params
+	 *
+	 * @param data - data containing user, session and plan
+	 * @param ctx - the context object
+	 */
+	getCheckoutSessionParams?: <V extends object>(
+		data: {
+			user: User;
+			session: Session;
+			plan: StripePlan;
+			subscription: Subscription;
+		},
+		ctx: Context<ContextVars<V>>,
+	) =>
+		| Promise<{
+				params?: Stripe.Checkout.SessionCreateParams;
+				options?: Stripe.RequestOptions;
+		  }>
+		| {
+				params?: Stripe.Checkout.SessionCreateParams;
+				options?: Stripe.RequestOptions;
+		  };
+	/**
+	 * Enable organization subscription
+	 */
+	organization?: {
+		enabled: boolean;
+	};
+}
+
 export interface StripeOptions {
 	/**
 	 * Stripe Client
@@ -181,12 +293,12 @@ export interface StripeOptions {
 	 * @param stripeCustomer - Stripe Customer Data
 	 * @returns
 	 */
-	onCustomerCreate?: (
+	onCustomerCreate?: <V extends object>(
 		data: {
 			stripeCustomer: Stripe.Customer;
 			user: User;
 		},
-		ctx: Context<ContextVars>,
+		ctx: Context<ContextVars<V>>,
 	) => Promise<void>;
 	/**
 	 * A custom function to get the customer create
@@ -194,126 +306,23 @@ export interface StripeOptions {
 	 * @param data - data containing user and session
 	 * @returns
 	 */
-	getCustomerCreateParams?: (
+	getCustomerCreateParams?: <V extends object>(
 		data: {
 			user: User;
 			session: Session;
 		},
-		ctx: Context<ContextVars>,
+		ctx: Context<ContextVars<V>>,
 	) => Promise<{}>;
 	/**
 	 * Subscriptions
 	 */
-	subscription?: {
-		enabled: boolean;
-		/**
-		 * Subscription Configuration
-		 */
-		/**
-		 * List of plan
-		 */
-		plans: StripePlan[] | (() => StripePlan[] | Promise<StripePlan[]>);
-		/**
-		 * Require email verification before a user is allowed to upgrade
-		 * their subscriptions
-		 *
-		 * @default false
-		 */
-		requireEmailVerification?: boolean;
-		/**
-		 * A callback to run after a user has subscribed to a package
-		 * @param event - Stripe Event
-		 * @param subscription - Subscription Data
-		 * @returns
-		 */
-		onSubscriptionComplete?: (
-			data: {
-				event: Stripe.Event;
-				stripeSubscription: Stripe.Subscription;
-				subscription: Subscription;
-				plan: StripePlan;
-			},
-			ctx: Context<ContextVars>,
-		) => Promise<void>;
-		/**
-		 * A callback to run after a user is about to cancel their subscription
-		 * @returns
-		 */
-		onSubscriptionUpdate?: (data: {
-			event: Stripe.Event;
-			subscription: Subscription;
-		}) => Promise<void>;
-		/**
-		 * A callback to run after a user is about to cancel their subscription
-		 * @returns
-		 */
-		onSubscriptionCancel?: (data: {
-			event?: Stripe.Event | undefined;
-			subscription: Subscription;
-			stripeSubscription: Stripe.Subscription;
-			cancellationDetails?: Stripe.Subscription.CancellationDetails | null;
-		}) => Promise<void>;
-		/**
-		 * A function to check if the reference id is valid
-		 * and belongs to the user
-		 *
-		 * @param data - data containing user, session and referenceId
-		 * @param ctx - the context object
-		 * @returns
-		 */
-		authorizeReference?: (
-			data: {
-				user: User & Record<string, any>;
-				session: Session & Record<string, any>;
-				referenceId: string;
-				action:
-					| "upgrade-subscription"
-					| "list-subscription"
-					| "cancel-subscription"
-					| "restore-subscription"
-					| "billing-portal";
-			},
-			ctx: Context<ContextVars>,
-		) => Promise<boolean>;
-		/**
-		 * A callback to run after a user has deleted their subscription
-		 * @returns
-		 */
-		onSubscriptionDeleted?: (data: {
-			event: Stripe.Event;
-			stripeSubscription: Stripe.Subscription;
-			subscription: Subscription;
-		}) => Promise<void>;
-		/**
-		 * parameters for session create params
-		 *
-		 * @param data - data containing user, session and plan
-		 * @param ctx - the context object
-		 */
-		getCheckoutSessionParams?: (
-			data: {
-				user: User & Record<string, any>;
-				session: Session & Record<string, any>;
-				plan: StripePlan;
-				subscription: Subscription;
-			},
-			ctx: Context<ContextVars>,
-		) =>
-			| Promise<{
-					params?: Stripe.Checkout.SessionCreateParams;
-					options?: Stripe.RequestOptions;
-			  }>
-			| {
-					params?: Stripe.Checkout.SessionCreateParams;
-					options?: Stripe.RequestOptions;
-			  };
-		/**
-		 * Enable organization subscription
-		 */
-		organization?: {
-			enabled: boolean;
-		};
-	};
+	subscription?:
+		| {
+				enabled: false;
+		  }
+		| ({
+				enabled: true;
+		  } & SubscriptionOptions);
 	/**
 	 * A callback to run after a stripe event is received
 	 * @param event - Stripe Event

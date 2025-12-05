@@ -13,11 +13,12 @@ import { join } from "path";
 import { Bench, type BenchOptions, type FnHook } from "tinybench";
 import { describe, inject, bench as vtBench } from "vitest";
 import { staticConfigMap } from "./api/configs";
-import type { Config, DefaultAPI } from "./api/types";
+import type { Config } from "./api/types";
 import type { SuccessContext } from "./client";
 import type { User } from "./db";
 import {
 	faireAuth,
+	type Auth,
 	type ClientOptions,
 	type DBAdapter,
 	type FaireAuthOptions,
@@ -50,7 +51,7 @@ interface Context {
 	) => Promise<false extends SignIn ? TestUser : RepeatableSignInResult>;
 	cookieCapture: <Res>(context: SuccessContext<Res>) => void;
 	db: DBAdapter;
-	api: DefaultAPI;
+	api: Auth<any>["api"];
 }
 
 const BenchUtils = {
@@ -305,7 +306,7 @@ class RequestSecBenchmark<O extends FaireAuthOptions> extends BenchmarkBase {
 			});
 			const ctx: Context = {
 				api,
-				cookieCapture: createCookieCapture(headers),
+				cookieCapture: createCookieCapture(headers)(),
 				...rest,
 				currentTestUser: undefined,
 			};

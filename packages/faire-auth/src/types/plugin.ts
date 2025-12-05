@@ -23,7 +23,7 @@ export type AuthPluginSchema = {
 	};
 };
 
-export interface FaireAuthPlugin extends BaseFaireAuthPlugin<ContextVars> {
+export interface FaireAuthPlugin extends BaseFaireAuthPlugin<ContextVars<any>> {
 	/**
 	 * Custom routes provided by the plugin.
 	 */

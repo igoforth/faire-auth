@@ -4,7 +4,7 @@ import * as config from "../src/utils/get-config";
 import { faireAuth, type FaireAuthPlugin } from "faire-auth";
 import Database from "better-sqlite3";
 
-describe("migrate base auth instance", () => {
+describe("migrate base auth instance", (test) => {
 	const db = new Database(":memory:");
 
 	const auth = faireAuth({
@@ -26,7 +26,7 @@ describe("migrate base auth instance", () => {
 		vi.restoreAllMocks();
 	});
 
-	it("should migrate the database and sign-up a user", async () => {
+	test("should migrate the database and sign-up a user", async ({ expect }) => {
 		await migrateAction({
 			cwd: process.cwd(),
 			config: "test/auth.ts",
@@ -43,7 +43,7 @@ describe("migrate base auth instance", () => {
 	});
 });
 
-describe("migrate auth instance with plugins", () => {
+describe("migrate auth instance with plugins", (test) => {
 	const db = new Database(":memory:");
 	const testPlugin = {
 		id: "plugin",
@@ -79,7 +79,7 @@ describe("migrate auth instance with plugins", () => {
 		vi.restoreAllMocks();
 	});
 
-	it("should migrate the database and sign-up a user", async () => {
+	test("should migrate the database and sign-up a user", async ({ expect }) => {
 		await migrateAction({
 			cwd: process.cwd(),
 			config: "test/auth.ts",

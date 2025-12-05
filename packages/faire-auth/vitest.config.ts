@@ -32,7 +32,10 @@ export default defineConfig({
 				test: {
 					name: "adapters",
 					environment: "edge-runtime",
-					include: ["src/adapters/**/*.test.ts"],
+					include: [
+						"src/adapters/**/*.test.ts",
+						"src/db/get-migration-schema.test.ts",
+					],
 					provide: {
 						emitDrizzleKitLogs: false,
 						emitDrizzleKitErrors: true,
@@ -126,6 +129,7 @@ export default defineConfig({
 					environment: "edge-runtime",
 					exclude: [
 						...defaultExclude,
+						"src/db/get-migration-schema.test.ts",
 						"src/client/**/*.test.ts",
 						"src/adapters/**/*.test.ts",
 					],

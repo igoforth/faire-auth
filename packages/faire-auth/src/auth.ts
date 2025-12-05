@@ -43,7 +43,7 @@ export const faireAuth = <Options extends FaireAuthOptions>(
 		Record<never, never>,
 ) => {
 	const [authContext, authOptions] = init(options as Options);
-	const { api, app } = router(authContext, authOptions);
+	const { api, app } = router(authContext, authOptions as Options);
 
 	return {
 		handler: (request, Env?: any, executionCtx?: ExecutionContext) => {

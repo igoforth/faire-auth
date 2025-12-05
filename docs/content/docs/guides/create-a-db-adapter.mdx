@@ -359,7 +359,7 @@ import { expect, test, describe } from "vitest";
 import { runAdapterTest } from "faire-auth/adapters/test";
 import { myAdapter } from "./my-adapter";
 
-describe("My Adapter Tests", async () => {
+describe("My Adapter Tests", async (test) => {
   afterAll(async () => {
     // Run DB cleanup here...
   });
@@ -387,7 +387,7 @@ import { expect, test, describe } from "vitest";
 import { runNumberIdAdapterTest } from "faire-auth/adapters/test";
 import { myAdapter } from "./my-adapter";
 
-describe("My Adapter Numeric ID Tests", async () => {
+describe("My Adapter Numeric ID Tests", async (test) => {
   afterAll(async () => {
     // Run DB cleanup here...
   });

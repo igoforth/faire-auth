@@ -7,7 +7,7 @@ import type {
 import { buildSchemas } from "@faire-auth/core/utils";
 import type { SetRequired } from "type-fest";
 import type { z } from "zod";
-import { createEndpoint } from "../api/factory/endpoint";
+import { createEndpoint, createAPI } from "../api/factory/endpoint";
 import type { AuthContext } from "../init";
 import { init } from "../init";
 import type { ContextVars } from "../types/hono";
@@ -34,11 +34,11 @@ export const createTestEndpoint = <
 			? ([o.context, o.options] as const)
 			: init(options);
 	const schemas = buildSchemas(SCHEMAS, opts);
-	const { config, handler, execute } = createEndpoint(c, h)(opts);
+	const api = { execute: createEndpoint(c, h)(opts) };
+	const [config, handler] = api.execute.toArgs(schemas, context, {});
 	return {
-		config: config(schemas),
-		// TODO: context cannot be hydrated with api in single endpoint test scenarios
-		handler: handler(context, {} as any),
-		execute,
+		config,
+		handler,
+		execute: createAPI(api).execute,
 	};
 };

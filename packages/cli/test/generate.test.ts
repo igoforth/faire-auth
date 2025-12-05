@@ -10,8 +10,8 @@ import type { FaireAuthOptions } from "faire-auth";
 import { generateAuthConfig } from "../src/generators/auth-config";
 import type { SupportedPlugin } from "../src/commands/init";
 
-describe("generate", async () => {
-	it("should generate prisma schema", async () => {
+describe("generate", async (test) => {
+	test("should generate prisma schema", async ({ expect }) => {
 		const schema = await generatePrismaSchema({
 			file: "test.prisma",
 			adapter: prismaAdapter(
@@ -35,7 +35,7 @@ describe("generate", async () => {
 		);
 	});
 
-	it("should generate prisma schema with number id", async () => {
+	test("should generate prisma schema with number id", async ({ expect }) => {
 		const schema = await generatePrismaSchema({
 			file: "test.prisma",
 			adapter: prismaAdapter(
@@ -64,7 +64,7 @@ describe("generate", async () => {
 		);
 	});
 
-	it("should generate prisma schema for mongodb", async () => {
+	test("should generate prisma schema for mongodb", async ({ expect }) => {
 		const schema = await generatePrismaSchema({
 			file: "test.prisma",
 			adapter: prismaAdapter(
@@ -88,7 +88,7 @@ describe("generate", async () => {
 		);
 	});
 
-	it("should generate prisma schema for mysql", async () => {
+	test("should generate prisma schema for mysql", async ({ expect }) => {
 		const schema = await generatePrismaSchema({
 			file: "test.prisma",
 			adapter: prismaAdapter(
@@ -112,7 +112,9 @@ describe("generate", async () => {
 		);
 	});
 
-	it("should generate prisma schema for mysql with custom model names", async () => {
+	test("should generate prisma schema for mysql with custom model names", async ({
+		expect,
+	}) => {
 		const schema = await generatePrismaSchema({
 			file: "test.prisma",
 			adapter: prismaAdapter(
@@ -149,7 +151,7 @@ describe("generate", async () => {
 		);
 	});
 
-	it("should generate drizzle schema", async () => {
+	test("should generate drizzle schema", async ({ expect }) => {
 		const schema = await generateDrizzleSchema({
 			file: "test.drizzle",
 			adapter: drizzleAdapter(
@@ -187,7 +189,7 @@ describe("generate", async () => {
 		);
 	});
 
-	it("should generate drizzle schema with number id", async () => {
+	test("should generate drizzle schema with number id", async ({ expect }) => {
 		const schema = await generateDrizzleSchema({
 			file: "test.drizzle",
 			adapter: drizzleAdapter(
@@ -230,7 +232,7 @@ describe("generate", async () => {
 		);
 	});
 
-	it("should generate kysely schema", async () => {
+	test("should generate kysely schema", async ({ expect }) => {
 		const schema = await generateMigrations({
 			file: "test.sql",
 			options: {
@@ -243,7 +245,9 @@ describe("generate", async () => {
 		);
 	});
 
-	it("should add plugin to empty plugins array without leading comma", async () => {
+	test("should add plugin to empty plugins array without leading comma", async ({
+		expect,
+	}) => {
 		const initialConfig = `export const auth = faireAuth({
 			plugins: []
 		});`;
@@ -273,8 +277,10 @@ describe("generate", async () => {
 	});
 });
 
-describe("JSON field support in CLI generators", () => {
-	it("should generate Drizzle schema with JSON fields for PostgreSQL", async () => {
+describe("JSON field support in CLI generators", (test) => {
+	test("should generate Drizzle schema with JSON fields for PostgreSQL", async ({
+		expect,
+	}) => {
 		const schema = await generateDrizzleSchema({
 			file: "test.drizzle",
 			adapter: {
@@ -298,7 +304,9 @@ describe("JSON field support in CLI generators", () => {
 		await expect(schema.code).toContain("preferences: jsonb(");
 	});
 
-	it("should generate Drizzle schema with JSON fields for MySQL", async () => {
+	test("should generate Drizzle schema with JSON fields for MySQL", async ({
+		expect,
+	}) => {
 		const schema = await generateDrizzleSchema({
 			file: "test.drizzle",
 			adapter: {
@@ -322,7 +330,9 @@ describe("JSON field support in CLI generators", () => {
 		await expect(schema.code).toContain("preferences: json(");
 	});
 
-	it("should generate Drizzle schema with JSON fields for SQLite", async () => {
+	test("should generate Drizzle schema with JSON fields for SQLite", async ({
+		expect,
+	}) => {
 		const schema = await generateDrizzleSchema({
 			file: "test.drizzle",
 			adapter: {
@@ -346,7 +356,7 @@ describe("JSON field support in CLI generators", () => {
 		await expect(schema.code).toContain("preferences: text(");
 	});
 
-	it("should generate Prisma schema with JSON fields", async () => {
+	test("should generate Prisma schema with JSON fields", async ({ expect }) => {
 		const schema = await generatePrismaSchema({
 			file: "test.prisma",
 			adapter: {

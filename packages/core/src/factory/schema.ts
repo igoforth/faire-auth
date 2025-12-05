@@ -177,6 +177,29 @@ export const zodErrorSchema = registry.register(
 		.register(zodRegistry, { id: "zodError" }),
 );
 
+export const createTokenUserSchema = <T extends z.ZodType>(user: T) =>
+	z.discriminatedUnion("success", [
+		z.object({
+			success: z.literal(true),
+			token: z
+				.string()
+				.nullable()
+				.default(null)
+				.openapi({ description: "Session token" }),
+			user,
+		}),
+		z.object({
+			success: z.literal(false),
+			token: z.null().default(null),
+			user: z.null().default(null),
+		}),
+	]);
+
+export const redirectUrlSchema = z.discriminatedUnion("redirect", [
+	z.object({ redirect: z.literal(false), url: z.null().default(null) }),
+	z.object({ redirect: z.literal(true), url: z.url() }),
+]);
+
 interface InnerDescription {
 	_inner?: string;
 	[x: string]: string | InnerDescription;

@@ -6,8 +6,8 @@ import assert from "node:assert";
 
 const fixturesDir = fileURLToPath(new URL("./fixtures", import.meta.url));
 
-describe("(deno) simple server", () => {
-	it("run server", async (t) => {
+describe("(deno) simple server", (test) => {
+	test("run server", async (t) => {
 		const cp = spawn("deno", ["-A", join(fixturesDir, "deno-simple.ts")], {
 			stdio: "pipe",
 		});

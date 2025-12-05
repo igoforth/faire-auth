@@ -3,6 +3,7 @@
 export * from "./access";
 export * from "./bearer";
 export * from "./magic-link";
+export * from "./oauth-proxy";
 export * from "./organization";
 export * from "./two-factor";
 export * from "./username";

@@ -6,7 +6,7 @@ import { RegExpRouter } from "hono/router/reg-exp-router";
 import { contextStorage } from "../context/hono";
 import type { AuthContext } from "../init";
 import type { FaireAuthOptions } from "../types/options";
-import { createAPI, getEndpoints, sortEndpoints } from "./endpoints";
+import { createEndpoints, createArgs } from "./endpoints";
 import { initContextMiddleware } from "./middleware/context";
 import { initHooksMiddleware } from "./middleware/hooks";
 import { initInterceptMiddleware } from "./middleware/intercept";
@@ -16,6 +16,7 @@ import { initOriginCheckMiddleware } from "./middleware/origin-check";
 import { initRateLimitMiddleware } from "./middleware/rate-limit";
 import { setDefaultExecutionCtx } from "./middleware/set-execution-ctx";
 import { setRenderer } from "./middleware/set-renderer";
+import { createAPI } from "./factory/endpoint";
 
 export type { InferAPI, InferApp, InferClient } from "./types";
 
@@ -23,15 +24,17 @@ export const router = <O extends FaireAuthOptions>(
 	context: AuthContext,
 	options: O,
 ) => {
-	const endpoints = getEndpoints(options as any);
-	const api = createAPI(endpoints);
+	// appends .transform() for dto's
+	const schemas = buildSchemas(SCHEMAS, options);
 
-	const { pub } = sortEndpoints(
-		endpoints,
-		buildSchemas(SCHEMAS, options),
-		context,
-		api,
-	);
+	// resolves any route hooks and calls endpoints with options
+	const { endpoints, hooks } = createEndpoints(options);
+
+	// sort into endpoints which should be exposed or not
+	const { pub } = createArgs(endpoints, schemas, context, hooks);
+
+	// just points to endpoints, but does some type black magic
+	const api = createAPI(endpoints);
 
 	// instantiate app
 	// I know we can loop, but no need to reproduce types here
@@ -87,7 +90,7 @@ export const router = <O extends FaireAuthOptions>(
 				// setup
 				setDefaultExecutionCtx,
 				setRenderer,
-				initContextMiddleware(options, context, api),
+				initContextMiddleware(options, context, endpoints),
 				contextStorage(),
 				// onRequest
 				initHandleDisabledMiddleware(options),

@@ -102,7 +102,7 @@ afterEach(() => {
 
 afterAll(() => mswServer.close());
 
-describe("Social Providers", async () => {
+describe("Social Providers", async (test) => {
 	const { client } = await getTestInstance(
 		{
 			user: {

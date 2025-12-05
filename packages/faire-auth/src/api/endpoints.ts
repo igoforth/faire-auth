@@ -1,9 +1,8 @@
 import { Definitions, Routes } from "@faire-auth/core/static";
-import type { DefaultHook, FromFn } from "@faire-auth/core/types";
 import type { UnionToTuple } from "type-fest";
 import type { z } from "zod";
 import type { AuthContext } from "../init";
-import type { FaireAuthOptions } from "../types/options";
+import type { FaireAuthOptions, Hooks } from "../types/options";
 import {
 	changeEmail,
 	changePassword,
@@ -37,6 +36,8 @@ import {
 	verifyEmail,
 } from "./routes";
 import type { ServerConfigs } from "./types";
+import type { AuthProperties } from "../types";
+import type { AuthArgs } from "./factory/endpoint";
 
 const staticRouteMap = {
 	[Routes.SET_PASSWORD]: setPassword,
@@ -72,7 +73,7 @@ const staticRouteMap = {
 };
 
 // : Record<string, FromFn<DefaultHook> | undefined>
-const resolveHooks = (options: FaireAuthOptions) => {
+const resolveHooks = (options: FaireAuthOptions): Hooks => {
 	const routeHooks = {
 		...options.routeHooks,
 	};
@@ -85,7 +86,7 @@ const resolveHooks = (options: FaireAuthOptions) => {
 	return routeHooks;
 };
 
-const resolveRoutes = (options: FaireAuthOptions) => {
+const resolveRoutes = (options: FaireAuthOptions): typeof staticRouteMap => {
 	const routeMap = { ...staticRouteMap };
 
 	// last plugin gets to overwrite
@@ -96,63 +97,47 @@ const resolveRoutes = (options: FaireAuthOptions) => {
 	return routeMap;
 };
 
-export const getEndpoints = (options: FaireAuthOptions) => {
-	const routeHooks = resolveHooks(options);
+export const createEndpoints = (options: FaireAuthOptions) => {
 	const routeMap = resolveRoutes(options);
+	const routeHooks = resolveHooks(options);
 
-	// return endpoints object
-	return Object.fromEntries(
-		Object.entries(routeMap).map(([k, v]) => [
-			k,
-			[k, v(options), routeHooks[k]],
-		]),
+	const endpoints = Object.fromEntries(
+		Object.entries(routeMap).map(([k, v]) => [k, v(options)]),
 	) as {
-		[K in keyof typeof routeMap]: [
-			K,
-			ReturnType<(typeof routeMap)[K]>,
-			FromFn<DefaultHook> | undefined,
-		];
+		[K in keyof typeof routeMap]: ReturnType<(typeof routeMap)[K]>;
 	};
+
+	return { endpoints, hooks: routeHooks };
 };
 
-export const sortEndpoints = <
-	V extends Record<
-		string,
-		[
-			string,
-			{
-				config: (...args: any[]) => any;
-				handler: (...args: any[]) => any;
-			},
-			any,
-		]
-	>,
+export const createArgs = <
+	V extends Record<string, AuthProperties<any>>,
 	T extends Routes[] = ServerConfigs["operationId"][],
 >(
-	routeMap: V,
+	endpoints: V,
 	builtSchemas: Record<Definitions, z.ZodType>,
 	context: AuthContext,
-	api: Record<string, (...args: any[]) => any>,
+	routeHooks: Hooks,
 ): {
 	priv: UnionToTuple<
-		T[number] extends infer X
-			? X extends keyof V
-				? [
-						ReturnType<V[X][1]["config"]>,
-						ReturnType<V[X][1]["handler"]>,
-						FromFn<DefaultHook> | undefined,
-					]
+		V extends Record<string, infer E>
+			? E extends AuthProperties<infer Config>
+				? Config extends { operationId: infer OpId }
+					? OpId extends T[number]
+						? AuthArgs<Config>
+						: never
+					: never
 				: never
 			: never
 	>;
 	pub: UnionToTuple<
-		Exclude<Routes, T[number]> extends infer X
-			? X extends keyof V
-				? [
-						ReturnType<V[X][1]["config"]>,
-						ReturnType<V[X][1]["handler"]>,
-						FromFn<DefaultHook> | undefined,
-					]
+		V extends Record<string, infer E>
+			? E extends AuthProperties<infer Config>
+				? Config extends { operationId: infer OpId }
+					? OpId extends Exclude<Routes, T[number]>
+						? AuthArgs<Config>
+						: never
+					: never
 				: never
 			: never
 	>;
@@ -162,100 +147,10 @@ export const sortEndpoints = <
 		pub: [any, any, any][];
 	} = { priv: [], pub: [] };
 
-	// Single pass - no intermediate array
-	for (const v of Object.values(routeMap)) {
-		const config = v[1].config(builtSchemas);
-		groups[config.SERVER_ONLY === true ? "priv" : "pub"].push([
-			config,
-			v[1].handler(context, api),
-			v[2],
-		]);
+	for (const [k, v] of Object.entries(endpoints)) {
+		const args = v.toArgs(builtSchemas, context, endpoints, routeHooks[k]);
+		groups[args[0].SERVER_ONLY === true ? "priv" : "pub"].push(args);
 	}
 
 	return groups as any;
 };
-
-// export const createAPI = <
-// 	S extends readonly (
-// 		| readonly [
-// 				operationId: string,
-// 				{ execute: (...args: any[]) => any },
-// 				FromFn<DefaultHook> | undefined,
-// 		  ]
-// 		| any
-// 	)[],
-// >(
-// 	endpoints: S,
-// ): {
-// 	[K in S[number] as K extends readonly [infer U, any, any]
-// 		? U extends PropertyKey
-// 			? U
-// 			: never
-// 		: never]: K extends readonly [any, { execute: infer F }, any]
-// 		? F extends (...args: infer A) => infer R
-// 			? (...args: A) => R
-// 			: never
-// 		: never;
-// } =>
-// 	endpoints.reduce((acc, [k, v]) => {
-// 		acc[k] = v.execute as any;
-// 		return acc;
-// 	}, {}) as any;
-
-// TODO: Maybe some day the compiler will be strong enough we won't
-// need this explicit type annotation
-// type RoutesMap = {
-// 	[K in Configs as K["operationId"]]: [
-// 		K["operationId"],
-// 		AuthProperties<K, {}>,
-// 		FromFn<DefaultHook> | undefined,
-// 	];
-// };
-// type RoutesMap = {
-// 	[L in {
-// 		[K in keyof typeof staticRouteMap]: (typeof staticRouteMap)[K] extends AuthEndpoint<
-// 			infer C
-// 		>
-// 			? C
-// 			: never;
-// 	}[keyof typeof staticRouteMap] as L["operationId"]]: [
-// 		L["operationId"],
-// 		AuthProperties<L, {}>,
-// 		FromFn<DefaultHook> | undefined,
-// 	];
-// };
-
-// export const createAPI = (
-// 	endpoints: RoutesMap,
-// ): {
-// 	[K in keyof RoutesMap]: RoutesMap[K] extends readonly [
-// 		any,
-// 		{ execute: infer F },
-// 		any,
-// 	]
-// 		? F extends (...args: infer A) => infer R
-// 			? (...args: A) => R
-// 			: never
-// 		: never;
-// } =>
-// 	new Proxy({} as any, {
-// 		get(_, prop) {
-// 			const triple = endpoints[prop as keyof RoutesMap];
-// 			return triple?.[1]?.execute;
-// 		},
-// 	});
-export const createAPI = <
-	const T extends Record<string, readonly [any, { execute: any }, any]>,
->(
-	endpoints: T,
-): {
-	[K in keyof T]: T[K] extends readonly [any, { execute: infer F }, any]
-		? F
-		: never;
-} =>
-	new Proxy({} as any, {
-		get(_, prop) {
-			const triple = endpoints[prop as keyof T];
-			return triple?.[1]?.execute;
-		},
-	});

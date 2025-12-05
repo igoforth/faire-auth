@@ -1,13 +1,14 @@
-import { createRoute, req, res } from "@faire-auth/core/factory";
-import { callbackURLSchema } from "@faire-auth/core/static";
-import { False, True } from "@faire-auth/core/utils";
-import type {
-	FaireAuthOptions,
-	FaireAuthPlugin,
-	Session,
-	User,
-} from "faire-auth";
+import {
+	callbackURLSchema,
+	createRoute,
+	redirectUrlSchema,
+	req,
+	res,
+} from "@faire-auth/core/factory";
+import { False, True } from "@faire-auth/core/static";
+import type { FaireAuthOptions, FaireAuthPlugin } from "faire-auth";
 import { logger } from "faire-auth";
+import type { Session, User } from "faire-auth/db";
 import {
 	getSessionFromCtx,
 	originCheck,
@@ -150,7 +151,9 @@ export const stripe = <O extends StripeOptions>(options: O) => {
 				method: "post",
 				path: "/subscription/upgrade",
 				middleware: [
-					sessionMiddleware<{ user: { stripeCustomerId?: string } }>(),
+					sessionMiddleware<{
+						session: { user: { stripeCustomerId?: string } };
+					}>(),
 					originCheck(async (ctx) => {
 						const { successURL, cancelURL } = await ctx.req.raw.clone().json();
 						return [successURL as string, cancelURL as string];
@@ -258,12 +261,13 @@ export const stripe = <O extends StripeOptions>(options: O) => {
 					)
 					.bld(),
 				responses: res(
-					z.looseObject({}) as z.ZodType<
-						StripeType.Checkout.Session & {
-							url?: string;
-							redirect?: boolean;
-						}
-					>,
+					z.intersection(
+						redirectUrlSchema,
+						z.record(z.string(), z.any()) as unknown as z.ZodType<
+							Partial<StripeType.Checkout.Session>,
+							Partial<StripeType.Checkout.Session>
+						>,
+					),
 				)
 					.err(400)
 					.err(401)
@@ -355,7 +359,7 @@ export const stripe = <O extends StripeOptions>(options: O) => {
 						if (!stripeCustomer) {
 							stripeCustomer = await client.customers.create({
 								email: user.email,
-								name: user.name,
+								...(user.name && { name: user.name }),
 								metadata: {
 									...metadata,
 									userId: user.id,
@@ -649,9 +653,9 @@ export const stripe = <O extends StripeOptions>(options: O) => {
 				if (!callbackURL || !subscriptionId)
 					return ctx.redirect(getUrl(authOptions, callbackURL || "/"), 302);
 
-				const session = await getSessionFromCtx<{ stripeCustomerId: string }>(
-					ctx,
-				);
+				const session = await getSessionFromCtx<
+					{ stripeCustomerId: string } & User
+				>(ctx);
 				if (session instanceof Response)
 					return ctx.redirect(getUrl(authOptions, callbackURL || "/"), 302);
 
@@ -1169,9 +1173,9 @@ export const stripe = <O extends StripeOptions>(options: O) => {
 				if (!callbackURL || !subscriptionId)
 					return ctx.redirect(getUrl(authOptions, callbackURL || "/"), 302);
 
-				const session = await getSessionFromCtx<{ stripeCustomerId?: string }>(
-					ctx,
-				);
+				const session = await getSessionFromCtx<
+					{ stripeCustomerId?: string } & User
+				>(ctx);
 				if (session instanceof Response)
 					return ctx.redirect(getUrl(authOptions, callbackURL || "/"), 302);
 
@@ -1206,47 +1210,46 @@ export const stripe = <O extends StripeOptions>(options: O) => {
 							.then((res) => res.data[0]);
 
 						if (stripeSubscription) {
-							const plan = await getPlanByPriceInfo(
-								options,
-								stripeSubscription.items.data[0]?.price.id,
-								stripeSubscription.items.data[0]?.price.lookup_key,
-							);
+							const firstItem = stripeSubscription.items.data[0];
+							if (firstItem) {
+								const plan = await getPlanByPriceInfo(
+									options,
+									firstItem.price.id,
+									firstItem.price.lookup_key,
+								);
 
-							if (plan && subscription) {
-								await ctx.get("context").adapter.update({
-									model: "subscription",
-									update: {
-										status: stripeSubscription.status,
-										seats: stripeSubscription.items.data[0]?.quantity || 1,
-										plan: plan.name.toLowerCase(),
-										periodEnd: new Date(
-											stripeSubscription.items.data[0]?.current_period_end *
-												1000,
-										),
-										periodStart: new Date(
-											stripeSubscription.items.data[0]?.current_period_start *
-												1000,
-										),
-										stripeSubscriptionId: stripeSubscription.id,
-										...(stripeSubscription.trial_start &&
-										stripeSubscription.trial_end
-											? {
-													trialStart: new Date(
-														stripeSubscription.trial_start * 1000,
-													),
-													trialEnd: new Date(
-														stripeSubscription.trial_end * 1000,
-													),
-												}
-											: {}),
-									},
-									where: [
-										{
-											field: "id",
-											value: subscription.id,
+								if (plan && subscription) {
+									await ctx.get("context").adapter.update({
+										model: "subscription",
+										update: {
+											status: stripeSubscription.status,
+											seats: firstItem.quantity || 1,
+											plan: plan.name.toLowerCase(),
+											periodEnd: new Date(firstItem.current_period_end * 1000),
+											periodStart: new Date(
+												firstItem.current_period_start * 1000,
+											),
+											stripeSubscriptionId: stripeSubscription.id,
+											...(stripeSubscription.trial_start &&
+											stripeSubscription.trial_end
+												? {
+														trialStart: new Date(
+															stripeSubscription.trial_start * 1000,
+														),
+														trialEnd: new Date(
+															stripeSubscription.trial_end * 1000,
+														),
+													}
+												: {}),
 										},
-									],
-								});
+										where: [
+											{
+												field: "id",
+												value: subscription.id,
+											},
+										],
+									});
+								}
 							}
 						}
 					} catch (error) {
@@ -1264,7 +1267,9 @@ export const stripe = <O extends StripeOptions>(options: O) => {
 				method: "post",
 				path: "/subscription/billing-portal",
 				middleware: [
-					sessionMiddleware<{ user: { stripeCustomerId?: string } }>(),
+					sessionMiddleware<{
+						session: { user: { stripeCustomerId?: string } };
+					}>(),
 					originCheck((ctx) =>
 						ctx.req.raw
 							.clone()
@@ -1448,7 +1453,7 @@ export const stripe = <O extends StripeOptions>(options: O) => {
 									if (ctx && options.createCustomerOnSignUp) {
 										const stripeCustomer = await client.customers.create({
 											email: user.email,
-											name: user.name,
+											...(user.name && { name: user.name }),
 											metadata: {
 												userId: user.id,
 											},
@@ -1458,17 +1463,16 @@ export const stripe = <O extends StripeOptions>(options: O) => {
 											.internalAdapter.updateUser(user.id, {
 												stripeCustomerId: stripeCustomer.id,
 											});
-										if (!updatedUser) {
+										if (!updatedUser)
 											logger.error("#FAIRE_AUTH: Failed to create  customer");
-										} else {
-											await options.onCustomerCreate?.(
+										else if (options.onCustomerCreate)
+											await options.onCustomerCreate(
 												{
 													stripeCustomer,
 													user,
 												},
 												ctx,
 											);
-										}
 									}
 								},
 							},
@@ -1480,5 +1484,9 @@ export const stripe = <O extends StripeOptions>(options: O) => {
 		schema: getSchema(options),
 	} satisfies FaireAuthPlugin;
 };
+
+export type StripePlugin<O extends StripeOptions> = ReturnType<
+	typeof stripe<O>
+>;
 
 export type { StripePlan, Subscription };

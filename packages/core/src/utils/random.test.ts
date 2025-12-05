@@ -51,8 +51,8 @@ function calculateChiSquared(
 	return chiSquared;
 }
 
-describe("createRandomStringGenerator", () => {
-	it("generates a random string of specified length", () => {
+describe("createRandomStringGenerator", (test) => {
+	test("generates a random string of specified length", ({ expect }) => {
 		const generator = createRandomStringGenerator("a-z");
 		const length = 16;
 		const randomString = generator(length);
@@ -61,7 +61,7 @@ describe("createRandomStringGenerator", () => {
 		expect(randomString).toHaveLength(length);
 	});
 
-	it("uses a custom alphabet to generate random strings", () => {
+	test("uses a custom alphabet to generate random strings", ({ expect }) => {
 		const generator = createRandomStringGenerator("A-Z", "0-9");
 		const randomString = generator(8);
 		const allowedChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -70,13 +70,15 @@ describe("createRandomStringGenerator", () => {
 		);
 	});
 
-	it("throws an error when no valid characters are provided", () => {
+	test("throws an error when no valid characters are provided", ({
+		expect,
+	}) => {
 		expect(() => createRandomStringGenerator()).toThrowError(
 			"No valid characters provided for random string generation.",
 		);
 	});
 
-	it("throws an error when length is not positive", () => {
+	test("throws an error when length is not positive", ({ expect }) => {
 		const generator = createRandomStringGenerator("a-z");
 		expect(() => generator(0)).toThrowError(
 			"Length must be a positive integer.",
@@ -86,7 +88,9 @@ describe("createRandomStringGenerator", () => {
 		);
 	});
 
-	it("respects a new alphabet when passed during generation", () => {
+	test("respects a new alphabet when passed during generation", ({
+		expect,
+	}) => {
 		const generator = createRandomStringGenerator("a-z");
 		const newAlphabet = "A-Z";
 		const randomString = generator(10, newAlphabet);
@@ -97,7 +101,9 @@ describe("createRandomStringGenerator", () => {
 		);
 	});
 
-	it("generates consistent randomness with valid mask calculations", () => {
+	test("generates consistent randomness with valid mask calculations", ({
+		expect,
+	}) => {
 		const generator = createRandomStringGenerator("0-9");
 		const randomString = generator(10);
 		const allowedChars = "0123456789";
@@ -106,7 +112,9 @@ describe("createRandomStringGenerator", () => {
 		);
 	});
 
-	it("combines multiple alphabets when passed during generation", () => {
+	test("combines multiple alphabets when passed during generation", ({
+		expect,
+	}) => {
 		// Mock getRandomValues to return sequentially increasing values
 		vi.stubGlobal("crypto", {
 			getRandomValues: vi.fn(
@@ -142,8 +150,8 @@ describe("createRandomStringGenerator", () => {
 		}
 	});
 
-	describe("produces unbiased distribution across characters", () => {
-		it("with a 26-character alphabet", () => {
+	describe("produces unbiased distribution across characters", (test) => {
+		test("with a 26-character alphabet", ({ expect }) => {
 			// Choose a small alphabet to make bias easier to detect
 			const alphabet = "a-z";
 			const expectedCharSet = "abcdefghijklmnopqrstuvwxyz";
@@ -176,7 +184,7 @@ describe("createRandomStringGenerator", () => {
 			expect(chiSquared).toBeLessThan(criticalValue);
 		});
 
-		it("with a 10-character alphabet", () => {
+		test("with a 10-character alphabet", ({ expect }) => {
 			// Also test the distribution with a different, non-power-of-2 alphabet
 			// which is more likely to expose modulo bias
 			const alphabet = "0-9"; // 10 characters, not a power of 2

@@ -1,4 +1,3 @@
-import type { Routes } from "@faire-auth/core/static";
 import type { AuthContext } from "../../init";
 import type { FaireAuthOptions } from "../../types/options";
 import { createMiddleware } from "../factory/middleware";
@@ -13,7 +12,7 @@ import { createMiddleware } from "../factory/middleware";
 export const initContextMiddleware = <O extends FaireAuthOptions>(
 	options: O,
 	context: AuthContext,
-	api: Record<Routes, (...args: any[]) => any>,
+	api: Record<string, (...args: any[]) => any>,
 ) =>
 	createMiddleware()(async (ctx, next) => {
 		// TODO: migrate session

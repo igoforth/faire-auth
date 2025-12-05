@@ -2,11 +2,11 @@ import { chromium, expect, test } from "@playwright/test";
 import { runClient, setup } from "./utils";
 
 const { ref, start, clean } = setup();
-test.describe("cross domain", async () => {
+test.describe("cross domain", async (test) => {
 	test.beforeEach(async () => start());
 	test.afterEach(async () => clean());
 
-	test("should work across domains", async () => {
+	test("should work across domains", async ({ expect }) => {
 		const browser = await chromium.launch({
 			args: [`--host-resolver-rules=MAP * localhost`],
 		});

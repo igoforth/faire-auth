@@ -1,15 +1,58 @@
-import { faireAuth, type User } from "faire-auth";
+import { faireAuth, type Auth, type InferAPI, type InferApp } from "faire-auth";
 import { memoryAdapter } from "faire-auth/adapters/memory";
 import { createAuthClient } from "faire-auth/client";
 import { createCookieCapture } from "faire-auth/cookies";
 import { bearer } from "faire-auth/plugins";
 import Stripe from "stripe";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expectTypeOf, vi } from "vitest";
 import { stripeClient } from "./client";
-import { stripe } from "./index";
+import { stripe, type StripePlugin } from "./index";
 import type { StripeOptions, Subscription } from "./types";
+import type { User } from "faire-auth/db";
 
-describe("stripe", async () => {
+describe("stripe type", (test) => {
+	test("should api endpoint exists", () => {
+		type Plugins = [
+			StripePlugin<{
+				stripeClient: Stripe;
+				stripeWebhookSecret: string;
+				subscription: {
+					enabled: false;
+				};
+			}>,
+		];
+		type MyApp = InferApp<{
+			plugins: Plugins;
+		}>;
+		type MyAPI = InferAPI<MyApp>;
+		expectTypeOf<MyAPI["stripeWebhook"]>().toBeFunction();
+	});
+
+	test("should have subscription endpoints", () => {
+		type Plugins = [
+			StripePlugin<{
+				stripeClient: Stripe;
+				stripeWebhookSecret: string;
+				subscription: {
+					enabled: true;
+					plans: [];
+				};
+			}>,
+		];
+		type MyApp = InferApp<{
+			plugins: Plugins;
+		}>;
+		type MyAPI = InferAPI<MyApp>;
+		expectTypeOf<MyAPI["stripeWebhook"]>().toBeFunction();
+		expectTypeOf<MyAPI["subscriptionSuccess"]>().toBeFunction();
+		expectTypeOf<MyAPI["listActiveSubscriptions"]>().toBeFunction();
+		expectTypeOf<MyAPI["cancelSubscriptionCallback"]>().toBeFunction();
+		expectTypeOf<MyAPI["cancelSubscription"]>().toBeFunction();
+		expectTypeOf<MyAPI["restoreSubscription"]>().toBeFunction();
+	});
+});
+
+describe("stripe", async (test) => {
 	const mockStripe = {
 		prices: {
 			list: vi.fn().mockResolvedValue({ data: [{ id: "price_lookup_123" }] }),
@@ -82,7 +125,7 @@ describe("stripe", async () => {
 		plugins: [stripe(stripeOptions)],
 	};
 	const auth = faireAuth(opts);
-	const ctx = await auth.$context;
+	const ctx = auth.$context;
 	const app = auth.$Infer.App(opts);
 	const authClient = createAuthClient<typeof app>()({
 		baseURL: "http://localhost:3000",
@@ -115,33 +158,16 @@ describe("stripe", async () => {
 		vi.clearAllMocks();
 	});
 
-	async function getHeader() {
-		const headers = new Headers();
-		const userRes = await authClient.signIn.email.$post(
-			{ json: testUser },
-			{
-				fetchOptions: { throw: true, onSuccess: createCookieCapture(headers) },
-			},
-		);
-		return {
-			headers,
-			response: userRes,
-		};
-	}
-
-	it("should create a customer on sign up", async () => {
-		const userRes = await authClient.signUp.email.$post(
-			{ json: testUser },
-			{
-				fetchOptions: { throw: true },
-			},
-		);
+	test("should create a customer on sign up", async ({ expect }) => {
+		const userRes = await authClient.signUp.email.$post({ json: testUser });
+		expect(userRes.data).not.toBeNull();
+		if (userRes.data === null) throw new Error("Can't continue");
 		const res = await ctx.adapter.findOne<User>({
 			model: "user",
 			where: [
 				{
 					field: "id",
-					value: userRes.data.user!.id,
+					value: userRes.data.data.user!.id,
 				},
 			],
 		});
@@ -151,19 +177,18 @@ describe("stripe", async () => {
 		});
 	});
 
-	it("should create a subscription", async () => {
-		const userRes = await authClient.signUp.email.$post(
-			{ json: testUser },
-			{
-				fetchOptions: { throw: true },
-			},
-		);
+	test("should create a subscription", async ({ expect }) => {
+		const userRes = await authClient.signUp.email.$post({ json: testUser });
+		expect(userRes.data).not.toBeNull();
+		if (userRes.data === null) throw new Error("Can't continue");
 
 		const headers = new Headers();
 		await authClient.signIn.email.$post(
 			{ json: testUser },
 			{
-				fetchOptions: { throw: true, onSuccess: createCookieCapture(headers) },
+				fetchOptions: {
+					onSuccess: createCookieCapture(headers)(),
+				},
 			},
 		);
 
@@ -183,14 +208,14 @@ describe("stripe", async () => {
 			where: [
 				{
 					field: "referenceId",
-					value: userRes.data.user!.id,
+					value: userRes.data.data.user!.id,
 				},
 			],
 		});
 		expect(subscription).toMatchObject({
 			id: expect.any(String),
 			plan: "starter",
-			referenceId: userRes.data.user!.id,
+			referenceId: userRes.data.data.user!.id,
 			stripeCustomerId: expect.any(String),
 			status: "incomplete",
 			periodStart: undefined,
@@ -200,19 +225,16 @@ describe("stripe", async () => {
 		});
 	});
 
-	it("should list active subscriptions", async () => {
-		const userRes = await authClient.signUp.email.$post(
-			{
-				json: {
-					...testUser,
-					email: "list-test@email.com",
-				},
+	test("should list active subscriptions", async ({ expect }) => {
+		const userRes = await authClient.signUp.email.$post({
+			json: {
+				...testUser,
+				email: "list-test@email.com",
 			},
-			{
-				fetchOptions: { throw: true },
-			},
-		);
-		const userId = userRes.data.user!.id;
+		});
+		expect(userRes.data).not.toBeNull();
+		if (userRes.data === null) throw new Error("Can't continue");
+		const userId = userRes.data.data.user!.id;
 
 		const headers = new Headers();
 		await authClient.signIn.email.$post(
@@ -223,7 +245,9 @@ describe("stripe", async () => {
 				},
 			},
 			{
-				fetchOptions: { throw: true, onSuccess: createCookieCapture(headers) },
+				fetchOptions: {
+					onSuccess: createCookieCapture(headers)(),
+				},
 			},
 		);
 
@@ -275,7 +299,7 @@ describe("stripe", async () => {
 		expect(listAfterRes.data?.length).toBeGreaterThan(0);
 	});
 
-	it("should handle subscription webhook events", async () => {
+	test("should handle subscription webhook events", async ({ expect }) => {
 		const { id: testReferenceId } = await ctx.adapter.create({
 			model: "user",
 			data: {
@@ -382,7 +406,9 @@ describe("stripe", async () => {
 		});
 	});
 
-	it("should handle subscription webhook events with trial", async () => {
+	test("should handle subscription webhook events with trial", async ({
+		expect,
+	}) => {
 		const { id: testReferenceId } = await ctx.adapter.create({
 			model: "user",
 			data: {
@@ -500,7 +526,7 @@ describe("stripe", async () => {
 		},
 	});
 
-	it("should handle subscription deletion webhook", async () => {
+	test("should handle subscription deletion webhook", async ({ expect }) => {
 		const subId = "test_sub_delete";
 
 		await ctx.adapter.create({
@@ -595,7 +621,7 @@ describe("stripe", async () => {
 		}
 	});
 
-	it("should execute subscription event handlers", async () => {
+	test("should execute subscription event handlers", async ({ expect }) => {
 		const onSubscriptionComplete = vi.fn();
 		const onSubscriptionUpdate = vi.fn();
 		const onSubscriptionCancel = vi.fn();
@@ -848,18 +874,15 @@ describe("stripe", async () => {
 		expect(onSubscriptionDeleted).toHaveBeenCalled();
 	});
 
-	it("should allow seat upgrades for the same plan", async () => {
-		const userRes = await authClient.signUp.email.$post(
-			{
-				json: {
-					...testUser,
-					email: "seat-upgrade@email.com",
-				},
+	test("should allow seat upgrades for the same plan", async ({ expect }) => {
+		const userRes = await authClient.signUp.email.$post({
+			json: {
+				...testUser,
+				email: "seat-upgrade@email.com",
 			},
-			{
-				fetchOptions: { throw: true },
-			},
-		);
+		});
+		expect(userRes.data).not.toBeNull();
+		if (userRes.data === null) throw new Error("Can't continue");
 
 		const headers = new Headers();
 		await authClient.signIn.email.$post(
@@ -870,7 +893,9 @@ describe("stripe", async () => {
 				},
 			},
 			{
-				fetchOptions: { throw: true, onSuccess: createCookieCapture(headers) },
+				fetchOptions: {
+					onSuccess: createCookieCapture(headers)(),
+				},
 			},
 		);
 
@@ -894,7 +919,7 @@ describe("stripe", async () => {
 			where: [
 				{
 					field: "referenceId",
-					value: userRes.data.user!.id,
+					value: userRes.data.data.user!.id,
 				},
 			],
 		});
@@ -914,18 +939,17 @@ describe("stripe", async () => {
 		expect(upgradeRes.data?.url).toBeDefined();
 	});
 
-	it("should prevent duplicate subscriptions with same plan and same seats", async () => {
-		const userRes = await authClient.signUp.email.$post(
-			{
-				json: {
-					...testUser,
-					email: "duplicate-prevention@email.com",
-				},
+	test("should prevent duplicate subscriptions with same plan and same seats", async ({
+		expect,
+	}) => {
+		const userRes = await authClient.signUp.email.$post({
+			json: {
+				...testUser,
+				email: "duplicate-prevention@email.com",
 			},
-			{
-				fetchOptions: { throw: true },
-			},
-		);
+		});
+		expect(userRes.data).not.toBeNull();
+		if (userRes.data === null) throw new Error("Can't continue");
 
 		const headers = new Headers();
 		await authClient.signIn.email.$post(
@@ -936,7 +960,9 @@ describe("stripe", async () => {
 				},
 			},
 			{
-				fetchOptions: { throw: true, onSuccess: createCookieCapture(headers) },
+				fetchOptions: {
+					onSuccess: createCookieCapture(headers)(),
+				},
 			},
 		);
 
@@ -961,7 +987,7 @@ describe("stripe", async () => {
 			where: [
 				{
 					field: "referenceId",
-					value: userRes.data.user!.id,
+					value: userRes.data.data.user!.id,
 				},
 			],
 		});
@@ -982,17 +1008,22 @@ describe("stripe", async () => {
 		expect(upgradeRes.error?.message).toContain("already subscribed");
 	});
 
-	it("should only call Stripe customers.create once for signup and upgrade", async () => {
-		const userRes = await authClient.signUp.email.$post(
-			{ json: { ...testUser, email: "single-create@email.com" } },
-			{ fetchOptions: { throw: true } },
-		);
+	test("should only call Stripe customers.create once for signup and upgrade", async ({
+		expect,
+	}) => {
+		const userRes = await authClient.signUp.email.$post({
+			json: { ...testUser, email: "single-create@email.com" },
+		});
+		expect(userRes.data).not.toBeNull();
+		if (userRes.data === null) throw new Error("Can't continue");
 
 		const headers = new Headers();
 		await authClient.signIn.email.$post(
 			{ json: { ...testUser, email: "single-create@email.com" } },
 			{
-				fetchOptions: { throw: true, onSuccess: createCookieCapture(headers) },
+				fetchOptions: {
+					onSuccess: createCookieCapture(headers)(),
+				},
 			},
 		);
 
@@ -1010,18 +1041,13 @@ describe("stripe", async () => {
 		expect(mockStripe.customers.create).toHaveBeenCalledTimes(1);
 	});
 
-	it("should create billing portal session", async () => {
-		await authClient.signUp.email.$post(
-			{
-				json: {
-					...testUser,
-					email: "billing-portal@email.com",
-				},
+	test("should create billing portal session", async ({ expect }) => {
+		await authClient.signUp.email.$post({
+			json: {
+				...testUser,
+				email: "billing-portal@email.com",
 			},
-			{
-				fetchOptions: { throw: true },
-			},
-		);
+		});
 
 		const headers = new Headers();
 		await authClient.signIn.email.$post(
@@ -1032,7 +1058,9 @@ describe("stripe", async () => {
 				},
 			},
 			{
-				fetchOptions: { throw: true, onSuccess: createCookieCapture(headers) },
+				fetchOptions: {
+					onSuccess: createCookieCapture(headers)(),
+				},
 			},
 		);
 		const billingPortalRes = await authClient.subscription.billingPortal.$post(
@@ -1053,7 +1081,9 @@ describe("stripe", async () => {
 		});
 	});
 
-	it("should not update personal subscription when upgrading with an org referenceId", async () => {
+	test("should not update personal subscription when upgrading with an org referenceId", async ({
+		expect,
+	}) => {
 		const orgId = "org_b67GF32Cljh7u588AuEblmLVobclDRcP";
 
 		const testOptions = {
@@ -1085,15 +1115,18 @@ describe("stripe", async () => {
 		});
 
 		// Sign up and sign in the user
-		const userRes = await testAuthClient.signUp.email.$post(
-			{ json: { ...testUser, email: "org-ref@email.com" } },
-			{ fetchOptions: { throw: true } },
-		);
+		const userRes = await testAuthClient.signUp.email.$post({
+			json: { ...testUser, email: "org-ref@email.com" },
+		});
+		expect(userRes.data).not.toBeNull();
+		if (userRes.data === null) throw new Error("Can't continue");
 		const headers = new Headers();
 		await testAuthClient.signIn.email.$post(
 			{ json: { ...testUser, email: "org-ref@email.com" } },
 			{
-				fetchOptions: { throw: true, onSuccess: createCookieCapture(headers) },
+				fetchOptions: {
+					onSuccess: createCookieCapture(headers)(),
+				},
 			},
 		);
 
@@ -1111,7 +1144,7 @@ describe("stripe", async () => {
 
 		const personalSub = await testCtx.adapter.findOne<Subscription>({
 			model: "subscription",
-			where: [{ field: "referenceId", value: userRes.data.user!.id }],
+			where: [{ field: "referenceId", value: userRes.data.data.user!.id }],
 		});
 		expect(personalSub).toBeTruthy();
 
@@ -1177,18 +1210,23 @@ describe("stripe", async () => {
 		expect(personalAfter?.status).toBe("active");
 	});
 
-	it("should prevent multiple free trials for the same user", async () => {
+	test("should prevent multiple free trials for the same user", async ({
+		expect,
+	}) => {
 		// Create a user
-		const userRes = await authClient.signUp.email.$post(
-			{ json: { ...testUser, email: "trial-prevention@email.com" } },
-			{ fetchOptions: { throw: true } },
-		);
+		const userRes = await authClient.signUp.email.$post({
+			json: { ...testUser, email: "trial-prevention@email.com" },
+		});
+		expect(userRes.data).not.toBeNull();
+		if (userRes.data === null) throw new Error("Can't continue");
 
 		const headers = new Headers();
 		await authClient.signIn.email.$post(
 			{ json: { ...testUser, email: "trial-prevention@email.com" } },
 			{
-				fetchOptions: { throw: true, onSuccess: createCookieCapture(headers) },
+				fetchOptions: {
+					onSuccess: createCookieCapture(headers)(),
+				},
 			},
 		);
 
@@ -1217,7 +1255,7 @@ describe("stripe", async () => {
 			where: [
 				{
 					field: "referenceId",
-					value: userRes.data.user!.id,
+					value: userRes.data.data.user!.id,
 				},
 			],
 		});
@@ -1231,7 +1269,7 @@ describe("stripe", async () => {
 			where: [
 				{
 					field: "referenceId",
-					value: userRes.data.user!.id,
+					value: userRes.data.data.user!.id,
 				},
 			],
 		});
@@ -1258,7 +1296,7 @@ describe("stripe", async () => {
 			where: [
 				{
 					field: "referenceId",
-					value: userRes.data.user!.id,
+					value: userRes.data.data.user!.id,
 				},
 			],
 		})) as Subscription[];
@@ -1273,18 +1311,23 @@ describe("stripe", async () => {
 		expect(hasTrialData).toBe(true);
 	});
 
-	it("should prevent multiple free trials across different plans", async () => {
+	test("should prevent multiple free trials across different plans", async ({
+		expect,
+	}) => {
 		// Create a user
-		const userRes = await authClient.signUp.email.$post(
-			{ json: { ...testUser, email: "cross-plan-trial@email.com" } },
-			{ fetchOptions: { throw: true } },
-		);
+		const userRes = await authClient.signUp.email.$post({
+			json: { ...testUser, email: "cross-plan-trial@email.com" },
+		});
+		expect(userRes.data).not.toBeNull();
+		if (userRes.data === null) throw new Error("Can't continue");
 
 		const headers = new Headers();
 		await authClient.signIn.email.$post(
 			{ json: { ...testUser, email: "cross-plan-trial@email.com" } },
 			{
-				fetchOptions: { throw: true, onSuccess: createCookieCapture(headers) },
+				fetchOptions: {
+					onSuccess: createCookieCapture(headers)(),
+				},
 			},
 		);
 
@@ -1313,7 +1356,7 @@ describe("stripe", async () => {
 			where: [
 				{
 					field: "referenceId",
-					value: userRes.data.user!.id,
+					value: userRes.data.data.user!.id,
 				},
 			],
 		});
@@ -1327,7 +1370,7 @@ describe("stripe", async () => {
 			where: [
 				{
 					field: "referenceId",
-					value: userRes.data.user!.id,
+					value: userRes.data.data.user!.id,
 				},
 			],
 		});
@@ -1352,7 +1395,7 @@ describe("stripe", async () => {
 			where: [
 				{
 					field: "referenceId",
-					value: userRes.data.user!.id,
+					value: userRes.data.data.user!.id,
 				},
 			],
 		})) as Subscription[];

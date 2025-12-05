@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { shouldPublishLog, type LogLevel } from "./logger";
 
-describe("shouldPublishLog", () => {
+describe("shouldPublishLog", (test) => {
 	const testCases: {
 		currentLogLevel: LogLevel;
 		logLevel: LogLevel;
@@ -26,7 +26,7 @@ describe("shouldPublishLog", () => {
 	];
 
 	testCases.forEach(({ currentLogLevel, logLevel, expected }) => {
-		it(`should return "${expected}" when currentLogLevel is "${currentLogLevel}" and logLevel is "${logLevel}"`, () => {
+		test(`should return "${expected}" when currentLogLevel is "${currentLogLevel}" and logLevel is "${logLevel}"`, () => {
 			expect(shouldPublishLog(currentLogLevel, logLevel)).toBe(expected);
 		});
 	});

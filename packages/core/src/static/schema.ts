@@ -5,8 +5,10 @@ import { looseUserSchema } from "../db/schema/user";
 import { looseVerificationSchema } from "../db/schema/verification";
 import {
 	createSchema,
+	createTokenUserSchema,
 	dateOrIsoStringSchema,
 	emailSchema,
+	redirectUrlSchema,
 	scopesStringOrArraySchema,
 	stringOrNumberIdSchema,
 	type SchemaRegistry,
@@ -28,26 +30,7 @@ const DEFAULT_SCHEMAS = (() => {
 		}),
 	};
 
-	const tokenUserSchema = z.discriminatedUnion("success", [
-		z.object({
-			success: z.literal(true),
-			token: z
-				.string()
-				.nullable()
-				.default(null)
-				.openapi({ description: "Session token" }),
-			user: core[Definitions.USER].schema,
-		}),
-		z.object({
-			success: z.literal(false),
-			token: z.null().default(null),
-			user: z.null().default(null),
-		}),
-	]);
-	const redirectUrlSchema = z.discriminatedUnion("redirect", [
-		z.object({ redirect: z.literal(false), url: z.null().default(null) }),
-		z.object({ redirect: z.literal(true), url: z.url() }),
-	]);
+	const tokenUserSchema = createTokenUserSchema(core[Definitions.USER].schema);
 
 	const dependees = {
 		[Definitions.TOKEN_USER]: createSchema(

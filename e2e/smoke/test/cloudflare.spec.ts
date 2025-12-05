@@ -6,8 +6,8 @@ import assert from "node:assert/strict";
 
 const fixturesDir = fileURLToPath(new URL("./fixtures", import.meta.url));
 
-describe("(cloudflare) simple server", () => {
-	it("check repo", async (t) => {
+describe("(cloudflare) simple server", (test) => {
+	test("check repo", async (t) => {
 		const cp = spawn("npm", ["run", "check"], {
 			cwd: join(fixturesDir, "cloudflare"),
 			stdio: "pipe",

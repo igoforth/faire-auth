@@ -1,7 +1,7 @@
 import { faireAuth, defineOptions } from "faire-auth";
 import { oAuthProxy } from "faire-auth/plugins";
 import { getTestInstance } from "faire-auth/test";
-import { describe, expect, it, vi } from "vitest";
+import { describe, vi } from "vitest";
 import { expoClient } from "./client";
 import { expo } from "./index";
 
@@ -43,7 +43,7 @@ vi.mock("expo-linking", async () => {
 
 const fn = vi.fn();
 
-describe("expo", async () => {
+describe("expo", async (test) => {
 	const storage = new Map<string, string>();
 	const opts = defineOptions({
 		baseURL: "http://localhost:3000",
@@ -60,7 +60,7 @@ describe("expo", async () => {
 		plugins: [expo(), oAuthProxy()],
 		trustedOrigins: ["faire-auth://"],
 	});
-	const { $Infer, auth } = await getTestInstance(opts, {
+	const { $Infer, auth, createUser } = await getTestInstance(opts, {
 		disableTestUser: true,
 		clientOptions: {
 			plugins: [
@@ -85,13 +85,14 @@ describe("expo", async () => {
 	// 	vi.useRealTimers();
 	// });
 
-	it("should store cookie with expires date", async () => {
-		const testUser = {
-			email: "test@test.com",
-			password: "password",
-			name: "Test User",
-		};
-		await client.signUp.email.$post({ json: testUser });
+	test("should store cookie with expires date", async ({ expect }) => {
+		await createUser(false);
+		// 	const testUser = {
+		// 		email: "test@test.com",
+		// 		password: "password",
+		// 		name: "Test User",
+		// 	};
+		// 	await client.signUp.email.$post({ json: testUser });
 		const storedCookie = storage.get("faire-auth_cookie");
 		expect(storedCookie, JSON.stringify(storage)).toBeDefined();
 		const parsedCookie = JSON.parse(storedCookie || "");
@@ -101,7 +102,7 @@ describe("expo", async () => {
 		});
 	});
 
-	it("should send cookie and get session", async () => {
+	test("should send cookie and get session", async ({ expect }) => {
 		const { data } = await client.getSession.$get({ query: {} });
 		expect(data?.data).toMatchObject({
 			session: expect.any(Object),
@@ -109,7 +110,7 @@ describe("expo", async () => {
 		});
 	});
 
-	it("should use the scheme to open the browser", async () => {
+	test("should use the scheme to open the browser", async ({ expect }) => {
 		const res = await client.signIn.social.$post({
 			json: {
 				provider: "google",
@@ -117,7 +118,7 @@ describe("expo", async () => {
 			},
 		});
 		const stateId = res.data?.data.url?.split("state=")[1].split("&")[0];
-		const ctx = await auth.$context;
+		const ctx = auth.$context;
 		if (!stateId) throw new Error("State ID not found");
 
 		const state = await ctx.internalAdapter.findVerificationValue(stateId);
@@ -134,12 +135,14 @@ describe("expo", async () => {
 		);
 	});
 
-	it("should get cookies", async () => {
+	test("should get cookies", async ({ expect }) => {
 		const c = client.getCookie();
 		expect(c).includes("faire-auth.session_token");
 	});
 
-	it("should correctly parse multiple Set-Cookie headers with Expires commas", async () => {
+	test("should correctly parse multiple Set-Cookie headers with Expires commas", async ({
+		expect,
+	}) => {
 		const header =
 			"faire-auth.session_token=abc; Expires=Wed, 21 Oct 2015 07:28:00 GMT; Path=/, faire-auth.session_data=xyz; Expires=Thu, 22 Oct 2015 07:28:00 GMT; Path=/";
 		const map = (await import("./client")).parseSetCookieHeader(header);
@@ -147,7 +150,9 @@ describe("expo", async () => {
 		expect(map.get("faire-auth.session_data")?.value).toBe("xyz");
 	});
 
-	it("should preserve unchanged client store session properties on signout", async () => {
+	test("should preserve unchanged client store session properties on signout", async ({
+		expect,
+	}) => {
 		const before = client.$store.atoms.session.get();
 		await client.signOut.$post();
 		const after = client.$store.atoms.session.get();
@@ -161,7 +166,7 @@ describe("expo", async () => {
 	});
 });
 
-describe("expo with cookieCache", async () => {
+describe("expo with cookieCache", async (test) => {
 	const storage = new Map<string, string>();
 	const opts = defineOptions({
 		baseURL: "http://localhost:3000",
@@ -185,7 +190,7 @@ describe("expo with cookieCache", async () => {
 			},
 		},
 	});
-	const { $Infer, auth } = await getTestInstance(opts, {
+	const { $Infer, createUser } = await getTestInstance(opts, {
 		disableTestUser: true,
 		clientOptions: {
 			plugins: [
@@ -210,13 +215,14 @@ describe("expo with cookieCache", async () => {
 	// 	vi.useRealTimers();
 	// });
 
-	it("should store cookie with expires date", async () => {
-		const testUser = {
-			email: "test@test.com",
-			password: "password",
-			name: "Test User",
-		};
-		await client.signUp.email.$post({ json: testUser });
+	test("should store cookie with expires date", async ({ expect }) => {
+		await createUser(false);
+		// const testUser = {
+		// 	email: "test@test.com",
+		// 	password: "password",
+		// 	name: "Test User",
+		// };
+		// await client.signUp.email.$post({ json: testUser });
 		const storedCookie = storage.get("faire-auth_cookie");
 		expect(storedCookie).toBeDefined();
 		const parsedCookie = JSON.parse(storedCookie || "");
@@ -230,7 +236,9 @@ describe("expo with cookieCache", async () => {
 		});
 	});
 
-	it("should refresh session_data when it expired without erasing session_token", async () => {
+	test("should refresh session_data when it expired without erasing session_token", async ({
+		expect,
+	}) => {
 		vi.useFakeTimers();
 		vi.advanceTimersByTime(1000);
 		const { data } = await client.getSession.$get({ query: {} });
@@ -252,7 +260,9 @@ describe("expo with cookieCache", async () => {
 		vi.useRealTimers();
 	});
 
-	it("should erase both session_data and session_token when token expired", async () => {
+	test("should erase both session_data and session_token when token expired", async ({
+		expect,
+	}) => {
 		vi.useFakeTimers();
 		vi.advanceTimersByTime(5000);
 		const { data } = await client.getSession.$get({ query: {} });
@@ -271,7 +281,7 @@ describe("expo with cookieCache", async () => {
 		vi.useRealTimers();
 	});
 
-	it("should add `exp://` to trusted origins", async () => {
+	test("should add `exp://` to trusted origins", async ({ expect }) => {
 		vi.stubEnv("NODE_ENV", "development");
 		const auth = faireAuth({
 			plugins: [expo()],

@@ -5,8 +5,8 @@ import { twoFactor, username } from "faire-auth/plugins";
 import { passkey } from "faire-auth/plugins/passkey";
 import type { FaireAuthOptions } from "faire-auth";
 
-describe("generate drizzle schema for all databases", async () => {
-	it("should generate drizzle schema for MySQL", async () => {
+describe("generate drizzle schema for all databases", async (test) => {
+	test("should generate drizzle schema for MySQL", async ({ expect }) => {
 		const schema = await generateDrizzleSchema({
 			file: "test.drizzle",
 			adapter: drizzleAdapter(
@@ -44,7 +44,7 @@ describe("generate drizzle schema for all databases", async () => {
 		);
 	});
 
-	it("should generate drizzle schema for SQLite", async () => {
+	test("should generate drizzle schema for SQLite", async ({ expect }) => {
 		const schema = await generateDrizzleSchema({
 			file: "test.drizzle",
 			adapter: drizzleAdapter(
@@ -82,7 +82,9 @@ describe("generate drizzle schema for all databases", async () => {
 		);
 	});
 
-	it("should generate drizzle schema for MySQL with number id", async () => {
+	test("should generate drizzle schema for MySQL with number id", async ({
+		expect,
+	}) => {
 		const schema = await generateDrizzleSchema({
 			file: "test.drizzle",
 			adapter: drizzleAdapter(
@@ -125,7 +127,9 @@ describe("generate drizzle schema for all databases", async () => {
 		);
 	});
 
-	it("should generate drizzle schema for SQLite with number id", async () => {
+	test("should generate drizzle schema for SQLite with number id", async ({
+		expect,
+	}) => {
 		const schema = await generateDrizzleSchema({
 			file: "test.drizzle",
 			adapter: drizzleAdapter(
@@ -169,8 +173,10 @@ describe("generate drizzle schema for all databases", async () => {
 	});
 });
 
-describe("generate drizzle schema for all databases with passkey plugin", async () => {
-	it("should generate drizzle schema for MySQL with passkey plugin", async () => {
+describe("generate drizzle schema for all databases with passkey plugin", async (test) => {
+	test("should generate drizzle schema for MySQL with passkey plugin", async ({
+		expect,
+	}) => {
 		const schema = await generateDrizzleSchema({
 			file: "test.drizzle",
 			adapter: drizzleAdapter(
@@ -208,7 +214,9 @@ describe("generate drizzle schema for all databases with passkey plugin", async 
 		);
 	});
 
-	it("should generate drizzle schema for SQLite with passkey plugin", async () => {
+	test("should generate drizzle schema for SQLite with passkey plugin", async ({
+		expect,
+	}) => {
 		const schema = await generateDrizzleSchema({
 			file: "test.drizzle",
 			adapter: drizzleAdapter(
@@ -246,7 +254,9 @@ describe("generate drizzle schema for all databases with passkey plugin", async 
 		);
 	});
 
-	it("should generate drizzle schema for PostgreSQL with passkey plugin", async () => {
+	test("should generate drizzle schema for PostgreSQL with passkey plugin", async ({
+		expect,
+	}) => {
 		const schema = await generateDrizzleSchema({
 			file: "test.drizzle",
 			adapter: drizzleAdapter(
@@ -284,7 +294,9 @@ describe("generate drizzle schema for all databases with passkey plugin", async 
 		);
 	});
 
-	it("should generate drizzle schema for MySQL with passkey plugin and number id", async () => {
+	test("should generate drizzle schema for MySQL with passkey plugin and number id", async ({
+		expect,
+	}) => {
 		const schema = await generateDrizzleSchema({
 			file: "test.drizzle",
 			adapter: drizzleAdapter(
@@ -327,7 +339,9 @@ describe("generate drizzle schema for all databases with passkey plugin", async 
 		);
 	});
 
-	it("should generate drizzle schema for SQLite with passkey plugin and number id", async () => {
+	test("should generate drizzle schema for SQLite with passkey plugin and number id", async ({
+		expect,
+	}) => {
 		const schema = await generateDrizzleSchema({
 			file: "test.drizzle",
 			adapter: drizzleAdapter(

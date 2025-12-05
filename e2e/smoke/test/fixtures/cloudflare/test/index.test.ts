@@ -1,12 +1,12 @@
 import { SELF } from "cloudflare:test";
 import { describe, it, expect } from "vitest";
 
-describe("Cloudflare Worker compatibly basic tests", () => {
+describe("Cloudflare Worker compatibly basic tests", (test) => {
 	const randomEmail = `${crypto.randomUUID()}@test.com`;
 	const randomUserName = crypto.randomUUID().replaceAll("-", "").slice(6);
 	const randomPassword = crypto.randomUUID();
 
-	it("can sign up and login", async () => {
+	test("can sign up and login", async ({ expect }) => {
 		// Sign Up
 		let response = await SELF.fetch(
 			"http://localhost:8787/api/auth/sign-up/email",

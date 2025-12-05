@@ -26,7 +26,7 @@ export const tmpdirTest = test.extend<TmpDirFixture>({
 
 let tmpDir = ".";
 
-describe("getConfig", async () => {
+describe("getConfig", async (test) => {
 	beforeEach(async () => {
 		const tmp = path.join(process.cwd(), "getConfig_test-");
 		tmpDir = await fs.mkdtemp(tmp);
@@ -36,7 +36,7 @@ describe("getConfig", async () => {
 		await fs.rm(tmpDir, { recursive: true });
 	});
 
-	it("should resolve resolver type alias", async () => {
+	test("should resolve resolver type alias", async ({ expect }) => {
 		const authPath = path.join(tmpDir, "server", "auth");
 		const dbPath = path.join(tmpDir, "server", "db");
 		await fs.mkdir(authPath, { recursive: true });
@@ -91,7 +91,7 @@ describe("getConfig", async () => {
 		expect(config).not.toBe(null);
 	});
 
-	it("should resolve direct alias", async () => {
+	test("should resolve direct alias", async ({ expect }) => {
 		const authPath = path.join(tmpDir, "server", "auth");
 		const dbPath = path.join(tmpDir, "server", "db");
 		await fs.mkdir(authPath, { recursive: true });
@@ -146,7 +146,9 @@ describe("getConfig", async () => {
 		expect(config).not.toBe(null);
 	});
 
-	it("should resolve resolver type alias with relative path", async () => {
+	test("should resolve resolver type alias with relative path", async ({
+		expect,
+	}) => {
 		const authPath = path.join(tmpDir, "test", "server", "auth");
 		const dbPath = path.join(tmpDir, "test", "server", "db");
 		await fs.mkdir(authPath, { recursive: true });
@@ -201,7 +203,7 @@ describe("getConfig", async () => {
 		expect(config).not.toBe(null);
 	});
 
-	it("should resolve direct alias with relative path", async () => {
+	test("should resolve direct alias with relative path", async ({ expect }) => {
 		const authPath = path.join(tmpDir, "test", "server", "auth");
 		const dbPath = path.join(tmpDir, "test", "server", "db");
 		await fs.mkdir(authPath, { recursive: true });
@@ -256,7 +258,7 @@ describe("getConfig", async () => {
 		expect(config).not.toBe(null);
 	});
 
-	it("should resolve with relative import", async () => {
+	test("should resolve with relative import", async ({ expect }) => {
 		const authPath = path.join(tmpDir, "test", "server", "auth");
 		const dbPath = path.join(tmpDir, "test", "server", "db");
 		await fs.mkdir(authPath, { recursive: true });
@@ -311,7 +313,7 @@ describe("getConfig", async () => {
 		expect(config).not.toBe(null);
 	});
 
-	it("should error with invalid alias", async () => {
+	test("should error with invalid alias", async ({ expect }) => {
 		const authPath = path.join(tmpDir, "server", "auth");
 		const dbPath = path.join(tmpDir, "server", "db");
 		await fs.mkdir(authPath, { recursive: true });
@@ -374,7 +376,7 @@ describe("getConfig", async () => {
 		);
 	});
 
-	it("should resolve js config", async () => {
+	test("should resolve js config", async ({ expect }) => {
 		const authPath = path.join(tmpDir, "server", "auth");
 		const dbPath = path.join(tmpDir, "server", "db");
 		await fs.mkdir(authPath, { recursive: true });
@@ -400,7 +402,9 @@ describe("getConfig", async () => {
 		});
 	});
 
-	it("should resolve path aliases from referenced tsconfig files", async () => {
+	test("should resolve path aliases from referenced tsconfig files", async ({
+		expect,
+	}) => {
 		const authPath = path.join(tmpDir, "apps", "web", "server", "auth");
 		const dbPath = path.join(tmpDir, "packages", "shared", "db");
 		await fs.mkdir(authPath, { recursive: true });
@@ -483,7 +487,9 @@ describe("getConfig", async () => {
 		});
 	});
 
-	it("should handle missing referenced tsconfig files gracefully", async () => {
+	test("should handle missing referenced tsconfig files gracefully", async ({
+		expect,
+	}) => {
 		const authPath = path.join(tmpDir, "server", "auth");
 		await fs.mkdir(authPath, { recursive: true });
 
@@ -523,7 +529,9 @@ describe("getConfig", async () => {
 		expect(config).not.toBe(null);
 	});
 
-	it("should handle circular references in tsconfig files", async () => {
+	test("should handle circular references in tsconfig files", async ({
+		expect,
+	}) => {
 		const authPath = path.join(tmpDir, "server", "auth");
 		const appPath = path.join(tmpDir, "app");
 		await fs.mkdir(authPath, { recursive: true });
@@ -581,7 +589,7 @@ describe("getConfig", async () => {
 		expect(config).not.toBe(null);
 	});
 
-	it("should resolve direct tsconfig file references", async () => {
+	test("should resolve direct tsconfig file references", async ({ expect }) => {
 		const authPath = path.join(tmpDir, "server", "auth");
 		const sharedPath = path.join(tmpDir, "shared", "db");
 		await fs.mkdir(authPath, { recursive: true });
@@ -659,7 +667,9 @@ describe("getConfig", async () => {
 		expect(config).not.toBe(null);
 	});
 
-	it("should handle mixed directory and file references", async () => {
+	test("should handle mixed directory and file references", async ({
+		expect,
+	}) => {
 		const authPath = path.join(tmpDir, "apps", "web", "server", "auth");
 		const utilsPath = path.join(tmpDir, "packages", "utils");
 		await fs.mkdir(authPath, { recursive: true });
@@ -727,7 +737,9 @@ describe("getConfig", async () => {
 
 		expect(config).not.toBe(null);
 	});
-	it("should resolve SvelteKit $lib/server imports correctly", async () => {
+	test("should resolve SvelteKit $lib/server imports correctly", async ({
+		expect,
+	}) => {
 		const authPath = path.join(tmpDir, "src");
 		const libServerPath = path.join(tmpDir, "src", "lib", "server");
 		await fs.mkdir(authPath, { recursive: true });
@@ -774,7 +786,7 @@ describe("getConfig", async () => {
 		});
 	});
 
-	it("should resolve export default auth", async () => {
+	test("should resolve export default auth", async ({ expect }) => {
 		const authPath = path.join(tmpDir, "server", "auth");
 		await fs.mkdir(authPath, { recursive: true });
 
@@ -814,7 +826,9 @@ describe("getConfig", async () => {
 		});
 	});
 
-	it("should resolve export default auth with named export", async () => {
+	test("should resolve export default auth with named export", async ({
+		expect,
+	}) => {
 		const authPath = path.join(tmpDir, "server", "auth");
 		await fs.mkdir(authPath, { recursive: true });
 
@@ -856,7 +870,9 @@ describe("getConfig", async () => {
 		});
 	});
 
-	it("should resolve export default with inline faireAuth call", async () => {
+	test("should resolve export default with inline faireAuth call", async ({
+		expect,
+	}) => {
 		const authPath = path.join(tmpDir, "server", "auth");
 		await fs.mkdir(authPath, { recursive: true });
 

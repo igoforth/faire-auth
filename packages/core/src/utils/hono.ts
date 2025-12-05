@@ -5,7 +5,7 @@ import type {
 	FromFn,
 	ValidationTargets,
 } from "../types/helper";
-import type { AuthRouteConfig } from "../types/hono";
+import type { AuthRouteConfig, ExecOpts } from "../types/hono";
 import { initRenderer } from "../factory/renderer";
 
 export const hookFor = (
@@ -62,7 +62,9 @@ export const isHonoRequestLike = (value: unknown): value is HonoRequest =>
 	"path" in value &&
 	typeof value.path === "string";
 
-export const isExecOpts = (value: unknown): boolean =>
+export const isExecOpts = (
+	value: unknown,
+): value is ExecOpts<boolean, boolean> =>
 	typeof value === "object" &&
 	value != null &&
 	("asResponse" in value || "returnHeaders" in value || "headers" in value);
