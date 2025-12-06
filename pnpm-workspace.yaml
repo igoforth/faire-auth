@@ -105,7 +105,7 @@ catalogs:
     fumadocs-core: 15.8.3
     fumadocs-docgen: 2.1.0
     fumadocs-mdx: 11.8.3
-    fumadocs-typescript: ^4.0.6
+    fumadocs-typescript: 4.0.6
     fumadocs-ui: 15.8.3
 
 

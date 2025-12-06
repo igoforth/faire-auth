@@ -1,4 +1,3 @@
-import { capitalizeFirstLetter } from "@faire-auth/core/utils";
 import { afterEach, beforeEach, vi } from "vitest";
 
 interface CapturedLog {
