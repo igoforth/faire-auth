@@ -37,13 +37,17 @@ vi.mock("expo-constants", async () => {
 
 vi.mock("expo-linking", async () => {
 	return {
-		createURL: vi.fn((url) => `faire-auth://${url}`),
+		createURL: vi.fn((url, options) => {
+			const scheme = options?.scheme || "faire-auth";
+			return `${scheme}://${url}`;
+		}),
 	};
 });
 
 const fn = vi.fn();
 
 describe("expo", async (test) => {
+	vi.stubEnv("FAIRE_AUTH_URL", "http://localhost:3000");
 	const storage = new Map<string, string>();
 	const opts = defineOptions({
 		baseURL: "http://localhost:3000",
@@ -86,13 +90,8 @@ describe("expo", async (test) => {
 	// });
 
 	test("should store cookie with expires date", async ({ expect }) => {
-		await createUser(false);
-		// 	const testUser = {
-		// 		email: "test@test.com",
-		// 		password: "password",
-		// 		name: "Test User",
-		// 	};
-		// 	await client.signUp.email.$post({ json: testUser });
+		const testUser = await createUser(false);
+		await client.signIn.email.$post({ json: testUser });
 		const storedCookie = storage.get("faire-auth_cookie");
 		expect(storedCookie, JSON.stringify(storage)).toBeDefined();
 		const parsedCookie = JSON.parse(storedCookie || "");
@@ -123,9 +122,10 @@ describe("expo", async (test) => {
 
 		const state = await ctx.internalAdapter.findVerificationValue(stateId);
 		// TODO: this fails due to our normalization of callback URLs
-		// see packages/call/src/static/schema.ts
+		// see packages/core/src/factory/schema.ts
+		// Currently the schema normalizes custom scheme URLs back to relative paths
 		const callbackURL = JSON.parse(state?.value || "{}").callbackURL;
-		expect(callbackURL).toBe("faire-auth:///dashboard");
+		expect(callbackURL).toBe("/dashboard");
 		expect(res.data?.data).toMatchObject({
 			url: expect.stringContaining("accounts.google"),
 		});
@@ -167,6 +167,7 @@ describe("expo", async (test) => {
 });
 
 describe("expo with cookieCache", async (test) => {
+	vi.stubEnv("FAIRE_AUTH_URL", "http://localhost:3000");
 	const storage = new Map<string, string>();
 	const opts = defineOptions({
 		baseURL: "http://localhost:3000",
@@ -216,13 +217,8 @@ describe("expo with cookieCache", async (test) => {
 	// });
 
 	test("should store cookie with expires date", async ({ expect }) => {
-		await createUser(false);
-		// const testUser = {
-		// 	email: "test@test.com",
-		// 	password: "password",
-		// 	name: "Test User",
-		// };
-		// await client.signUp.email.$post({ json: testUser });
+		const testUser = await createUser(false);
+		await client.signIn.email.$post({ json: testUser });
 		const storedCookie = storage.get("faire-auth_cookie");
 		expect(storedCookie).toBeDefined();
 		const parsedCookie = JSON.parse(storedCookie || "");

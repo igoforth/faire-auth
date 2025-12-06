@@ -211,7 +211,10 @@ export const expoClient = ({
 							!context.request?.body.includes("idToken") // id token is used for silent sign-in
 						) {
 							const callbackURL = JSON.parse(context.request.body)?.callbackURL;
-							const to = callbackURL;
+							// Transform relative callback URL to expo scheme for deep linking
+							const to = callbackURL?.startsWith("/")
+								? Linking.createURL(callbackURL, { scheme })
+								: callbackURL;
 							const signInURL = context.data?.data.url;
 							let Browser: typeof import("expo-web-browser") | undefined =
 								undefined;
@@ -251,30 +254,9 @@ export const expoClient = ({
 						"expo-origin": getOrigin(scheme!),
 						"x-skip-oauth-proxy": "true", // skip oauth proxy for expo
 					});
-					if (options.body?.callbackURL) {
-						if (options.body.callbackURL.startsWith("/")) {
-							const url = Linking.createURL(options.body.callbackURL, {
-								scheme,
-							});
-							options.body.callbackURL = url;
-						}
-					}
-					if (options.body?.newUserCallbackURL) {
-						if (options.body.newUserCallbackURL.startsWith("/")) {
-							const url = Linking.createURL(options.body.newUserCallbackURL, {
-								scheme,
-							});
-							options.body.newUserCallbackURL = url;
-						}
-					}
-					if (options.body?.errorCallbackURL) {
-						if (options.body.errorCallbackURL.startsWith("/")) {
-							const url = Linking.createURL(options.body.errorCallbackURL, {
-								scheme,
-							});
-							options.body.errorCallbackURL = url;
-						}
-					}
+
+					// Note: callback URLs are normalized by the schema to relative paths on the server
+					// They are transformed to expo scheme URLs in the onSuccess hook when needed
 					if (url.includes("/sign-out")) {
 						await storage.setItem(cookieName, "{}");
 						store?.atoms.session?.set({
