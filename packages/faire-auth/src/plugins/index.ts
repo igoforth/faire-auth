@@ -5,6 +5,7 @@ export * from "./bearer";
 export * from "./magic-link";
 export * from "./oauth-proxy";
 export * from "./organization";
+export * from "./passkey";
 export * from "./two-factor";
 export * from "./username";
 export * from "../types/plugin";

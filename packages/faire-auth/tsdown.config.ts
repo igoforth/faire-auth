@@ -35,6 +35,7 @@ export default defineConfig({
 		"./src/integrations/react-start.ts",
 		"./src/integrations/node.ts",
 		"./src/plugins/bearer/index.ts",
+		"./src/plugins/passkey/index.ts",
 		"./src/test-utils/index.ts",
 	],
 	external: [

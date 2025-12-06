@@ -351,6 +351,17 @@
         "types": "./dist/plugins/bearer/index.d.cts",
         "default": "./dist/plugins/bearer/index.cjs"
       }
+    },
+    "./plugins/passkey": {
+      "dev-source": "./src/plugins/passkey/index.ts",
+      "import": {
+        "types": "./dist/plugins/passkey/index.d.mts",
+        "default": "./dist/plugins/passkey/index.mjs"
+      },
+      "require": {
+        "types": "./dist/plugins/passkey/index.d.cts",
+        "default": "./dist/plugins/passkey/index.cjs"
+      }
     }
   },
   "dependencies": {
