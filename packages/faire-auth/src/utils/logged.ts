@@ -1,4 +1,4 @@
-import { isTest } from "@faire-auth/core/env";
+import { isCI, isTest } from "@faire-auth/core/env";
 import { inspect as nodeInspect } from "node:util";
 
 const inspect = (object: any) => nodeInspect(object, { colors: true });
@@ -242,7 +242,7 @@ function logged<T>(
 	name?: string,
 	strategy: "immediate" | "queue" = "queue",
 ): T {
-	if (!isTest()) return target;
+	if (!isTest() || isCI()) return target;
 
 	// If it's a function, wrap it directly
 	if (typeof target === "function") {
