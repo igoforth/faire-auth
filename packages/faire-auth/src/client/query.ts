@@ -101,11 +101,11 @@ export const useAuthQuery = <T>(
 				return;
 			}
 			if (isMounted) {
-				fn();
+				void fn();
 			} else {
 				onMount(value, () => {
 					setTimeout(() => {
-						fn();
+						void fn();
 					}, 0);
 					isMounted = true;
 					return () => {

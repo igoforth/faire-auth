@@ -242,7 +242,7 @@ describe("username custom normalization", async (test) => {
 			username.replaceAll("0", "o").replaceAll("4", "a").toLowerCase();
 	});
 	afterAll(() => {
-		delete usernameOptions.usernameNormalization;
+		usernameOptions.usernameNormalization = undefined;
 	});
 
 	const { $Infer, auth } = await getTestInstance(
@@ -311,13 +311,13 @@ describe("username custom normalization", async (test) => {
 
 describe("username with displayUsername validation", async (test) => {
 	beforeAll(() => {
-		delete usernameOptions.minUsernameLength;
+		usernameOptions.minUsernameLength = undefined;
 		usernameOptions.displayUsernameValidator = (displayUsername) =>
 			/^[a-zA-Z0-9_-]+$/.test(displayUsername);
 	});
 	afterAll(() => {
 		usernameOptions.minUsernameLength = 4;
-		delete usernameOptions.displayUsernameValidator;
+		usernameOptions.displayUsernameValidator = undefined;
 	});
 
 	const { $Infer, auth } = await getTestInstance(
@@ -436,7 +436,7 @@ describe("post normalization flow", async (test) => {
 	afterAll(() => {
 		usernameOptions.validationOrder.username = "pre-normalization";
 		usernameOptions.validationOrder.displayUsername = "pre-normalization";
-		delete usernameOptions.usernameNormalization;
+		usernameOptions.usernameNormalization = undefined;
 	});
 
 	test("should set displayUsername to username if only username is provided", async ({

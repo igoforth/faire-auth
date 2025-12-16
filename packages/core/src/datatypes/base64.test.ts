@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe } from "vitest";
 import { base64, base64Url } from "./base64";
 import { binary } from "./binary";
 

@@ -1,10 +1,9 @@
 import { createOTP } from "@faire-auth/core/datatypes";
 import { DEFAULT_SECRET, True } from "@faire-auth/core/static";
-import { describe, expect, vi } from "vitest";
+import { describe, vi } from "vitest";
 import { symmetricDecrypt } from "../../crypto";
 import { getTestInstance } from "../../test-utils";
 import {
-	convertSetCookieToCookie,
 	createCookieCapture,
 	createCookieSetter,
 	parseSetCookieHeader,

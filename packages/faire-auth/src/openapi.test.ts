@@ -1,4 +1,4 @@
-import { describe, test } from "vitest";
+import { describe } from "vitest";
 import { getTestInstance } from "./test-utils";
 import { writeFile } from "fs/promises";
 

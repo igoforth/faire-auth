@@ -7,8 +7,6 @@ import { createAuthClient } from "../../client";
 import { nextCookies } from "../../integrations/next-js";
 import { getTestInstance } from "../../test-utils";
 import { createAccessControl } from "../access";
-// import { admin } from "../admin";
-import { ownerAc } from "./access";
 import { inferOrgAdditionalFields, organizationClient } from "./client";
 import { ORGANIZATION_ERROR_CODES } from "./error-codes";
 import { organization } from "./organization";

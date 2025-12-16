@@ -1,4 +1,4 @@
-import { describe, expect, test } from "vitest";
+import { describe } from "vitest";
 import type { Auth } from "../auth";
 import { testClientPlugin } from "./test-plugin";
 import { createAuthClient } from "./vanilla";

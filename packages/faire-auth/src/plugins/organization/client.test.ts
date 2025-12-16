@@ -2,7 +2,7 @@ import { defineOptions } from "../../auth";
 import { createAuthClient } from "../../client";
 import { inferOrgAdditionalFields, organizationClient } from "./client";
 import { organization } from "./organization";
-import { describe, test, expectTypeOf } from "vitest";
+import { describe, expectTypeOf } from "vitest";
 import type { InferApp } from "../../api/types";
 import type { Simplify } from "type-fest";
 

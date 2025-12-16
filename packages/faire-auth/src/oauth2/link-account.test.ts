@@ -2,7 +2,7 @@ import { DEFAULT_SECRET } from "@faire-auth/core/static";
 import type { User } from "@faire-auth/core/db";
 import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
-import { afterAll, afterEach, beforeAll, describe, expect, test } from "vitest";
+import { afterAll, afterEach, beforeAll, describe, expect } from "vitest";
 import { signJWT } from "../crypto";
 import type { GoogleProfile } from "../social-providers";
 import { getTestInstance } from "../test-utils/test-instance";

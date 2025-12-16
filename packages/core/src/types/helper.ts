@@ -33,7 +33,7 @@ import type {
 	JSONParsed,
 	JSONPrimitive,
 } from "hono/utils/types";
-import type { AuthRouteConfig, Exec, execHelper, MinRouteConfig } from "./hono";
+import type { AuthRouteConfig, execHelper, MinRouteConfig } from "./hono";
 
 export type Awaitable<T> = Promise<T> | T;
 

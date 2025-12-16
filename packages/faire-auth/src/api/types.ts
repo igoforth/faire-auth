@@ -2,11 +2,9 @@ import type { BASE_ERROR_CODES } from "@faire-auth/core/error";
 import type { OpenAPIHono } from "@faire-auth/core/factory";
 import type {
 	AnyHono,
-	AuthRouteConfig,
 	BasePath,
 	BuildSchema,
 	DocPathFromOptions,
-	FromFn,
 	LiteralStringUnion,
 	Prettify,
 	ProcessRouteConfig,
@@ -23,7 +21,7 @@ import type {
 	InferErrorCodes,
 } from "../client/types";
 import type { InferResolvedHooks } from "../client/vanilla";
-import type { ContextVars, Execute } from "../types/hono";
+import type { ContextVars } from "../types/hono";
 import type { FaireAuthOptions } from "../types/options";
 import type { AuthEndpoint } from "./factory/endpoint";
 import type {

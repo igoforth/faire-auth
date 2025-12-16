@@ -3,7 +3,6 @@ import { createRoute, req, res } from "@faire-auth/core/factory";
 import { False } from "@faire-auth/core/static";
 import type {
 	InferAdditionalFieldsFromPluginOptions,
-	LiteralString,
 	LiteralStringUnion,
 } from "@faire-auth/core/types";
 import { toSuccess } from "@faire-auth/core/utils";

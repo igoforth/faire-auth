@@ -296,7 +296,7 @@ export async function getConfig({
 		process.exit(1);
 	} finally {
 		// unset environment variable for options control flow
-		delete process.env.IS_FAIRE_AUTH_CLI_ACCESS;
+		process.env.IS_FAIRE_AUTH_CLI_ACCESS = undefined;
 	}
 }
 

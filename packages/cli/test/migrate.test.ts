@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, vi } from "vitest";
 import { migrateAction } from "../src/commands/migrate";
 import * as config from "../src/utils/get-config";
 import { faireAuth, type FaireAuthPlugin } from "faire-auth";

@@ -1,12 +1,7 @@
 import { base64 } from "@faire-auth/core/datatypes";
 import { logger } from "@faire-auth/core/env";
 import { createRoute, emailSchema, req, res } from "@faire-auth/core/factory";
-import {
-	Definitions,
-	False,
-	SCHEMAS,
-	True,
-} from "@faire-auth/core/static";
+import { Definitions, False, SCHEMAS, True } from "@faire-auth/core/static";
 import { toSuccess } from "@faire-auth/core/utils";
 import type {
 	AuthenticationResponseJSON,

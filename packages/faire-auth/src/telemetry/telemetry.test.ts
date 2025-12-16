@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeEach, describe, vi } from "vitest";
 import type { TelemetryEvent } from "./types";
 import { createTelemetry } from "./index";
 

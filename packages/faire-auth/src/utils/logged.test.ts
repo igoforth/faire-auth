@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeEach, describe, vi } from "vitest";
 import LoggerAPI from "./logged";
 import { inspect } from "node:util";
 

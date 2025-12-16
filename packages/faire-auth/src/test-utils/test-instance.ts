@@ -1,5 +1,4 @@
 import type { SuccessContext } from "@better-fetch/fetch";
-import type { User } from "@faire-auth/core/db";
 import type { AnyHono, ExK } from "@faire-auth/core/types";
 import type { InferAPI, InferApp, InferClient } from "../api/types";
 import type { Auth } from "../auth";

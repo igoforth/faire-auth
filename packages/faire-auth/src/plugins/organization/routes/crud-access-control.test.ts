@@ -1,12 +1,9 @@
 import type { DBFieldAttribute } from "@faire-auth/core/db";
 import { False, True } from "@faire-auth/core/static";
-import { describe, expect, expectTypeOf, test } from "vitest";
+import { describe, expectTypeOf } from "vitest";
 import { createAuthClient } from "../../../client";
 import { getTestInstance } from "../../../test-utils";
-import {
-	createCookieCapture,
-	parseSetCookieHeader,
-} from "../../../utils/cookies";
+import { createCookieCapture } from "../../../utils/cookies";
 import { createAccessControl } from "../../access";
 import { adminAc, defaultStatements, memberAc, ownerAc } from "../access";
 import { inferOrgAdditionalFields, organizationClient } from "../client";

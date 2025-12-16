@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe } from "vitest";
 
 import { hex } from "./hex";
 

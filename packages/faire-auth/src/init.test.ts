@@ -1,5 +1,5 @@
 import Database from "better-sqlite3";
-import { describe, expect, test, vi } from "vitest";
+import { describe, expect, vi } from "vitest";
 import { faireAuth } from "./auth";
 import { createAuthClient } from "./client";
 import { init } from "./init";

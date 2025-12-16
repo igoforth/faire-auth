@@ -1,5 +1,5 @@
 import { setCookie } from "../utils/cookies";
-import { describe, expect, test } from "vitest";
+import { describe, expect } from "vitest";
 import * as z from "zod";
 import { defineOptions } from "../auth";
 import { createAuthClient } from "../client";

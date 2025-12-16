@@ -1,4 +1,4 @@
-import { describe, expect, test } from "vitest";
+import { describe } from "vitest";
 import { createAuthClient } from "../../../client";
 import { getTestInstance } from "../../../test-utils/test-instance";
 import { organizationClient } from "../client";

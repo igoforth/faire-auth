@@ -4,9 +4,7 @@
 	"main": "src/index.ts",
 	"tsconfig": "./tsconfig.json",
 	"compatibility_date": "2025-10-25",
-	"compatibility_flags": [
-		"nodejs_compat"
-	],
+	"compatibility_flags": ["nodejs_compat"],
 	"observability": {
 		"enabled": true
 	},
@@ -16,14 +14,14 @@
 	// D1 Database binding
 	"d1_databases": [
 		{
-			"binding": "FAIRE_AUTH_DB",
-		},
+			"binding": "FAIRE_AUTH_DB"
+		}
 	],
 	// KV namespace for sessions and cache
 	"kv_namespaces": [
 		{
-			"binding": "FAIRE_AUTH_CACHE",
-		},
+			"binding": "FAIRE_AUTH_CACHE"
+		}
 	],
 	// Rate limiting configuration
 	"ratelimits": [

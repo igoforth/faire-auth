@@ -1,4 +1,4 @@
-import { chromium, expect, test } from "@playwright/test";
+import { chromium, test } from "@playwright/test";
 import { runClient, setup } from "./utils";
 
 const { ref, start, clean } = setup();

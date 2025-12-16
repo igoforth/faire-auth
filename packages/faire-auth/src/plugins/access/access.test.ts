@@ -1,4 +1,4 @@
-import { describe, expect, test } from "vitest";
+import { describe } from "vitest";
 import { True, False } from "@faire-auth/core/static";
 import { createAccessControl } from "./access";
 

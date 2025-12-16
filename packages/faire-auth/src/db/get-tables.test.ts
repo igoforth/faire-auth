@@ -1,4 +1,4 @@
-import { describe, expect, test } from "vitest";
+import { describe } from "vitest";
 import { getAuthTables } from "./get-tables";
 
 describe("getAuthTables", (test) => {

@@ -1,4 +1,4 @@
-import { describe, it } from "node:test";
+import { describe } from "node:test";
 import { spawn } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import { join } from "node:path";

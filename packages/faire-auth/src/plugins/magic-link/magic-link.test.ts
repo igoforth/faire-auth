@@ -1,4 +1,4 @@
-import { describe, expect, test, vi } from "vitest";
+import { describe, vi } from "vitest";
 import { createAuthClient } from "../../client";
 import { getTestInstance } from "../../test-utils";
 import { magicLinkClient } from "./client";

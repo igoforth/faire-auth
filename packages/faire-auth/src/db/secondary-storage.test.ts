@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, test } from "vitest";
+import { beforeEach, describe } from "vitest";
 import { getTestInstance } from "../test-utils/test-instance";
 import { safeJSONParse } from "../utils/json";
 

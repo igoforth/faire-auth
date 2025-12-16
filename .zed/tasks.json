@@ -4,10 +4,7 @@
     "command": "cd $(npm prefix --no-workspaces) && vitest related",
     "use_new_terminal": false,
     "allow_concurrent_runs": true,
-    "args": [
-      "--run",
-      "$ZED_FILE"
-    ],
+    "args": ["--run", "$ZED_FILE"],
     "cwd": "$ZED_DIRNAME"
   },
   {
@@ -15,16 +12,8 @@
     "command": "cd $(npm prefix --no-workspaces) && vitest run",
     "use_new_terminal": false,
     "allow_concurrent_runs": true,
-    "args": [
-      "$ZED_FILE",
-      "-t",
-      "\"$ZED_SYMBOL\""
-    ],
+    "args": ["$ZED_FILE", "-t", "\"$ZED_SYMBOL\""],
     "cwd": "$ZED_DIRNAME",
-    "tags": [
-      "tsx-test",
-      "ts-test",
-      "js-test"
-    ]
+    "tags": ["tsx-test", "ts-test", "js-test"]
   }
 ]

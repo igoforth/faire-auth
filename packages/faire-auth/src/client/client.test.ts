@@ -3,7 +3,7 @@ import type { BetterFetchError } from "@better-fetch/fetch";
 import type { ReadableAtom } from "nanostores";
 import { isProxy } from "node:util/types";
 import type { Accessor } from "solid-js";
-import { describe, expect, expectTypeOf, test, vi } from "vitest";
+import { describe, expectTypeOf, vi } from "vitest";
 import type { Ref } from "vue";
 import type { InferApp } from "../api";
 import type { Auth } from "../auth";

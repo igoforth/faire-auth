@@ -1,6 +1,6 @@
 import Database from "better-sqlite3";
 import { Kysely, SqliteDialect } from "kysely";
-import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
+import { afterEach, beforeAll, describe, vi } from "vitest";
 import { faireAuth } from "../auth";
 import { init } from "../init";
 import { getTestInstance } from "../test-utils/test-instance";

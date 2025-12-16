@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe } from "vitest";
 import { generateDrizzleSchema } from "../src/generators/drizzle";
 import { drizzleAdapter } from "faire-auth/adapters/drizzle";
 import { twoFactor, username } from "faire-auth/plugins";

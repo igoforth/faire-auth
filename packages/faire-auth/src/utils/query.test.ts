@@ -1,4 +1,4 @@
-import { describe, expect, test } from "vitest";
+import { describe } from "vitest";
 import { appendQueryParam, setQueryParam } from "./query";
 
 describe("setQueryParam", (test) => {

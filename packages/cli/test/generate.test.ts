@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe } from "vitest";
 import { prismaAdapter } from "faire-auth/adapters/prisma";
 import { generatePrismaSchema } from "../src/generators/prisma";
 import { organization, twoFactor, username } from "faire-auth/plugins";

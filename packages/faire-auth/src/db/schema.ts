@@ -8,7 +8,6 @@ import type {
 import type { FaireAuthOptions } from "../types";
 import { getContext } from "../context/hono";
 import { False } from "@faire-auth/core/static";
-import LoggerAPI from "../utils/logged";
 
 // Cache for parsed schemas to avoid reparsing on every request
 const cache = new WeakMap<

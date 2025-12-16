@@ -5,13 +5,12 @@ import Database from "better-sqlite3";
 import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
 import { OAuth2Server } from "oauth2-mock-server";
-import { afterAll, afterEach, beforeAll, describe, vi } from "vitest";
+import { afterAll, afterEach, beforeAll, describe } from "vitest";
 import { signJWT } from "./crypto";
 import { getMigrations } from "./db";
 import { refreshAccessToken } from "./oauth2";
 import { getTestInstance } from "./test-utils";
 import { runWithContext } from "./test-utils/test-context";
-import type { FaireAuthOptions } from "./types";
 import { createCookieCapture, parseSetCookieHeader } from "./utils/cookies";
 
 let server = new OAuth2Server();

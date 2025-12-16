@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from "vitest";
+import { describe, vi } from "vitest";
 
 import { createRandomStringGenerator } from "./random";
 

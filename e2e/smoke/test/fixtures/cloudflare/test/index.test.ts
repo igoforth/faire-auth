@@ -1,5 +1,5 @@
 import { SELF } from "cloudflare:test";
-import { describe, it, expect } from "vitest";
+import { describe } from "vitest";
 
 describe("Cloudflare Worker compatibly basic tests", (test) => {
 	const randomEmail = `${crypto.randomUUID()}@test.com`;
