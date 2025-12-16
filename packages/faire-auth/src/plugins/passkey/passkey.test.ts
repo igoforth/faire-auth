@@ -7,13 +7,13 @@ import type { Passkey } from "./index";
 import { passkey } from "./index";
 
 describe("passkey", async () => {
-	const { $Infer, auth, signInWithTestUser, customFetchImpl } =
+	const { $Infer, auth, signIn, customFetchImpl } =
 		await getTestInstance({ plugins: [passkey()] });
 	const app = $Infer.app(auth.options);
 	const api = $Infer.api(app);
 
 	it("should generate register options", async () => {
-		const { headers } = await signInWithTestUser();
+		const { headers } = await signIn();
 		const options = await api.generatePasskeyRegistrationOptions(
 			{ query: {} },
 			{ headers },
@@ -56,7 +56,26 @@ describe("passkey", async () => {
 	});
 
 	it("should generate authenticate options", async () => {
-		const { headers } = await signInWithTestUser();
+		const { headers, user } = await signIn();
+		const context = auth.$context;
+
+		// Create a passkey first so allowCredentials is populated
+		await context.adapter.create<Omit<Passkey, "id">, Passkey>({
+			model: "passkey",
+			data: {
+				userId: user.id,
+				publicKey: "mockPublicKey",
+				name: "mockName",
+				counter: 0,
+				deviceType: "singleDevice",
+				credentialID: "mockCredentialID",
+				createdAt: new Date(),
+				backedUp: false,
+				transports: "internal,usb",
+				aaguid: "mockAAGUID",
+			} satisfies Omit<Passkey, "id">,
+		});
+
 		const options = await api.generatePasskeyAuthenticationOptions(
 			{ json: {} },
 			{ headers },
@@ -69,7 +88,7 @@ describe("passkey", async () => {
 	});
 
 	it("should list user passkeys", async () => {
-		const { headers, user } = await signInWithTestUser();
+		const { headers, user } = await signIn();
 		const context = auth.$context;
 		await context.adapter.create<Omit<Passkey, "id">, Passkey>({
 			model: "passkey",
@@ -82,7 +101,7 @@ describe("passkey", async () => {
 				credentialID: "mockCredentialID",
 				createdAt: new Date(),
 				backedUp: false,
-				transports: "mockTransports",
+				transports: "internal,usb",
 				aaguid: "mockAAGUID",
 			} satisfies Omit<Passkey, "id">,
 		});
@@ -100,7 +119,7 @@ describe("passkey", async () => {
 	});
 
 	it("should update a passkey", async () => {
-		const { headers } = await signInWithTestUser();
+		const { headers } = await signIn();
 		const passkeys = await api.listPasskeys({ headers });
 		expect(Array.isArray(passkeys.data)).toBe(true);
 		if (Array.isArray(passkeys.data)) {
@@ -116,7 +135,7 @@ describe("passkey", async () => {
 	});
 
 	it("should delete a passkey", async () => {
-		const { headers } = await signInWithTestUser();
+		const { headers } = await signIn();
 		const deleteResult = await api.deletePasskey(
 			{ json: { id: "mockPasskeyId" } },
 			{ headers: headers },
