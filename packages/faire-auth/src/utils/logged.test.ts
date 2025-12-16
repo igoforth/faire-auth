@@ -2,6 +2,15 @@ import { beforeEach, describe, vi } from "vitest";
 import LoggerAPI from "./logged";
 import { inspect } from "node:util";
 
+// Mock isCI to always return false so tests run in CI
+vi.mock("@faire-auth/core/env", async () => {
+	const actual = await vi.importActual("@faire-auth/core/env");
+	return {
+		...actual,
+		isCI: () => false,
+	};
+});
+
 const di = (obj: any) => inspect(obj, { colors: true });
 
 // --- Test Objects (unchanged) ---
