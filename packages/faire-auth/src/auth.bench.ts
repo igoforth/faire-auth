@@ -68,7 +68,7 @@ const BenchUtils = {
 		};
 	},
 	async signUpAuthenticatedUser(ctx: Context) {
-		if (!ctx.currentTestUser) BenchUtils.createRandomTestUser(ctx);
+		if (!ctx.currentTestUser) await BenchUtils.createRandomTestUser(ctx);
 		await ctx.api.signUpEmail({ json: ctx.currentTestUser! });
 	},
 	// Helper function to create and authenticate a user
@@ -433,8 +433,8 @@ class RequestSecBenchmark<O extends FaireAuthOptions> extends BenchmarkBase {
 						currentPassword: ctx.currentTestUser!.password,
 						revokeOtherSessions: false,
 					}),
-					setup: BenchUtils.setupAuthenticatedUser,
-					teardown: BenchUtils.cleanupTestUser,
+					before: BenchUtils.setupAuthenticatedUser,
+					after: BenchUtils.cleanupTestUser,
 				},
 				{
 					name: "listAccounts",
@@ -451,8 +451,8 @@ class RequestSecBenchmark<O extends FaireAuthOptions> extends BenchmarkBase {
 					payload: (ctx) => ({
 						password: ctx.currentTestUser!.password,
 					}),
-					setup: BenchUtils.setupAuthenticatedUser,
-					teardown: BenchUtils.cleanupTestUser,
+					before: BenchUtils.setupAuthenticatedUser,
+					after: BenchUtils.cleanupTestUser,
 				},
 				{
 					name: "ok",
