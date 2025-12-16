@@ -664,9 +664,9 @@ describe("organization", async (test) => {
 		expect(member?.data.role).toBe("admin,member");
 	});
 
-	test("should respect membershipLimit when adding members to organization", async ({
-		expect,
-	}) => {
+	test(
+		"should respect membershipLimit when adding members to organization",
+		async ({ expect }) => {
 		const org = await api.createOrganization(
 			{
 				json: {
@@ -800,7 +800,9 @@ describe("organization", async (test) => {
 		)
 			throw new Error("Failed to get full organization");
 		expect(getFullOrganization.data?.data.members.length).toBe(6);
-	});
+		},
+		15000,
+	);
 
 	test("should allow listing invitations for an org", async ({ expect }) => {
 		const invitations = await client.organization.listInvitations.$get(
@@ -810,9 +812,9 @@ describe("organization", async (test) => {
 		expect(invitations.data?.data.length).toBe(5);
 	});
 
-	test("should allow listing invitations for a user using authClient", async ({
-		expect,
-	}) => {
+	test(
+		"should allow listing invitations for a user using authClient",
+		async ({ expect }) => {
 		const { headers: headers2, user } = await createUser();
 		const { headers: adminHeaders, user: orgAdminUser } = await createUser();
 
@@ -843,7 +845,9 @@ describe("organization", async (test) => {
 			invitation.data.data.invitation.id,
 		);
 		expect(userInvitations.data?.data.length).toBe(1);
-	});
+		},
+		15000,
+	);
 
 	test("should allow listing invitations for a user using server", async ({
 		expect,

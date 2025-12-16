@@ -55,7 +55,12 @@ afterAll(() => server.close());
 
 describe("oauth-proxy", async (test) => {
 	const { client } = await getTestInstance({
-		plugins: [oAuthProxy({ currentURL: "http://preview-localhost:3000" })],
+		plugins: [
+			oAuthProxy({
+				currentURL: "http://preview-localhost:3000",
+				productionURL: "http://production.example.com",
+			}),
+		],
 		socialProviders: { google: { clientId: "test", clientSecret: "test" } },
 	});
 
