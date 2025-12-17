@@ -132,18 +132,9 @@ jobs:
           TURBO_CACHE: remote:rw
         run: pnpm build
 
-      - name: Start Docker Containers
-        run: |
-          docker compose up -d
-          # Wait for services to be ready (optional)
-          sleep 10
-
       - name: Test
         env:
           TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
           TURBO_TEAM: ${{ vars.TURBO_TEAM || github.repository_owner }}
         run: pnpm test
-
-      - name: Stop Docker Containers
-        run: docker compose down
             
