@@ -133,6 +133,7 @@ export default defineConfig({
 						"src/client/**/*.test.ts",
 						"src/adapters/**/*.test.ts",
 					],
+					setupFiles: ["./test/setup/msw.ts"],
 					pool: "threads",
 					// pool: "forks",
 				},

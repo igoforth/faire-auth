@@ -1,11 +1,40 @@
 import type { ChildProcess } from "node:child_process";
 import { spawn } from "node:child_process";
 import { exec } from "node:child_process";
+import { existsSync } from "node:fs";
+import { dirname, join, resolve } from "node:path";
 import { promisify } from "node:util";
+import { fileURLToPath } from "node:url";
 import type { TestProject } from "vitest/node";
 import { waitUntil } from "../utils/waitUntil";
 
 const execAsync = promisify(exec);
+
+// Find the repository root by looking for docker-compose.yml
+function findRepoRoot(): string {
+	// Start from the current file's directory
+	let currentDir = dirname(fileURLToPath(import.meta.url));
+
+	// Walk up the directory tree until we find docker-compose.yml
+	while (currentDir !== dirname(currentDir)) {
+		const dockerComposePath = join(currentDir, "docker-compose.yml");
+		if (existsSync(dockerComposePath)) {
+			return currentDir;
+		}
+		currentDir = dirname(currentDir);
+	}
+
+	// Fallback: try to resolve from process.cwd()
+	const fallbackPath = resolve(process.cwd(), "../../docker-compose.yml");
+	if (existsSync(fallbackPath)) {
+		return dirname(fallbackPath);
+	}
+
+	throw new Error("Could not find docker-compose.yml in repository");
+}
+
+const REPO_ROOT = findRepoRoot();
+const DOCKER_COMPOSE_FILE = join(REPO_ROOT, "docker-compose.yml");
 
 let composeProcess: ChildProcess;
 
@@ -57,7 +86,7 @@ async function checkAllContainersHealthy(): Promise<boolean> {
 	try {
 		// Get all container IDs from the compose project
 		const { stdout: containersOutput } = await execAsync(
-			"docker compose ps -q",
+			`docker compose -f "${DOCKER_COMPOSE_FILE}" ps -q`,
 		);
 
 		const containerIds = containersOutput
@@ -115,8 +144,10 @@ async function checkAllContainersHealthy(): Promise<boolean> {
 }
 
 export async function setup(project: TestProject) {
+	console.log(`Starting Docker Compose from: ${DOCKER_COMPOSE_FILE}`);
+
 	// Start Docker Compose services
-	composeProcess = spawn("docker", ["compose", "up", "-d"], {
+	composeProcess = spawn("docker", ["compose", "-f", DOCKER_COMPOSE_FILE, "up", "-d"], {
 		stdio: "inherit",
 	});
 
@@ -142,7 +173,7 @@ export async function setup(project: TestProject) {
 export async function teardown(project: TestProject) {
 	try {
 		// Stop and remove containers, networks, and volumes
-		const downProcess = spawn("docker", ["compose", "down", "-v"], {
+		const downProcess = spawn("docker", ["compose", "-f", DOCKER_COMPOSE_FILE, "down", "-v"], {
 			stdio: "inherit",
 		});
 
@@ -162,7 +193,9 @@ export async function teardown(project: TestProject) {
 		await waitUntil(
 			async () => {
 				try {
-					const { stdout } = await execAsync("docker compose ps -q");
+					const { stdout } = await execAsync(
+						`docker compose -f "${DOCKER_COMPOSE_FILE}" ps -q`,
+					);
 					return stdout.trim().length === 0;
 				} catch (e) {
 					return true; // If command fails, assume everything is down
