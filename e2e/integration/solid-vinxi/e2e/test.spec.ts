@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test";
 import { runClient, setup } from "./utils";
 
 const { ref, start, clean } = setup();
-test.describe("solid-vinxi", async (test) => {
+test.describe("solid-vinxi", () => {
 	test.beforeEach(async () => start());
 	test.afterEach(async () => clean());
 
