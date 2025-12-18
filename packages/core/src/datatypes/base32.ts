@@ -111,7 +111,7 @@ export const base32 = {
 		const buffer =
 			typeof data === "string"
 				? new TextEncoder().encode(data)
-				: new Uint8Array(data);
+				: new Uint8Array(data as ArrayBuffer);
 		return base32Encode(buffer, alphabet, options.padding ?? true);
 	},
 
@@ -147,7 +147,7 @@ export const base32hex = {
 		const buffer =
 			typeof data === "string"
 				? new TextEncoder().encode(data)
-				: new Uint8Array(data);
+				: new Uint8Array(data as ArrayBuffer);
 		return base32Encode(buffer, alphabet, options.padding ?? true);
 	},
 

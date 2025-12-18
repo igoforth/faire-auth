@@ -182,7 +182,7 @@ export const originCheck = (
 		if (!callbackURL) return await next();
 		const callbacks = Array.isArray(callbackURL) ? callbackURL : [callbackURL];
 
-		let ret;
+		let ret: Response | null;
 		for (const url of callbacks) {
 			ret = validateURL(
 				url,

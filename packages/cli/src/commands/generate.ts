@@ -1,7 +1,8 @@
 import chalk from "chalk";
 import { Command } from "commander";
 import { createTelemetry, getTelemetryAuthConfig, logger } from "faire-auth";
-import { getAdapter } from "faire-auth/db";
+import { getAdapter, type DBAdapter } from "faire-auth/db";
+import type { FaireAuthOptions } from "faire-auth";
 import { existsSync } from "fs";
 import fs from "fs/promises";
 import path from "path";
@@ -38,7 +39,7 @@ export async function generateAction(opts: any) {
 		return;
 	}
 
-	let adapter;
+	let adapter: DBAdapter<FaireAuthOptions>;
 	try {
 		adapter = getAdapter(config);
 	} catch (e) {

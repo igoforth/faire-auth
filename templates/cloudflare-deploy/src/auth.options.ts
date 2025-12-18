@@ -5,7 +5,7 @@ import { StrictRateLimit } from "faire-auth/db";
 import * as schema from "./schema";
 import { withD1, withEnv } from "./utils";
 
-let baseURL;
+let baseURL: string;
 if (process.env.IS_FAIRE_AUTH_CLI_ACCESS === "true") {
 	// this is for @faire-auth/cli drizzle schema generation to work
 	// but baseURL CANNOT be set to this in production

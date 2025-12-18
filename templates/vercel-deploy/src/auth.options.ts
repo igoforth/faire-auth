@@ -3,7 +3,7 @@ import { defineOptions } from "faire-auth";
 import { drizzleAdapter } from "faire-auth/adapters/drizzle";
 import * as schema from "./schema";
 
-let baseURL;
+let baseURL: string;
 if (process.env.IS_FAIRE_AUTH_CLI_ACCESS === "true") {
 	// this is for @faire-auth/cli drizzle schema generation to work
 	// but baseURL CANNOT be set to this in production

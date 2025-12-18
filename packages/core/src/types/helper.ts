@@ -33,7 +33,7 @@ import type {
 	JSONParsed,
 	JSONPrimitive,
 } from "hono/utils/types";
-import type { AuthRouteConfig, execHelper, MinRouteConfig } from "./hono";
+import type { AuthRouteConfig, execHelper } from "./hono";
 
 export type Awaitable<T> = Promise<T> | T;
 
@@ -556,7 +556,7 @@ export type ConvertPathType<T extends string> =
 // loop with raw AuthRouteConfig to RouteConfigToTypedResponse ?
 
 export type RouteHook<
-	R extends MinRouteConfig,
+	R extends AuthRouteConfig,
 	E extends Env = RouteConfigToEnv<R>,
 	I extends Input = InferInput<R>,
 	P extends string = ConvertPathType<R["path"]>,

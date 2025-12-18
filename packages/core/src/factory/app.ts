@@ -205,7 +205,7 @@ export class OpenAPIHono<
 			>,
 		BasePath
 	> => {
-		if (!hide) this.openAPIRegistry.registerPath(route);
+		if (!hide) this.openAPIRegistry.registerPath(route as any);
 
 		const validators: MiddlewareHandler[] = [];
 
@@ -304,7 +304,7 @@ export class OpenAPIHono<
 			route.path.replaceAll(/\/{(.+?)}/g, "/:$1"),
 			...middleware,
 			...validators,
-			handler,
+			handler as any,
 		);
 		return this;
 	};

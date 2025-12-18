@@ -14,7 +14,9 @@ export const createHMAC = <E extends EncodingFormat = "none">(
 		) =>
 			getWebcryptoSubtle().importKey(
 				"raw",
-				typeof key === "string" ? new TextEncoder().encode(key) : key,
+				typeof key === "string"
+					? new TextEncoder().encode(key)
+					: (key as BufferSource),
 				{ name: "HMAC", hash: { name: algorithm } },
 				false,
 				[keyUsage],
@@ -29,7 +31,9 @@ export const createHMAC = <E extends EncodingFormat = "none">(
 			const signature = await getWebcryptoSubtle().sign(
 				"HMAC",
 				hmacKey,
-				typeof data === "string" ? new TextEncoder().encode(data) : data,
+				typeof data === "string"
+					? new TextEncoder().encode(data)
+					: (data as BufferSource),
 			);
 			if (encoding === "hex") {
 				return hex.encode(signature) as any;
@@ -68,8 +72,10 @@ export const createHMAC = <E extends EncodingFormat = "none">(
 				hmacKey,
 				typeof signature === "string"
 					? new TextEncoder().encode(signature)
-					: signature,
-				typeof data === "string" ? new TextEncoder().encode(data) : data,
+					: (signature as BufferSource),
+				typeof data === "string"
+					? new TextEncoder().encode(data)
+					: (data as BufferSource),
 			);
 		},
 	};

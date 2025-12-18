@@ -22,7 +22,7 @@ import { resolveConfig } from "./config";
  */
 export type Bundle<C extends AuthRouteConfig> = Readonly<{
 	resolvedConfig: C;
-	routeApp: OpenAPIHono<any, ConfigToSchema<C>>;
+	routeApp: OpenAPIHono<any, ConfigToSchema<C> & any>;
 	builder: Builder;
 	parser: Parser<C>;
 }>;

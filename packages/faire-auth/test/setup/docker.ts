@@ -147,9 +147,13 @@ export async function setup(project: TestProject) {
 	console.log(`Starting Docker Compose from: ${DOCKER_COMPOSE_FILE}`);
 
 	// Start Docker Compose services
-	composeProcess = spawn("docker", ["compose", "-f", DOCKER_COMPOSE_FILE, "up", "-d"], {
-		stdio: "inherit",
-	});
+	composeProcess = spawn(
+		"docker",
+		["compose", "-f", DOCKER_COMPOSE_FILE, "up", "-d"],
+		{
+			stdio: "inherit",
+		},
+	);
 
 	// Wait for the spawn command to complete
 	await new Promise<void>((resolve, reject) => {
@@ -173,9 +177,13 @@ export async function setup(project: TestProject) {
 export async function teardown(project: TestProject) {
 	try {
 		// Stop and remove containers, networks, and volumes
-		const downProcess = spawn("docker", ["compose", "-f", DOCKER_COMPOSE_FILE, "down", "-v"], {
-			stdio: "inherit",
-		});
+		const downProcess = spawn(
+			"docker",
+			["compose", "-f", DOCKER_COMPOSE_FILE, "down", "-v"],
+			{
+				stdio: "inherit",
+			},
+		);
 
 		// Wait for down command to complete
 		await new Promise<void>((resolve, reject) => {

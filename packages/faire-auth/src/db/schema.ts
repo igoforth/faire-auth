@@ -96,7 +96,7 @@ export function parseInputData<T extends Record<string, any>>(
 		Object.create(null),
 		null,
 	);
-	let fieldError;
+	let fieldError: Response | undefined;
 	for (const key in fields) {
 		if (key in data) {
 			if (fields[key]!.input === false) {

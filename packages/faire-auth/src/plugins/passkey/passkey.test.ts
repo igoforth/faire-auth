@@ -7,8 +7,9 @@ import type { Passkey } from "./index";
 import { passkey } from "./index";
 
 describe("passkey", async () => {
-	const { $Infer, auth, signIn, customFetchImpl } =
-		await getTestInstance({ plugins: [passkey()] });
+	const { $Infer, auth, signIn, customFetchImpl } = await getTestInstance({
+		plugins: [passkey()],
+	});
 	const app = $Infer.app(auth.options);
 	const api = $Infer.api(app);
 

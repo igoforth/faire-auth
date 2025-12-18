@@ -11,13 +11,13 @@ export interface OAuth2TokensInput {
 }
 
 export interface OAuth2Tokens {
-	tokenType?: string;
-	accessToken?: string;
-	refreshToken?: string;
-	accessTokenExpiresAt?: Date;
-	refreshTokenExpiresAt?: Date;
-	scopes?: string[];
-	idToken?: string;
+	tokenType?: string | undefined;
+	accessToken?: string | undefined;
+	refreshToken?: string | undefined;
+	accessTokenExpiresAt?: Date | undefined;
+	refreshTokenExpiresAt?: Date | undefined;
+	scopes?: string[] | undefined;
+	idToken?: string | undefined;
 }
 
 export interface OAuth2UserInfo {

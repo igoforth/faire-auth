@@ -14,7 +14,10 @@ export const createHash = <Encoding extends EncodingFormat = "none">(
 	): Promise<Encoding extends "none" ? ArrayBuffer : string> => {
 		const encoder = new TextEncoder();
 		const data = typeof input === "string" ? encoder.encode(input) : input;
-		const hashBuffer = await getWebcryptoSubtle().digest(algorithm, data);
+		const hashBuffer = await getWebcryptoSubtle().digest(
+			algorithm,
+			data as BufferSource,
+		);
 
 		if (encoding === "hex") {
 			const hashArray = Array.from(new Uint8Array(hashBuffer));
