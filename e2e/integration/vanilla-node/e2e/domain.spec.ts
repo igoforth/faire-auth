@@ -6,7 +6,7 @@ test.describe("cross domain", () => {
 	test.beforeEach(async () => start());
 	test.afterEach(async () => clean());
 
-	test("should work across domains", async ({ expect }) => {
+	test("should work across domains", async () => {
 		const browser = await chromium.launch({
 			args: [`--host-resolver-rules=MAP * localhost`],
 		});
