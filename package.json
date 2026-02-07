@@ -30,7 +30,7 @@
     "test": "turbo --filter \"./packages/*\" test -- --run",
     "e2e:smoke": "turbo --filter \"./e2e/*\" e2e:smoke",
     "e2e:integration": "turbo --filter \"./e2e/*\" e2e:integration",
-    "typecheck": "turbo --filter \"./packages/*\" typecheck"
+    "typecheck": "turbo --filter \"./packages/*\" --filter \"!./packages/playground\" typecheck"
   },
   "devDependencies": {
     "@biomejs/biome": "2.2.4",

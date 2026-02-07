@@ -150,9 +150,7 @@ const jitiOptions = (cwd: string): JitiOptions => {
 	};
 };
 
-const isDefaultExport = (
-	object: unknown,
-): object is FaireAuthOptions => {
+const isDefaultExport = (object: unknown): object is FaireAuthOptions => {
 	return (
 		typeof object === "object" &&
 		object !== null &&
