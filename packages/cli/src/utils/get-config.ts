@@ -151,7 +151,7 @@ const jitiOptions = (cwd: string): JitiOptions => {
 };
 
 const isDefaultExport = (
-	object: Record<string, unknown>,
+	object: unknown,
 ): object is FaireAuthOptions => {
 	return (
 		typeof object === "object" &&

@@ -39,7 +39,10 @@ describe("migrate base auth instance", (test) => {
 				password: "password",
 			},
 		});
-		expect(signUpRes.data.token).toBeDefined();
+		expect(signUpRes.success).toBe(true);
+		if (signUpRes.success) {
+			expect(signUpRes.data.token).toBeDefined();
+		}
 	});
 });
 

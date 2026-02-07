@@ -50,7 +50,15 @@ const supportedDatabases = [
 
 export type SupportedDatabases = (typeof supportedDatabases)[number];
 
-export const supportedPlugins = [
+export interface SupportedPlugin {
+	id: string;
+	name: string;
+	clientName: string | undefined;
+	path: string;
+	clientPath: string | undefined;
+}
+
+export const supportedPlugins: SupportedPlugin[] = [
 	// {
 	// 	id: "two-factor",
 	// 	name: "twoFactor",
@@ -191,9 +199,7 @@ export const supportedPlugins = [
 	// 	clientName: undefined,
 	// 	path: `faire-auth/next-js`,
 	// },
-] as const;
-
-export type SupportedPlugin = (typeof supportedPlugins)[number];
+];
 
 const defaultFormatOptions = {
 	trailingComma: "all" as const,

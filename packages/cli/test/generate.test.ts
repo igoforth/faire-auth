@@ -6,7 +6,7 @@ import { generateDrizzleSchema } from "../src/generators/drizzle";
 import { drizzleAdapter } from "faire-auth/adapters/drizzle";
 import { generateMigrations } from "../src/generators/kysely";
 import Database from "better-sqlite3";
-import type { FaireAuthOptions } from "faire-auth";
+import type { FaireAuthOptions, FaireAuthPlugin } from "faire-auth";
 import { generateAuthConfig } from "../src/generators/auth-config";
 import type { SupportedPlugin } from "../src/commands/init";
 
@@ -27,7 +27,7 @@ describe("generate", async (test) => {
 						provider: "postgresql",
 					},
 				),
-				plugins: [twoFactor(), username()],
+				plugins: [twoFactor(), username()] as FaireAuthPlugin[],
 			},
 		});
 		await expect(schema.code).toMatchFileSnapshot(
@@ -51,7 +51,7 @@ describe("generate", async (test) => {
 						provider: "postgresql",
 					},
 				),
-				plugins: [twoFactor(), username()],
+				plugins: [twoFactor(), username()] as FaireAuthPlugin[],
 				advanced: {
 					database: {
 						useNumberId: true,
@@ -80,7 +80,7 @@ describe("generate", async (test) => {
 						provider: "mongodb",
 					},
 				),
-				plugins: [twoFactor(), username()],
+				plugins: [twoFactor(), username()] as FaireAuthPlugin[],
 			},
 		});
 		await expect(schema.code).toMatchFileSnapshot(
@@ -104,7 +104,7 @@ describe("generate", async (test) => {
 						provider: "mongodb",
 					},
 				),
-				plugins: [twoFactor(), username()],
+				plugins: [twoFactor(), username()] as FaireAuthPlugin[],
 			},
 		});
 		await expect(schema.code).toMatchFileSnapshot(
@@ -143,7 +143,7 @@ describe("generate", async (test) => {
 							},
 						},
 					}),
-				],
+				] as FaireAuthPlugin[],
 			},
 		});
 		await expect(schema.code).toMatchFileSnapshot(
@@ -169,7 +169,7 @@ describe("generate", async (test) => {
 						schema: {},
 					},
 				),
-				plugins: [twoFactor(), username()],
+				plugins: [twoFactor(), username()] as FaireAuthPlugin[],
 				user: {
 					modelName: "custom_user",
 				},
@@ -207,7 +207,7 @@ describe("generate", async (test) => {
 						schema: {},
 					},
 				),
-				plugins: [twoFactor(), username()],
+				plugins: [twoFactor(), username()] as FaireAuthPlugin[],
 				advanced: {
 					database: {
 						useNumberId: true,

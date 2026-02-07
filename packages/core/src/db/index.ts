@@ -7,6 +7,7 @@ import type {
 	FaireAuthDBSchema,
 } from "./type";
 
+export * from "./adapter";
 export type { FaireAuthPluginDBSchema } from "./plugin";
 // export { coreSchema } from "./schema/shared";
 export {

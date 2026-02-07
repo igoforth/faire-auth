@@ -3,7 +3,7 @@ import { generateDrizzleSchema } from "../src/generators/drizzle";
 import { drizzleAdapter } from "faire-auth/adapters/drizzle";
 import { twoFactor, username } from "faire-auth/plugins";
 import { passkey } from "faire-auth/plugins/passkey";
-import type { FaireAuthOptions } from "faire-auth";
+import type { FaireAuthOptions, FaireAuthPlugin } from "faire-auth";
 
 describe("generate drizzle schema for all databases", async (test) => {
 	test("should generate drizzle schema for MySQL", async ({ expect }) => {
@@ -24,7 +24,7 @@ describe("generate drizzle schema for all databases", async (test) => {
 						schema: {},
 					},
 				),
-				plugins: [twoFactor(), username()],
+				plugins: [twoFactor(), username()] as FaireAuthPlugin[],
 				user: {
 					modelName: "custom_user",
 				},
@@ -62,7 +62,7 @@ describe("generate drizzle schema for all databases", async (test) => {
 						schema: {},
 					},
 				),
-				plugins: [twoFactor(), username()],
+				plugins: [twoFactor(), username()] as FaireAuthPlugin[],
 				user: {
 					modelName: "custom_user",
 				},
@@ -102,7 +102,7 @@ describe("generate drizzle schema for all databases", async (test) => {
 						schema: {},
 					},
 				),
-				plugins: [twoFactor(), username()],
+				plugins: [twoFactor(), username()] as FaireAuthPlugin[],
 				advanced: {
 					database: {
 						useNumberId: true,
@@ -147,7 +147,7 @@ describe("generate drizzle schema for all databases", async (test) => {
 						schema: {},
 					},
 				),
-				plugins: [twoFactor(), username()],
+				plugins: [twoFactor(), username()] as FaireAuthPlugin[],
 				advanced: {
 					database: {
 						useNumberId: true,
@@ -194,7 +194,7 @@ describe("generate drizzle schema for all databases with passkey plugin", async 
 						schema: {},
 					},
 				),
-				plugins: [passkey()],
+				plugins: [passkey()] as FaireAuthPlugin[],
 				user: {
 					modelName: "custom_user",
 				},
@@ -234,7 +234,7 @@ describe("generate drizzle schema for all databases with passkey plugin", async 
 						schema: {},
 					},
 				),
-				plugins: [passkey()],
+				plugins: [passkey()] as FaireAuthPlugin[],
 				user: {
 					modelName: "custom_user",
 				},
@@ -274,7 +274,7 @@ describe("generate drizzle schema for all databases with passkey plugin", async 
 						schema: {},
 					},
 				),
-				plugins: [passkey()],
+				plugins: [passkey()] as FaireAuthPlugin[],
 				user: {
 					modelName: "custom_user",
 				},
@@ -314,7 +314,7 @@ describe("generate drizzle schema for all databases with passkey plugin", async 
 						schema: {},
 					},
 				),
-				plugins: [passkey()],
+				plugins: [passkey()] as FaireAuthPlugin[],
 				advanced: {
 					database: {
 						useNumberId: true,
@@ -359,7 +359,7 @@ describe("generate drizzle schema for all databases with passkey plugin", async 
 						schema: {},
 					},
 				),
-				plugins: [passkey()],
+				plugins: [passkey()] as FaireAuthPlugin[],
 				advanced: {
 					database: {
 						useNumberId: true,
