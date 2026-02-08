@@ -30,7 +30,7 @@ export async function onCheckoutSessionCompleted(
 				checkoutSession?.client_reference_id ||
 				checkoutSession?.metadata?.referenceId;
 			const subscriptionId = checkoutSession?.metadata?.subscriptionId;
-			const seats = subscription.items.data[0].quantity;
+			const seats = subscription.items.data[0]!.quantity;
 			if (referenceId && subscriptionId) {
 				const trial =
 					subscription.trial_start && subscription.trial_end
@@ -49,10 +49,10 @@ export async function onCheckoutSessionCompleted(
 							status: subscription.status,
 							updatedAt: new Date(),
 							periodStart: new Date(
-								subscription.items.data[0].current_period_start * 1000,
+								subscription.items.data[0]!.current_period_start * 1000,
 							),
 							periodEnd: new Date(
-								subscription.items.data[0].current_period_end * 1000,
+								subscription.items.data[0]!.current_period_end * 1000,
 							),
 							stripeSubscriptionId: checkoutSession.subscription as string,
 							seats,
@@ -110,9 +110,9 @@ export async function onSubscriptionUpdated(
 			return;
 		}
 		const subscriptionUpdated = event.data.object as Stripe.Subscription;
-		const priceId = subscriptionUpdated.items.data[0].price.id;
+		const priceId = subscriptionUpdated.items.data[0]!.price.id;
 		const priceLookupKey =
-			subscriptionUpdated.items.data[0].price.lookup_key || null;
+			subscriptionUpdated.items.data[0]!.price.lookup_key || null;
 		const plan = await getPlanByPriceInfo(options, priceId, priceLookupKey);
 
 		const subscriptionId = subscriptionUpdated.metadata?.subscriptionId;
@@ -141,11 +141,11 @@ export async function onSubscriptionUpdated(
 				}
 				subscription = activeSub;
 			} else {
-				subscription = subs[0];
+				subscription = subs[0]!;
 			}
 		}
 
-		const seats = subscriptionUpdated.items.data[0].quantity;
+		const seats = subscriptionUpdated.items.data[0]!.quantity;
 		await ctx.get("context").adapter.update({
 			model: "subscription",
 			update: {
@@ -158,10 +158,10 @@ export async function onSubscriptionUpdated(
 				updatedAt: new Date(),
 				status: subscriptionUpdated.status,
 				periodStart: new Date(
-					subscriptionUpdated.items.data[0].current_period_start * 1000,
+					subscriptionUpdated.items.data[0]!.current_period_start * 1000,
 				),
 				periodEnd: new Date(
-					subscriptionUpdated.items.data[0].current_period_end * 1000,
+					subscriptionUpdated.items.data[0]!.current_period_end * 1000,
 				),
 				cancelAtPeriodEnd: subscriptionUpdated.cancel_at_period_end,
 				seats,
@@ -181,8 +181,9 @@ export async function onSubscriptionUpdated(
 		if (subscriptionCanceled) {
 			await options.subscription.onSubscriptionCancel?.({
 				subscription,
-				cancellationDetails:
-					subscriptionUpdated.cancellation_details || undefined,
+				...(subscriptionUpdated.cancellation_details !== undefined && {
+					cancellationDetails: subscriptionUpdated.cancellation_details,
+				}),
 				stripeSubscription: subscriptionUpdated,
 				event,
 			});

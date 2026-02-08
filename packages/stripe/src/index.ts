@@ -28,8 +28,10 @@ import type {
 	StripeOptions,
 	StripePlan,
 	Subscription,
+	SubscriptionOptions,
 } from "./types";
 import { getPlanByName, getPlanByPriceInfo, getPlans } from "./utils";
+import { toSuccess } from "@faire-auth/core/utils";
 
 const STRIPE_ERROR_CODES = {
 	SUBSCRIPTION_NOT_FOUND: "Subscription not found",
@@ -91,6 +93,13 @@ export const stripe = <O extends StripeOptions>(options: O) => {
 		>()(async (ctx, next) => {
 			const session = ctx.get("session");
 			if (!session) return ctx.json({ success: False }, 401);
+
+			if (!options.subscription?.enabled) {
+				logger.error(
+					`Subscription actions are not enabled in your stripe plugin config.`,
+				);
+				return ctx.json({ success: False }, 400);
+			}
 
 			let body: { referenceId?: string } = {};
 			let bodyHasId = false;
@@ -275,10 +284,18 @@ export const stripe = <O extends StripeOptions>(options: O) => {
 					.bld(),
 			}),
 			(authOptions) => async (ctx) => {
+				if (!options.subscription?.enabled) {
+					logger.error(
+						`Subscription actions are not enabled in your stripe plugin config.`,
+					);
+					return ctx.json({ success: False }, 400);
+				}
+
 				const { user, session } = ctx.get("session");
 				if (
 					!user.emailVerified &&
-					options.subscription?.requireEmailVerification
+					options.subscription?.enabled &&
+					options.subscription.requireEmailVerification
 				)
 					return ctx.json(
 						{
@@ -483,7 +500,7 @@ export const stripe = <O extends StripeOptions>(options: O) => {
 					return ctx.json(
 						{
 							url: res.url,
-							redirect: true,
+							redirect: True,
 						},
 						200,
 					);
@@ -539,8 +556,6 @@ export const stripe = <O extends StripeOptions>(options: O) => {
 						plan,
 						subscription,
 					},
-					ctx.req,
-					//@ts-expect-error
 					ctx,
 				);
 
@@ -649,6 +664,13 @@ export const stripe = <O extends StripeOptions>(options: O) => {
 				responses: res().rdr().bld(),
 			}),
 			(authOptions) => async (ctx) => {
+				if (!options.subscription?.enabled) {
+					logger.error(
+						`Subscription actions are not enabled in your stripe plugin config.`,
+					);
+					return ctx.json({ success: False }, 400);
+				}
+
 				const { callbackURL, subscriptionId } = ctx.req.valid("query");
 				if (!callbackURL || !subscriptionId)
 					return ctx.redirect(getUrl(authOptions, callbackURL || "/"), 302);
@@ -1115,6 +1137,13 @@ export const stripe = <O extends StripeOptions>(options: O) => {
 					.bld(),
 			}),
 			(_authOptions) => async (ctx) => {
+				if (!options.subscription?.enabled) {
+					logger.error(
+						`Subscription actions are not enabled in your stripe plugin config.`,
+					);
+					return ctx.json({ success: False }, 400);
+				}
+
 				const session = ctx.get("session");
 				const { referenceId = session.user.id } = ctx.req.valid("query");
 
@@ -1131,7 +1160,9 @@ export const stripe = <O extends StripeOptions>(options: O) => {
 					});
 				if (!subscriptions.length) return ctx.json([], 200);
 
-				const plans = await getPlans(options);
+				const plans = await getPlans(
+					options.subscription as O["subscription"] & SubscriptionOptions,
+				);
 				if (!plans) return ctx.json([], 200);
 
 				const subs = subscriptions
@@ -1464,13 +1495,14 @@ export const stripe = <O extends StripeOptions>(options: O) => {
 												stripeCustomerId: stripeCustomer.id,
 											});
 										if (!updatedUser)
-											logger.error("#FAIRE_AUTH: Failed to create  customer");
+											logger.error("#FAIRE_AUTH: Failed to create customer");
 										else if (options.onCustomerCreate)
 											await options.onCustomerCreate(
 												{
 													stripeCustomer,
 													user,
 												},
+												// @ts-expect-error Doesn't have ContextVars
 												ctx,
 											);
 									}
