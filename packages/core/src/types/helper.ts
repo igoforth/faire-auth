@@ -463,28 +463,20 @@ export type RouteConfigToTypedResponse<
 							? Ret extends infer Y
 								? void extends Y
 									? never
-									: Y extends Response & infer U
-										? U
-										: Y
-								: void extends Ret
-									? never
-									: Ret extends Response & infer U
-										? U
-										: Ret
+									: Y extends Response & TypedResponse<infer T, infer S, infer F>
+										? TypedResponse<T, S, F>
+										: never
+								: never
 							: never
 						: never
 					: M extends (...args: any[]) => Promise<infer Ret>
 						? Ret extends infer X
 							? void extends X
 								? never
-								: X extends Response & infer U
-									? U
-									: X
-							: void extends Ret
-								? never
-								: Ret extends Response & infer U
-									? U
-									: Ret
+								: X extends Response & TypedResponse<infer T, infer S, infer F>
+									? TypedResponse<T, S, F>
+									: never
+							: never
 						: never
 				: never
 			: never);
