@@ -31,7 +31,6 @@ import type {
 	SubscriptionOptions,
 } from "./types";
 import { getPlanByName, getPlanByPriceInfo, getPlans } from "./utils";
-import { toSuccess } from "@faire-auth/core/utils";
 
 const STRIPE_ERROR_CODES = {
 	SUBSCRIPTION_NOT_FOUND: "Subscription not found",
@@ -642,7 +641,17 @@ export const stripe = <O extends StripeOptions>(options: O) => {
 					{
 						...checkoutSession,
 						redirect: !disableRedirect,
-					},
+					} as Omit<typeof checkoutSession, "url"> &
+						(
+							| {
+									url: string;
+									redirect: true;
+							  }
+							| {
+									url: null;
+									redirect: false;
+							  }
+						), // url must be present if redirect is true, but stripe types as string | null
 					200,
 				);
 			},
@@ -934,7 +943,7 @@ export const stripe = <O extends StripeOptions>(options: O) => {
 				return ctx.json(
 					{
 						url: res.url,
-						redirect: true,
+						redirect: True,
 					},
 					200,
 				);
@@ -1376,7 +1385,7 @@ export const stripe = <O extends StripeOptions>(options: O) => {
 					return ctx.json(
 						{
 							url,
-							redirect: true,
+							redirect: True,
 						},
 						200,
 					);
@@ -1398,7 +1407,9 @@ export const stripe = <O extends StripeOptions>(options: O) => {
 					operationId: "stripeWebhook",
 					method: "post",
 					path: "/stripe/webhook",
-					isAction: false,
+					// commenting because must be seen in API type? using SERVER_ONLY instead
+					// isAction: false,
+					SERVER_ONLY: true,
 					// cloneRequest: true,
 					// //don't parse the body
 					// disableBody: true,
