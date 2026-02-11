@@ -4,6 +4,8 @@
   "compilerOptions": {
     "lib": ["esnext", "dom", "dom.iterable"]
   },
+  "include": ["src/*.ts", "overrides.d.ts"],
+  // "exclude": ["node_modules", "**/*.test.ts"],
   "references": [
     {
       "path": "../faire-auth/tsconfig.json"

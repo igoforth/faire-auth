@@ -1,4 +1,9 @@
-import { faireAuth, type InferAPI, type InferApp } from "faire-auth";
+import {
+	defineOptions,
+	faireAuth,
+	type InferAPI,
+	type InferApp,
+} from "faire-auth";
 import { memoryAdapter } from "faire-auth/adapters/memory";
 import { createAuthClient } from "faire-auth/client";
 import { createCookieCapture } from "faire-auth/cookies";
@@ -1005,6 +1010,9 @@ describe("stripe", async (test) => {
 		);
 
 		expect(upgradeRes.error).toBeDefined();
+		if (upgradeRes.error == null) throw new Error("never");
+		expect(upgradeRes.error).toHaveProperty("message");
+		if (!("message" in upgradeRes.error)) throw new Error("never");
 		expect(upgradeRes.error?.message).toContain("already subscribed");
 	});
 
@@ -1093,7 +1101,7 @@ describe("stripe", async (test) => {
 				...stripeOptions.subscription,
 				authorizeReference: async () => true,
 			},
-		} as unknown as StripeOptions;
+		};
 
 		const opts = {
 			baseURL: "http://localhost:3000",
