@@ -17,7 +17,7 @@ export const initContextMiddleware = <O extends FaireAuthOptions>(
 	createMiddleware()(async (ctx, next) => {
 		// TODO: migrate session
 		ctx.set("context", context);
-		ctx.set("api", api);
+		ctx.set("api", api as any); // Generic type, doesn't match DefaultAPI
 		ctx.set(
 			"path",
 			ctx.req.path.slice((options.basePath ?? "/api/auth").length),
