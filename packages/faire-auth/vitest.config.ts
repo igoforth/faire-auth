@@ -47,7 +47,7 @@ export default defineConfig({
 						postgresDrizzle: {
 							type: "postgresql",
 							host: "127.0.0.1",
-							port: 5433,
+							port: 5435,
 							database: "faire_auth",
 							username: "user",
 							password: "password",
@@ -56,7 +56,16 @@ export default defineConfig({
 						postgresKysely: {
 							type: "postgresql",
 							host: "127.0.0.1",
-							port: 5434,
+							port: 5436,
+							database: "faire_auth",
+							username: "user",
+							password: "password",
+							orm: "kysely",
+						},
+						postgresKysely2: {
+							type: "postgresql",
+							host: "127.0.0.1",
+							port: 5438,
 							database: "faire_auth",
 							username: "user",
 							password: "password",
@@ -65,7 +74,7 @@ export default defineConfig({
 						postgresPrisma: {
 							type: "postgresql",
 							host: "127.0.0.1",
-							port: 5435,
+							port: 5437,
 							database: "faire_auth",
 							username: "user",
 							password: "password",

@@ -20,9 +20,9 @@ services:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: faire_auth
     ports:
-      - "127.0.0.1:5433:5432"
+      - "127.0.0.1:5435:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U user -d faire_auth"]
       interval: 3s
@@ -36,9 +36,25 @@ services:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: faire_auth
     ports:
-      - "127.0.0.1:5434:5432"
+      - "127.0.0.1:5436:5432"
     volumes:
-      - postgres-kysely_data:/var/lib/postgresql/data
+      - postgres-kysely_data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d faire_auth"]
+      interval: 3s
+      retries: 5
+
+  postgres-kysely2:
+    image: postgres:latest
+    container_name: postgres-kysely2
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: faire_auth
+    ports:
+      - "127.0.0.1:5438:5432"
+    volumes:
+      - postgres-kysely2_data:/var/lib/postgresql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U user -d faire_auth"]
       interval: 3s
@@ -52,9 +68,9 @@ services:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: faire_auth
     ports:
-      - "127.0.0.1:5435:5432"
+      - "127.0.0.1:5437:5432"
     volumes:
-      - postgres-prisma_data:/var/lib/postgresql/data
+      - postgres-prisma_data:/var/lib/postgresql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U user -d faire_auth"]
       interval: 3s
@@ -131,6 +147,7 @@ volumes:
   mongodb_data:
   postgres_data:
   postgres-kysely_data:
+  postgres-kysely2_data:
   postgres-prisma_data:
   mysql_data:
   mssql_data:

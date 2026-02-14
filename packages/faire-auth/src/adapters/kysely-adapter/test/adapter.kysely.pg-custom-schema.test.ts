@@ -21,8 +21,10 @@ import { getConnectionString } from "../../../test-utils/test-connection";
 const CUSTOM_SCHEMA = "auth";
 
 // Connection string with custom schema in search_path
+// Uses a dedicated postgres-kysely2 container to avoid interference
+// with the regular Kysely PG test that runs in parallel.
 const pgDB = new Pool({
-	connectionString: `${getConnectionString(inject("postgresKysely"))}?options=-c search_path=${CUSTOM_SCHEMA}`,
+	connectionString: `${getConnectionString(inject("postgresKysely2"))}?options=-c search_path=${CUSTOM_SCHEMA}`,
 });
 
 let kyselyDB = new Kysely({
