@@ -199,6 +199,7 @@ const _serialize = (key: string, value: string, opt: CookieOptions = {}) => {
 	if (key.startsWith("__Host-")) {
 		if (!(opt.secure ?? false)) opt.secure = true;
 		if (opt.path !== "/") opt.path = "/";
+		// biome-ignore lint/performance/noDelete: __Host- cookies must not have a domain
 		if (opt.domain != null) delete opt.domain;
 	}
 
@@ -682,6 +683,7 @@ export const setSessionCookie = <V extends object>(
 			dontRememberMe ??= !!dontRememberMeCookie;
 
 			const options = { ...context.authCookies.sessionToken.options };
+			// biome-ignore lint/performance/noDelete: maxAge must be absent, not undefined
 			if (dontRememberMe === true) delete options.maxAge;
 			else options.maxAge = context.sessionConfig.expiresIn;
 			// const maxAge = dontRememberMe

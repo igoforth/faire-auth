@@ -144,7 +144,9 @@ describe("username", async (test) => {
 			},
 		});
 		expect(res.error?.status).toBe(400);
-		expect((res.error as { message?: string })?.message).toBe(USERNAME_ERROR_CODES.INVALID_USERNAME);
+		expect((res.error as { message?: string })?.message).toBe(
+			USERNAME_ERROR_CODES.INVALID_USERNAME,
+		);
 	});
 
 	test("should fail on too short username", async ({ expect }) => {
@@ -157,7 +159,9 @@ describe("username", async (test) => {
 			},
 		});
 		expect(res.error?.status).toBe(400);
-		expect((res.error as { message?: string })?.message).toBe(USERNAME_ERROR_CODES.USERNAME_TOO_SHORT);
+		expect((res.error as { message?: string })?.message).toBe(
+			USERNAME_ERROR_CODES.USERNAME_TOO_SHORT,
+		);
 	});
 
 	test("should fail on empty username", async ({ expect }) => {
@@ -242,6 +246,7 @@ describe("username custom normalization", async (test) => {
 			username.replaceAll("0", "o").replaceAll("4", "a").toLowerCase();
 	});
 	afterAll(() => {
+		// biome-ignore lint/performance/noDelete: test cleanup
 		delete usernameOptions.usernameNormalization;
 	});
 
@@ -312,12 +317,14 @@ describe("username custom normalization", async (test) => {
 
 describe("username with displayUsername validation", async (test) => {
 	beforeAll(() => {
+		// biome-ignore lint/performance/noDelete: test cleanup
 		delete usernameOptions.minUsernameLength;
 		usernameOptions.displayUsernameValidator = (displayUsername) =>
 			/^[a-zA-Z0-9_-]+$/.test(displayUsername);
 	});
 	afterAll(() => {
 		usernameOptions.minUsernameLength = 4;
+		// biome-ignore lint/performance/noDelete: test cleanup
 		delete usernameOptions.displayUsernameValidator;
 	});
 
@@ -437,6 +444,7 @@ describe("post normalization flow", async (test) => {
 	afterAll(() => {
 		usernameOptions.validationOrder!.username = "pre-normalization";
 		usernameOptions.validationOrder!.displayUsername = "pre-normalization";
+		// biome-ignore lint/performance/noDelete: test cleanup
 		delete usernameOptions.usernameNormalization;
 	});
 

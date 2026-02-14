@@ -1,4 +1,3 @@
-import { True, False } from "@faire-auth/core/static";
 import { afterEach, describe, vi } from "vitest";
 import { getTestInstance } from "../../test-utils";
 
@@ -120,7 +119,7 @@ describe("sign-up with custom fields", async (test) => {
 				email: "input-false@test.com",
 				password: "password",
 				name: "Input False Test",
-					role: "admin",
+				role: "admin",
 			},
 		});
 
