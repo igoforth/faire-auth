@@ -228,6 +228,7 @@ describe("dynamic access control", async (test) => {
 			},
 		);
 		expect(shouldFail.success).toBe(True);
+		if (shouldFail.success !== true) throw new Error("Expected success response");
 		expect(shouldFail.data).toBe(False);
 
 		// Should pass because the user has the permission to create a project.
@@ -245,6 +246,7 @@ describe("dynamic access control", async (test) => {
 			},
 		);
 		expect(shouldPass.success).toBe(True);
+		if (shouldPass.success !== true) throw new Error("Expected success response");
 		expect(shouldPass.data).toBe(True);
 	});
 
@@ -433,6 +435,7 @@ describe("dynamic access control", async (test) => {
 			},
 		);
 		expect(res.success).toBe(False);
+		if (res.success !== false) throw new Error("Expected failure response");
 		expect(res.message).toBe(
 			ORGANIZATION_ERROR_CODES.YOU_ARE_NOT_ALLOWED_TO_DELETE_A_ROLE,
 		);
@@ -449,6 +452,7 @@ describe("dynamic access control", async (test) => {
 				headers,
 			},
 		);
+		if (res.success !== false) throw new Error("Expected failure response");
 		expect(res.message).toBe(ORGANIZATION_ERROR_CODES.ROLE_NOT_FOUND);
 	});
 
@@ -474,7 +478,7 @@ describe("dynamic access control", async (test) => {
 		expect(res.success).toBe(True);
 		if (res.success === false) throw new Error("Never");
 		expect(res.data.length).toBeGreaterThan(0);
-		expect(res.data[0].permission).not.toBeTypeOf("string");
+		expect(res.data[0]!.permission).not.toBeTypeOf("string");
 		const foundRole = res.data.find((x) => x.role === "list-test-role");
 		expect(foundRole).toBeDefined();
 		expect(foundRole?.permission).toEqual(permission);
@@ -493,6 +497,7 @@ describe("dynamic access control", async (test) => {
 			{ headers: normalHeaders },
 		);
 		expect(res.success).toBe(False);
+		if (res.success !== false) throw new Error("Expected failure response");
 		expect(res.message).toContain(
 			ORGANIZATION_ERROR_CODES.YOU_ARE_NOT_ALLOWED_TO_LIST_A_ROLE,
 		);
@@ -527,6 +532,7 @@ describe("dynamic access control", async (test) => {
 			},
 		);
 		expect(res.success).toBe(True);
+		if (res.success !== true) throw new Error("Expected success response");
 		expect(res.data.role).toBe(testRole.data.data.roleData.role);
 		expect(res.data.permission).toEqual(testRole.data.data.roleData.permission);
 		expect(res.data.color).toBe("#000000");
@@ -563,6 +569,7 @@ describe("dynamic access control", async (test) => {
 			},
 		);
 		expect(res.success).toBe(True);
+		if (res.success !== true) throw new Error("Expected success response");
 		expect(res.data.role).toBe(testRole.data.data.roleData.role);
 		expect(res.data.permission).toEqual(testRole.data.data.roleData.permission);
 		expect(res.data.color).toBe("#000000");
@@ -598,6 +605,7 @@ describe("dynamic access control", async (test) => {
 			},
 		);
 		expect(res.success).toBe(True);
+		if (res.success !== true) throw new Error("Expected success response");
 		expect(res.data.role).toBe(testRole.data.data.roleData.role);
 		expect(res.data.permission).toEqual({ project: ["create", "delete"] });
 	});
@@ -629,6 +637,7 @@ describe("dynamic access control", async (test) => {
 			},
 		);
 		expect(res.success).toBe(True);
+		if (res.success !== true) throw new Error("Expected success response");
 		expect(res.data.role).toBe(`updated-${roleName}`);
 
 		const res2 = await api.getOrgRole(
@@ -643,6 +652,7 @@ describe("dynamic access control", async (test) => {
 			},
 		);
 		expect(res2.success).toBe(True);
+		if (res2.success !== true) throw new Error("Expected success response");
 		expect(res2.data.role).toBe(`updated-${roleName}`);
 	});
 
@@ -707,8 +717,8 @@ describe("dynamic access control", async (test) => {
 			},
 		);
 		expect(res.success).toBe(True);
+		if (res.success !== true) throw new Error("Expected success response");
 		expect(res.data.color).toBe("#111111");
-		//@ts-expect-error - intentionally invalid key
 		expect(res.data.someInvalidKey).toBeUndefined();
 	});
 
@@ -760,6 +770,7 @@ describe("dynamic access control", async (test) => {
 
 		// Member should be able to list roles (they have ac:read permission)
 		expect(listAsMembers).toBeDefined();
+		if (listAsMembers.success !== true) throw new Error("Expected success response");
 		expect(Array.isArray(listAsMembers.data)).toBe(True);
 	});
 
@@ -809,6 +820,7 @@ describe("dynamic access control", async (test) => {
 
 		// Member should be able to read the role (they have ac:read permission)
 		expect(getRoleAsMember).toBeDefined();
+		if (getRoleAsMember.success !== true) throw new Error("Expected success response");
 		expect(getRoleAsMember.data.id).toBe(testRole.data.data.roleData.id);
 	});
 
@@ -874,6 +886,7 @@ describe("dynamic access control", async (test) => {
 				headers,
 			},
 		);
+		if (roleCheck.success !== true) throw new Error("Expected success response");
 		expect(roleCheck.data.permission).toEqual({
 			project: ["read"],
 		});
@@ -924,6 +937,7 @@ describe("dynamic access control", async (test) => {
 			},
 		);
 		expect(res.success).toBe(False);
+		if (res.success !== false) throw new Error("Expected failure response");
 		expect(res.message).toBe(
 			ORGANIZATION_ERROR_CODES.YOU_ARE_NOT_ALLOWED_TO_UPDATE_A_ROLE,
 		);
@@ -943,6 +957,7 @@ describe("dynamic access control", async (test) => {
 			},
 		);
 		expect(adminUpdate).toBeDefined();
+		if (adminUpdate.success !== true) throw new Error("Expected success response");
 		expect(adminUpdate.data.role).toContain("admin-updated");
 	});
 

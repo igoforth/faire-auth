@@ -58,6 +58,7 @@ describe("sign-up with custom fields", async (test) => {
 				image: "https://picsum.photos/200",
 			},
 		});
+		if (res.success !== true) throw new Error("Expected success response");
 		expect(res.data.token).toBeDefined();
 		const users = await db.findMany({
 			model: "user",
@@ -99,13 +100,13 @@ describe("sign-up with custom fields", async (test) => {
 				}),
 			},
 		);
-		expect(res.success).toBe(True);
+		if (res.success !== true) throw new Error("Expected success response");
 		const session = await auth.api.getSession(
 			{ query: {} },
 			{ headers: new Headers({ authorization: `Bearer ${res.data?.token}` }) },
 		);
-		expect(session.success).toBe(True);
-		expect(session?.data.session).toMatchObject({
+		if (session.success !== true) throw new Error("Expected success response");
+		expect(session.data.session).toMatchObject({
 			userAgent: "test-user-agent",
 			ipAddress: "127.0.0.1",
 		});
@@ -119,12 +120,12 @@ describe("sign-up with custom fields", async (test) => {
 				email: "input-false@test.com",
 				password: "password",
 				name: "Input False Test",
-				//@ts-expect-error
-				role: "admin",
+					role: "admin",
 			},
 		});
 
-		expect(res.success).toBe(False);
+		if (res.success !== false) throw new Error("Expected failure response");
+		if (!("message" in res)) throw new Error("Expected error with message");
 		expect(res.message).toBe("role is not allowed to be set");
 	});
 });

@@ -43,7 +43,7 @@ describe("username", async (test) => {
 	});
 
 	test("should sign-in with username", async ({ expect }) => {
-		const res = await client.signIn.username.$post({
+		const res = await (client.signIn as any).username.$post({
 			json: { username: "new_username", password: "new-password" },
 		});
 		expect(res.data?.data.token).toBeDefined();
@@ -144,7 +144,7 @@ describe("username", async (test) => {
 			},
 		});
 		expect(res.error?.status).toBe(400);
-		expect(res.error?.message).toBe(USERNAME_ERROR_CODES.INVALID_USERNAME);
+		expect((res.error as { message?: string })?.message).toBe(USERNAME_ERROR_CODES.INVALID_USERNAME);
 	});
 
 	test("should fail on too short username", async ({ expect }) => {
@@ -157,7 +157,7 @@ describe("username", async (test) => {
 			},
 		});
 		expect(res.error?.status).toBe(400);
-		expect(res.error?.message).toBe(USERNAME_ERROR_CODES.USERNAME_TOO_SHORT);
+		expect((res.error as { message?: string })?.message).toBe(USERNAME_ERROR_CODES.USERNAME_TOO_SHORT);
 	});
 
 	test("should fail on empty username", async ({ expect }) => {
@@ -173,14 +173,14 @@ describe("username", async (test) => {
 	});
 
 	test("should check if username is unavailable", async ({ expect }) => {
-		const res = await client.isUsernameAvailable.$post({
+		const res = await (client as any).isUsernameAvailable.$post({
 			json: { username: "priority_user" },
 		});
 		expect(res.data?.available).toEqual(false);
 	});
 
 	test("should check if username is available", async ({ expect }) => {
-		const res = await client.isUsernameAvailable.$post({
+		const res = await (client as any).isUsernameAvailable.$post({
 			json: { username: "new_username_2.2" },
 		});
 		expect(res.data?.available).toEqual(true);
@@ -242,7 +242,7 @@ describe("username custom normalization", async (test) => {
 			username.replaceAll("0", "o").replaceAll("4", "a").toLowerCase();
 	});
 	afterAll(() => {
-		usernameOptions.usernameNormalization = undefined;
+		delete usernameOptions.usernameNormalization;
 	});
 
 	const { $Infer, auth } = await getTestInstance(
@@ -299,11 +299,12 @@ describe("username custom normalization", async (test) => {
 				displayUsername: "Test Username",
 			},
 		});
+		if (res.success !== true) throw new Error("Expected success response");
 		const session = await api.getSession(
 			{ query: {} },
 			{ headers: new Headers({ authorization: `Bearer ${res.data.token}` }) },
 		);
-		expect(session.success).toBe(True);
+		if (session.success !== true) throw new Error("Expected success response");
 		expect(session.data.user.username).toBe("test_username");
 		expect(session.data.user.displayUsername).toBe("test username");
 	});
@@ -311,13 +312,13 @@ describe("username custom normalization", async (test) => {
 
 describe("username with displayUsername validation", async (test) => {
 	beforeAll(() => {
-		usernameOptions.minUsernameLength = undefined;
+		delete usernameOptions.minUsernameLength;
 		usernameOptions.displayUsernameValidator = (displayUsername) =>
 			/^[a-zA-Z0-9_-]+$/.test(displayUsername);
 	});
 	afterAll(() => {
 		usernameOptions.minUsernameLength = 4;
-		usernameOptions.displayUsernameValidator = undefined;
+		delete usernameOptions.displayUsernameValidator;
 	});
 
 	const { $Infer, auth } = await getTestInstance(
@@ -351,7 +352,7 @@ describe("username with displayUsername validation", async (test) => {
 			},
 		});
 		expect(res.error?.status).toBe(400);
-		expect(res.error?.message).toBe(
+		expect((res.error as { message?: string })?.message).toBe(
 			USERNAME_ERROR_CODES.INVALID_DISPLAY_USERNAME,
 		);
 	});
@@ -419,7 +420,7 @@ describe("username with displayUsername validation", async (test) => {
 		);
 
 		expect(res.error?.status).toBe(400);
-		expect(res.error?.message).toBe(
+		expect((res.error as { message?: string })?.message).toBe(
 			USERNAME_ERROR_CODES.INVALID_DISPLAY_USERNAME,
 		);
 	});
@@ -427,16 +428,16 @@ describe("username with displayUsername validation", async (test) => {
 
 describe("post normalization flow", async (test) => {
 	beforeAll(() => {
-		usernameOptions.validationOrder.username = "post-normalization";
-		usernameOptions.validationOrder.displayUsername = "post-normalization";
+		usernameOptions.validationOrder!.username = "post-normalization";
+		usernameOptions.validationOrder!.displayUsername = "post-normalization";
 		usernameOptions.usernameNormalization = (username) =>
 			username.split(" ").join("_").toLowerCase();
 	});
 
 	afterAll(() => {
-		usernameOptions.validationOrder.username = "pre-normalization";
-		usernameOptions.validationOrder.displayUsername = "pre-normalization";
-		usernameOptions.usernameNormalization = undefined;
+		usernameOptions.validationOrder!.username = "pre-normalization";
+		usernameOptions.validationOrder!.displayUsername = "pre-normalization";
+		delete usernameOptions.usernameNormalization;
 	});
 
 	test("should set displayUsername to username if only username is provided", async ({
@@ -456,12 +457,12 @@ describe("post normalization flow", async (test) => {
 				name: "test-name",
 			},
 		});
-		expect(res.success, JSON.stringify(res)).toBe(True);
+		if (res.success !== true) throw new Error("Expected success response");
 		const session = await api.getSession(
 			{ query: {} },
 			{ headers: new Headers({ authorization: `Bearer ${res.data.token}` }) },
 		);
-		expect(session.success).toBe(True);
+		if (session.success !== true) throw new Error("Expected success response");
 		expect(session.data.user.username).toBe("test_username");
 		expect(session.data.user.displayUsername).toBe("Test Username");
 	});
@@ -494,7 +495,7 @@ describe("username email verification flow (no info leak)", async (test) => {
 			},
 		});
 
-		const res = await client.signIn.username.$post({
+		const res = await (client.signIn as any).username.$post({
 			json: {
 				username: "unverified_user",
 				password: "wrong-password",
@@ -510,7 +511,7 @@ describe("username email verification flow (no info leak)", async (test) => {
 	test("returns EMAIL_NOT_VERIFIED only after a correct password for an unverified user", async ({
 		expect,
 	}) => {
-		const res = await client.signIn.username.$post({
+		const res = await (client.signIn as any).username.$post({
 			json: {
 				username: "unverified_user",
 				password: "correct-password",

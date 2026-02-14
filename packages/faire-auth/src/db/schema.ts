@@ -183,10 +183,12 @@ export function mergeSchema<S extends FaireAuthPluginDBSchema>(
 	schema: S,
 	newSchema?: {
 		[K in keyof S]?: {
-			modelName?: string;
-			fields?: {
-				[P: string]: string;
-			};
+			modelName?: string | undefined;
+			fields?:
+				| {
+						[P: string]: string;
+				  }
+				| undefined;
 		};
 	},
 ) {

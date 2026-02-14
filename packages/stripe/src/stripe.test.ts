@@ -1,9 +1,4 @@
-import {
-	defineOptions,
-	faireAuth,
-	type InferAPI,
-	type InferApp,
-} from "faire-auth";
+import { faireAuth, type InferAPI, type InferApp } from "faire-auth";
 import { memoryAdapter } from "faire-auth/adapters/memory";
 import { createAuthClient } from "faire-auth/client";
 import { createCookieCapture } from "faire-auth/cookies";

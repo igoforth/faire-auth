@@ -373,7 +373,7 @@ describe("DTO transformations", async (test) => {
 		const [emptyContext, emptyAuthOptions] = init(emptyArrayOptions);
 		const { api: emptyApi } = router(emptyContext, emptyAuthOptions);
 
-		const resp = await emptyApi.testEmptyArray();
+		const resp = await (emptyApi as any).testEmptyArray();
 		expect(Array.isArray(resp)).toBe(true);
 		expect(resp).toHaveLength(0);
 	});
@@ -445,7 +445,7 @@ describe("DTO transformations", async (test) => {
 		const { api: errorApi } = router(errorContext, errorAuthOptions);
 
 		// Should handle the error gracefully
-		await expect(errorApi.testErrorDto()).resolves.toMatchObject({
+		await expect((errorApi as any).testErrorDto()).resolves.toMatchObject({
 			success: false,
 		});
 	});

@@ -8,6 +8,7 @@ import type {
 	InsertQueryBuilder,
 	Kysely,
 	RawBuilder,
+	Transaction,
 	UpdateQueryBuilder,
 } from "kysely";
 import type { FaireAuthOptions } from "../../types";
@@ -364,13 +365,13 @@ export const kyselyAdapter = (
 				(config?.transaction ?? false)
 					? (cb) =>
 							withDb((db) =>
-								db.transaction().execute((trx) => {
+								db.transaction().execute(((trx) => {
 									const adapter = createAdapterFactory({
 										config: adapterOptions!.config,
 										adapter: createCustomAdapter(trx),
 									})(lazyOptions!);
 									return cb(adapter);
-								}),
+								}) as (trx: Transaction<any>) => Promise<any>),
 							)
 					: false,
 		},

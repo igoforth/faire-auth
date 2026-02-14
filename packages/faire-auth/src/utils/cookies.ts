@@ -199,7 +199,7 @@ const _serialize = (key: string, value: string, opt: CookieOptions = {}) => {
 	if (key.startsWith("__Host-")) {
 		if (!(opt.secure ?? false)) opt.secure = true;
 		if (opt.path !== "/") opt.path = "/";
-		if (opt.domain != null) opt.domain = undefined;
+		if (opt.domain != null) delete opt.domain;
 	}
 
 	if (opt != null && typeof opt.maxAge === "number" && opt.maxAge >= 0) {
@@ -682,7 +682,7 @@ export const setSessionCookie = <V extends object>(
 			dontRememberMe ??= !!dontRememberMeCookie;
 
 			const options = { ...context.authCookies.sessionToken.options };
-			if (dontRememberMe === true) options.maxAge = undefined;
+			if (dontRememberMe === true) delete options.maxAge;
 			else options.maxAge = context.sessionConfig.expiresIn;
 			// const maxAge = dontRememberMe
 			// 	? undefined

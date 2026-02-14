@@ -82,7 +82,7 @@ describe("init", async (test) => {
 		const { client } = await getTestInstance({ basePath: "/custom-path" });
 
 		await client.$fetch("/ok", {
-			onSuccess: (ctx) => {
+			onSuccess: (ctx: any) => {
 				expect(ctx.data.success).toBe(True);
 			},
 		});

@@ -352,7 +352,7 @@ export const getNormalTestSuiteTests = ({
 				});
 				if (!res) throw new TestError("No result", res);
 				let u = users.find((u) => u.id === user.id)!;
-				u.name = res.name;
+				u.name = res.name!;
 				u.updatedAt = res.updatedAt;
 			}
 			const ends_with = users[0]!.name?.slice(-1);
@@ -818,7 +818,7 @@ export const getNormalTestSuiteTests = ({
 						update: { name: user.name + "-last" },
 					});
 					if (!result) throw new TestError("No result", result);
-					users[i]!.name = result.name;
+					users[i]!.name = result.name!;
 					users[i]!.updatedAt = result.updatedAt;
 				}
 

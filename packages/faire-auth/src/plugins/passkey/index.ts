@@ -1,4 +1,5 @@
 import { base64 } from "@faire-auth/core/datatypes";
+import type { FaireAuthPluginDBSchema } from "@faire-auth/core/db";
 import { logger } from "@faire-auth/core/env";
 import { createRoute, emailSchema, req, res } from "@faire-auth/core/factory";
 import { Definitions, False, SCHEMAS, True } from "@faire-auth/core/static";
@@ -23,17 +24,14 @@ import {
 	sessionMiddleware,
 } from "../../api/routes/session";
 import { mergeSchema } from "../../db/schema";
-import type {
-	FaireAuthPlugin,
-	FaireAuthPluginDBSchema,
-	InferOptionSchema,
-} from "../../types/plugin";
+import type { FaireAuthPlugin, InferOptionSchema } from "../../types/plugin";
 import { generateId, generateRandomString } from "../../utils";
 import {
 	getSignedCookie,
 	setSessionCookie,
 	setSignedCookie,
 } from "../../utils/cookies";
+import type { SetRequired } from "type-fest";
 
 interface WebAuthnChallengeValue {
 	expectedChallenge: string;
@@ -234,7 +232,12 @@ export const passkey = (options?: PasskeyOptions) => {
 					const userID = new TextEncoder().encode(
 						generateRandomString(32, "a-z", "0-9"),
 					);
-					let options: PublicKeyCredentialCreationOptionsJSON;
+					let options: SetRequired<
+						PublicKeyCredentialCreationOptionsJSON,
+						"attestation" | "extensions"
+					>;
+					// TODO: always present?
+					// @ts-expect-error attestation and extensions required
 					options = await generateRegistrationOptions({
 						rpName: opts.rpName || ctx.get("context").appName,
 						rpID: getRpID(opts, authOptions.baseURL),
@@ -266,17 +269,14 @@ export const passkey = (options?: PasskeyOptions) => {
 						ctx.get("context").secret,
 						{ ...webAuthnCookie.attributes, maxAge: maxAgeInSeconds },
 					);
-					await ctx.get("context").internalAdapter.createVerificationValue(
-						{
-							identifier: id,
-							value: JSON.stringify({
-								expectedChallenge: options.challenge,
-								userData: { id: session.user.id },
-							}),
-							expiresAt: expirationTime,
-						},
-						ctx,
-					);
+					await ctx.get("context").internalAdapter.createVerificationValue({
+						identifier: id,
+						value: JSON.stringify({
+							expectedChallenge: options.challenge,
+							userData: { id: session.user.id },
+						}),
+						expiresAt: expirationTime,
+					});
 					return ctx.render(options, 200);
 				},
 			),
@@ -368,14 +368,11 @@ export const passkey = (options?: PasskeyOptions) => {
 						ctx.get("context").secret,
 						{ ...webAuthnCookie.attributes, maxAge: maxAgeInSeconds },
 					);
-					await ctx.get("context").internalAdapter.createVerificationValue(
-						{
-							identifier: id,
-							value: JSON.stringify(data),
-							expiresAt: expirationTime,
-						},
-						ctx,
-					);
+					await ctx.get("context").internalAdapter.createVerificationValue({
+						identifier: id,
+						value: JSON.stringify(data),
+						expiresAt: expirationTime,
+					});
 					return ctx.render(options, 200);
 				},
 			),
@@ -583,7 +580,9 @@ export const passkey = (options?: PasskeyOptions) => {
 							expectedRPID: getRpID(opts, authOptions.baseURL),
 							credential: {
 								id: passkey.credentialID,
-								publicKey: base64.decode(passkey.publicKey),
+								publicKey: base64.decode(
+									passkey.publicKey,
+								) as Uint8Array<ArrayBuffer>,
 								counter: passkey.counter,
 								transports: passkey.transports?.split(
 									",",
@@ -605,7 +604,7 @@ export const passkey = (options?: PasskeyOptions) => {
 						});
 						const s = await ctx
 							.get("context")
-							.internalAdapter.createSession(passkey.userId, ctx);
+							.internalAdapter.createSession(passkey.userId);
 						if (!s) {
 							return ctx.render(
 								{

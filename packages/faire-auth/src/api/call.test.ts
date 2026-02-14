@@ -378,6 +378,7 @@ describe("call", async (test) => {
 		// expect(e).toBeInstanceOf(APIError)
 		// expect(e.status).toBe('BAD_REQUEST')
 		expect(response).not.toBeInstanceOf(Response);
+		if (response instanceof Response) throw new Error("Expected non-Response");
 		expect(response.success).toBe(False);
 		expect(response.message).toContain("from after hook");
 	});
@@ -390,6 +391,7 @@ describe("call", async (test) => {
 		// expect(e).toBeInstanceOf(APIError)
 		// expect(response.status).toBe('BAD_REQUEST')
 		expect(response).not.toBeInstanceOf(Response);
+		if (response instanceof Response) throw new Error("Expected non-Response");
 		expect(response.success).toBe(False);
 		expect(response.message).toContain("from chained hook 2");
 	});

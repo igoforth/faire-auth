@@ -1,4 +1,5 @@
 import type { BetterFetch, BetterFetchOption } from "@better-fetch/fetch";
+import type { User } from "@faire-auth/core/db";
 import type {
 	PublicKeyCredentialCreationOptionsJSON,
 	PublicKeyCredentialRequestOptionsJSON,
@@ -11,8 +12,7 @@ import {
 import type { Session } from "inspector";
 import { atom } from "nanostores";
 import { useAuthQuery } from "../../client";
-import type { BetterAuthClientPlugin } from "../../client/types";
-import type { User } from "../../types";
+import type { FaireAuthClientPlugin } from "../../client/types";
 import type { Passkey, passkey as passkeyPl } from "./index";
 
 export const getPasskeyActions = (
@@ -37,7 +37,9 @@ export const getPasskeyActions = (
 		try {
 			const res = await startAuthentication({
 				optionsJSON: response.data,
-				useBrowserAutofill: opts?.autoFill,
+				...(opts?.autoFill !== undefined && {
+					useBrowserAutofill: opts.autoFill,
+				}),
 			});
 			const verified = await $fetch<{ session: Session; user: User }>(
 				"/passkey/verify-authentication",
@@ -104,7 +106,9 @@ export const getPasskeyActions = (
 		try {
 			const res = await startRegistration({
 				optionsJSON: options.data,
-				useAutoRegister: opts?.useAutoRegister,
+				...(opts?.useAutoRegister !== undefined && {
+					useAutoRegister: opts.useAutoRegister,
+				}),
 			});
 			const verified = await $fetch<{ passkey: Passkey }>(
 				"/passkey/verify-registration",
@@ -182,8 +186,9 @@ export const passkeyClient = () => {
 	return {
 		id: "passkey",
 		$InferServerPlugin: {} as ReturnType<typeof passkeyPl>,
-		getActions: ($fetch) => getPasskeyActions($fetch, { $listPasskeys }),
-		getAtoms($fetch) {
+		getActions: ($fetch: BetterFetch) =>
+			getPasskeyActions($fetch, { $listPasskeys }),
+		getAtoms($fetch: BetterFetch) {
 			const listPasskeys = useAuthQuery<Passkey[]>(
 				$listPasskeys,
 				"/passkey/list-user-passkeys",
@@ -198,12 +203,12 @@ export const passkeyClient = () => {
 		},
 		atomListeners: [
 			{
-				matcher: (path) =>
+				matcher: (path: string) =>
 					path === "/passkey/verify-registration" ||
 					path === "/passkey/delete-passkey" ||
 					path === "/passkey/update-passkey",
 				signal: "_listPasskeys",
 			},
 		],
-	} satisfies BetterAuthClientPlugin;
+	} satisfies FaireAuthClientPlugin;
 };

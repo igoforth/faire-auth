@@ -281,7 +281,7 @@ describe("account", async (test) => {
 			{ json: { providerId: "credential", accountId: unlinkAccountId } },
 			{ headers },
 		);
-		expect(unlinkRes.error?.message).toBe(
+		expect((unlinkRes.error as { message?: string })?.message).toBe(
 			BASE_ERROR_CODES.FAILED_TO_UNLINK_LAST_ACCOUNT,
 		);
 	});

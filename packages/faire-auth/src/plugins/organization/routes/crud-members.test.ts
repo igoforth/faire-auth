@@ -216,7 +216,7 @@ describe("updateMemberRole", async (test) => {
 		const member = await api.addMember({
 			json: {
 				organizationId: org.data?.data.id as string,
-				userId: newUser.data.user.id,
+				userId: newUser.data.user!.id,
 				role: "member",
 			},
 		});

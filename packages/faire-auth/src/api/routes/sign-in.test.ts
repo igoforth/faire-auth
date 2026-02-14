@@ -36,9 +36,10 @@ describe("sign-in", async (test) => {
 		);
 		captureCookies({ response: signInRes });
 		const session = await auth.api.getSession({ query: {} }, { headers });
-		expect(session?.data.session.ipAddress).toBe(
+		if (session.success !== true) throw new Error("Expected success response");
+		expect(session.data.session.ipAddress).toBe(
 			headers.get("X-Forwarded-For")!,
 		);
-		expect(session?.data.session.userAgent).toBe(headers.get("User-Agent")!);
+		expect(session.data.session.userAgent).toBe(headers.get("User-Agent")!);
 	});
 });

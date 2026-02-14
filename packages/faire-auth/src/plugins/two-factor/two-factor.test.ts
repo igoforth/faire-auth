@@ -161,7 +161,9 @@ describe("two factor", async (test) => {
 				},
 			},
 		);
-		expect(res.data?.twoFactorRedirect).toBe(True);
+		expect(
+			(res.data as Record<string, unknown>)?.twoFactorRedirect,
+		).toBe(True);
 		const res2 = await client.twoFactor.sendOtp.$post(
 			{ json: {} },
 			{ headers },
@@ -220,7 +222,9 @@ describe("two factor", async (test) => {
 				},
 			},
 		);
-		expect(res.data?.twoFactorRedirect).toBe(True);
+		expect(
+			(res.data as Record<string, unknown>)?.twoFactorRedirect,
+		).toBe(True);
 		await client.twoFactor.sendOtp.$post(
 			{ json: {} },
 			{
@@ -245,7 +249,9 @@ describe("two factor", async (test) => {
 			},
 		);
 
-		expect(verifyRes.error?.message).toBe(
+		if (!verifyRes.error || !("message" in verifyRes.error))
+			throw new Error("Expected error with message");
+		expect(verifyRes.error.message).toBe(
 			TWO_FACTOR_ERROR_CODES.INVALID_TWO_FACTOR_COOKIE,
 		);
 	});
@@ -263,7 +269,9 @@ describe("two factor", async (test) => {
 				headers,
 			},
 		);
-		expect(res.error?.message).toBe(TWO_FACTOR_ERROR_CODES.INVALID_CODE);
+		if (!res.error || !("message" in res.error))
+			throw new Error("Expected error with message");
+		expect(res.error.message).toBe(TWO_FACTOR_ERROR_CODES.INVALID_CODE);
 	});
 
 	let backupCodes: string[] = [];
@@ -314,7 +322,8 @@ describe("two factor", async (test) => {
 		const currentBackupCodes = await api.viewBackupCodes({
 			json: { userId: testUser.id },
 		});
-		expect(currentBackupCodes.success).toBe(True);
+		if (currentBackupCodes.success !== true)
+			throw new Error("Expected success response");
 		expect(currentBackupCodes.data).toBeDefined();
 		expect(currentBackupCodes.data).not.toContain(backupCode);
 
@@ -330,7 +339,9 @@ describe("two factor", async (test) => {
 				},
 			},
 		);
-		expect(res.error?.message).toBe("Invalid backup code");
+		if (!res.error || !("message" in res.error))
+			throw new Error("Expected error with message");
+		expect(res.error.message).toBe("Invalid backup code");
 	});
 
 	test("should trust device", async ({ expect }) => {
@@ -345,7 +356,9 @@ describe("two factor", async (test) => {
 				},
 			},
 		);
-		expect(res.data?.twoFactorRedirect).toBe(True);
+		expect(
+			(res.data as Record<string, unknown>)?.twoFactorRedirect,
+		).toBe(True);
 		await client.twoFactor.sendOtp.$post(
 			{ json: {} },
 			{
@@ -406,7 +419,9 @@ describe("two factor", async (test) => {
 				},
 				{ headers },
 			);
-			expect(res.error?.message).toBe("Invalid code");
+			if (!res.error || !("message" in res.error))
+				throw new Error("Expected error with message");
+			expect(res.error.message).toBe("Invalid code");
 		}
 
 		// Next attempt should be blocked
@@ -418,7 +433,9 @@ describe("two factor", async (test) => {
 			},
 			{ headers },
 		);
-		expect(res.error?.message).toBe(
+		if (!res.error || !("message" in res.error))
+			throw new Error("Expected error with message");
+		expect(res.error.message).toBe(
 			"Too many attempts. Please request a new code.",
 		);
 	});
@@ -481,7 +498,8 @@ describe("two factor auth API", async (test) => {
 		expect(json.data.backupCodes.length).toBe(10);
 		expect(json.data.totpURI).toBeDefined();
 		const session = await api.getSession({ query: {} }, { headers });
-		expect(session.success).toBe(True);
+		if (session.success !== true)
+			throw new Error("Expected success response");
 		expect(session.data.user.twoFactorEnabled).toBe(True);
 	});
 
@@ -490,6 +508,7 @@ describe("two factor auth API", async (test) => {
 			{ json: { password: testUser.password } },
 			{ headers },
 		);
+		if (res.success !== true) throw new Error("Expected success response");
 		expect(res.data).toBeTypeOf("string");
 	});
 
@@ -537,7 +556,8 @@ describe("two factor auth API", async (test) => {
 		);
 		captureCookies()({ response });
 		const session = await api.getSession({ query: {} }, { headers });
-		expect(session.success).toBe(True);
+		if (session.success !== true)
+			throw new Error("Expected success response");
 		expect(session.data.user.twoFactorEnabled).toBe(false);
 	});
 });
@@ -588,17 +608,18 @@ describe("view backup codes", async (test) => {
 			json: { userId },
 		});
 
+		if (viewResult.success !== true)
+			throw new Error("Expected success response");
 		expect(viewResult.data).not.toBeTypeOf("string");
 		expect(Array.isArray(viewResult.data), JSON.stringify(viewResult)).toBe(
 			True,
 		);
 		expect(viewResult.data.length).toBe(10);
-		viewResult.data.forEach((code) => {
+		viewResult.data.forEach((code: string) => {
 			expect(code).toBeTypeOf("string");
 			expect(code.length).toBeGreaterThan(0);
 		});
 		expect(viewResult.data).toEqual(enableJson.data.backupCodes);
-		expect(viewResult.success).toBe(True);
 	});
 
 	test("should return array after generating new backup codes", async ({
@@ -613,6 +634,8 @@ describe("view backup codes", async (test) => {
 			},
 		);
 
+		if (generateResult.success !== true)
+			throw new Error("Expected success response");
 		expect(generateResult.data).toBeDefined();
 		expect(generateResult.data.length).toBe(10);
 
@@ -620,11 +643,12 @@ describe("view backup codes", async (test) => {
 			json: { userId },
 		});
 
-		expect(viewResult.success).toBe(True);
+		if (viewResult.success !== true)
+			throw new Error("Expected success response");
 		expect(viewResult.data).not.toBeTypeOf("string");
 		expect(Array.isArray(viewResult.data)).toBe(True);
 		expect(viewResult.data.length).toBe(10);
-		viewResult.data.forEach((code) => {
+		viewResult.data.forEach((code: string) => {
 			expect(code).toBeTypeOf("string");
 			expect(code.length).toBeGreaterThan(0);
 		});

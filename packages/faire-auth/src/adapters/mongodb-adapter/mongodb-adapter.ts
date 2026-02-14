@@ -195,7 +195,9 @@ export const mongodbAdapter = (db: Db, config?: MongoDBAdapterConfig) => {
 
 			return {
 				async create({ model, data: values }) {
-					const res = await db.collection(model).insertOne(values, { session });
+					const res = await db.collection(model).insertOne(values, {
+						...(session && { session }),
+					});
 					const insertedData = { _id: res.insertedId.toString(), ...values };
 					return insertedData as any;
 				},
@@ -208,13 +210,18 @@ export const mongodbAdapter = (db: Db, config?: MongoDBAdapterConfig) => {
 						: undefined;
 					const res = await db
 						.collection(model)
-						.findOne(clause, { session, projection });
+						.findOne(clause, {
+							...(session && { session }),
+							...(projection && { projection }),
+						});
 					if (!res) return null;
 					return res as any;
 				},
 				async findMany({ model, where, limit, offset, sortBy }) {
 					const clause = where ? convertWhereClause({ where, model }) : {};
-					const cursor = db.collection(model).find(clause, { session });
+					const cursor = db.collection(model).find(clause, {
+						...(session && { session }),
+					});
 					if (limit) cursor.limit(limit);
 					if (offset) cursor.skip(offset);
 					if (sortBy)
@@ -229,7 +236,9 @@ export const mongodbAdapter = (db: Db, config?: MongoDBAdapterConfig) => {
 					const clause = where ? convertWhereClause({ where, model }) : {};
 					const res = await db
 						.collection(model)
-						.countDocuments(clause, { session });
+						.countDocuments(clause, {
+							...(session && { session }),
+						});
 					return res;
 				},
 				async update({ model, where, update: values }) {
@@ -239,7 +248,7 @@ export const mongodbAdapter = (db: Db, config?: MongoDBAdapterConfig) => {
 						clause,
 						{ $set: values as any },
 						{
-							session,
+							...(session && { session }),
 							returnDocument: "after",
 						},
 					);
@@ -254,19 +263,23 @@ export const mongodbAdapter = (db: Db, config?: MongoDBAdapterConfig) => {
 						{
 							$set: values as any,
 						},
-						{ session },
+						{ ...(session && { session }) },
 					);
 					return res.modifiedCount;
 				},
 				async delete({ model, where }) {
 					const clause = convertWhereClause({ where, model });
-					await db.collection(model).deleteOne(clause, { session });
+					await db.collection(model).deleteOne(clause, {
+						...(session && { session }),
+					});
 				},
 				async deleteMany({ model, where }) {
 					const clause = convertWhereClause({ where, model });
 					const res = await db
 						.collection(model)
-						.deleteMany(clause, { session });
+						.deleteMany(clause, {
+							...(session && { session }),
+						});
 					return res.deletedCount;
 				},
 			};

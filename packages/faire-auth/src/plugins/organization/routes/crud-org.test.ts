@@ -93,7 +93,7 @@ describe("get-full-organization", async (test) => {
 			{ headers: newHeaders },
 		);
 		expect(result.error?.status).toBe(403);
-		expect(result.error?.message).toContain(
+		expect((result.error as { message?: string })?.message).toContain(
 			ORGANIZATION_ERROR_CODES.USER_IS_NOT_A_MEMBER_OF_THE_ORGANIZATION,
 		);
 	});
@@ -106,7 +106,7 @@ describe("get-full-organization", async (test) => {
 			{ headers },
 		);
 		expect(result.error?.status).toBe(400);
-		expect(result.error?.message).toContain(
+		expect((result.error as { message?: string })?.message).toContain(
 			ORGANIZATION_ERROR_CODES.ORGANIZATION_NOT_FOUND,
 		);
 	});
@@ -164,7 +164,7 @@ describe("get-full-organization", async (test) => {
 		});
 		await api.addMember({
 			json: {
-				userId: newUser.data.user.id,
+				userId: (newUser as any).data.user.id,
 				role: "member",
 				organizationId: org.data?.data.id as string,
 			},
@@ -199,7 +199,7 @@ describe("get-full-organization", async (test) => {
 			});
 			await api.addMember({
 				json: {
-					userId: newUser.data.user.id,
+					userId: (newUser as any).data.user.id,
 					role: "member",
 					organizationId: org.data?.data.id as string,
 				},

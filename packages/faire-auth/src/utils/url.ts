@@ -117,14 +117,12 @@ export const getTrustedOrigins = (
 	}
 
 	const checkFalsy = () => {
-		let anyFalsy: boolean = false;
-		result.trustedOrigins.forEach((o) => {
-			if (!o && anyFalsy === false) anyFalsy = true;
-		});
-		if (anyFalsy === true)
-			throw new FaireAuthError(
-				"A provided trusted origin is invalid, make sure your trusted origins list is properly defined.",
-			);
+		for (const o of result.trustedOrigins) {
+			if (!o)
+				throw new FaireAuthError(
+					"A provided trusted origin is invalid, make sure your trusted origins list is properly defined.",
+				);
+		}
 	};
 
 	const optionsTrustedOrigins = options.trustedOrigins;

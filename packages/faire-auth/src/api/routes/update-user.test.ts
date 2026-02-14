@@ -26,7 +26,7 @@ describe("updateUser", async (test) => {
 			},
 		},
 		user: {
-			additionalFields: undefined,
+			// additionalFields: undefined,
 			changeEmail: {
 				enabled: true,
 				sendChangeEmailVerification: async ({ user, newEmail, url, token }) => {
@@ -35,7 +35,9 @@ describe("updateUser", async (test) => {
 			},
 		},
 	});
-	const auth = rawAuth as typeof rawAuth & { options: FaireAuthOptions };
+	const auth = rawAuth as Omit<typeof rawAuth, "options"> & {
+		options: FaireAuthOptions;
+	};
 
 	const { user, headers, captureCookies } = await signIn();
 	const session = await client.signIn.email.$post(
@@ -271,12 +273,13 @@ describe("delete user", async (test) => {
 		user: {
 			deleteUser: {
 				enabled: false,
-				sendDeleteAccountVerification: undefined,
 			},
 		},
 		session: { freshAge: 60 * 60 * 24 },
 	});
-	const auth = rawAuth as typeof rawAuth & { options: FaireAuthOptions };
+	const auth = rawAuth as Omit<typeof rawAuth, "options"> & {
+		options: FaireAuthOptions;
+	};
 
 	afterEach(() => {
 		token = "";
@@ -292,7 +295,9 @@ describe("delete user", async (test) => {
 				headers,
 			},
 		);
-		expect(res.error?.message).toBe("Delete user is disabled");
+		expect((res.error as { message?: string })?.message).toBe(
+			"Delete user is disabled",
+		);
 	});
 
 	test("should delete the user with a fresh session", async ({ expect }) => {
@@ -314,11 +319,15 @@ describe("delete user", async (test) => {
 		vi.spyOn(auth.options.user!.deleteUser!, "enabled", "get").mockReturnValue(
 			true,
 		);
+		Object.defineProperty(auth.options.user!.deleteUser!, "sendDeleteAccountVerification", {
+			value: undefined,
+			configurable: true,
+		});
 		vi.spyOn(
-			auth.options.user!.deleteUser!,
+			auth.options.user!.deleteUser! as Record<string, unknown>,
 			"sendDeleteAccountVerification",
 			"get",
-		).mockReturnValue((data, _) => {
+		).mockReturnValue((data: { token: string }, _: any) => {
 			token = data.token;
 		});
 		const { headers, user } = await signIn();

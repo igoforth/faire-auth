@@ -463,7 +463,8 @@ export type RouteConfigToTypedResponse<
 							? Ret extends infer Y
 								? void extends Y
 									? never
-									: Y extends Response & TypedResponse<infer T, infer S, infer F>
+									: Y extends Response &
+												TypedResponse<infer T, infer S, infer F>
 										? TypedResponse<T, S, F>
 										: never
 								: never

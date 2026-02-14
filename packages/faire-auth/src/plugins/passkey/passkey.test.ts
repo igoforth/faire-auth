@@ -21,6 +21,7 @@ describe("passkey", async () => {
 		);
 		// ,JSON.stringify(options)
 		expect(options.success).toBe(True);
+		if (options.success !== true) throw new Error("Expected success response");
 		expect(options.data).toHaveProperty("challenge");
 		expect(options.data).toHaveProperty("rp");
 		expect(options.data).toHaveProperty("user");
@@ -109,6 +110,7 @@ describe("passkey", async () => {
 
 		const passkeys = await api.listPasskeys({ headers });
 
+		if (passkeys.success !== true) throw new Error("Expected success response");
 		expect(Array.isArray(passkeys.data)).toBe(true);
 		if (Array.isArray(passkeys.data)) {
 			expect(passkeys.data[0]).toHaveProperty("id");
@@ -122,6 +124,7 @@ describe("passkey", async () => {
 	it("should update a passkey", async () => {
 		const { headers } = await signIn();
 		const passkeys = await api.listPasskeys({ headers });
+		if (passkeys.success !== true) throw new Error("Expected success response");
 		expect(Array.isArray(passkeys.data)).toBe(true);
 		if (Array.isArray(passkeys.data)) {
 			const passkey = passkeys.data[0]!;
@@ -131,6 +134,7 @@ describe("passkey", async () => {
 			);
 
 			expect(updateResult).not.toMatchObject({ success: false });
+			if (updateResult.success !== true) throw new Error("Expected success response");
 			expect(updateResult.data.name).toBe("newName");
 		}
 	});

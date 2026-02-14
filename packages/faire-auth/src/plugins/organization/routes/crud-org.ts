@@ -166,7 +166,15 @@ export const createOrganization = <O extends OrganizationOptions>(
 					400,
 				);
 
-			const orgData = { name, slug, logo, metadata, ...additionalFields };
+			const orgData = {
+				name,
+				slug,
+				...(logo != null && { logo }),
+				...(metadata != null && {
+					metadata: metadata as Record<string, unknown>,
+				}),
+				...additionalFields,
+			};
 			let hookResponse: { data: Record<string, any> } | undefined = undefined;
 
 			if (orgOptions.organizationHooks?.beforeCreateOrganization) {

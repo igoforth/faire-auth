@@ -45,7 +45,7 @@ describe("Origin Check", async (test) => {
 			},
 		});
 		expect(res.error?.status).toBe(403);
-		expect(res.error?.message).toBe("Invalid callbackURL");
+		expect((res.error as { message?: string })?.message).toBe("Invalid callbackURL");
 	});
 
 	test("should allow query params in callback url", async ({ expect }) => {
@@ -177,7 +177,7 @@ describe("Origin Check", async (test) => {
 			json: { email: testUser.email, redirectTo: "http://malicious.com" },
 		});
 		expect(res.error?.status).toBe(403);
-		expect(res.error?.message).toBe("Invalid redirectURL");
+		expect((res.error as { message?: string })?.message).toBe("Invalid redirectURL");
 	});
 
 	test("should work with list of trusted origins", async ({ expect }) => {

@@ -308,7 +308,7 @@ describe("Social Providers", async (test) => {
 			);
 
 			expect(signInRes.error?.status).toBe(403);
-			expect(signInRes.error?.message).toBe("Invalid callbackURL");
+			expect((signInRes.error as { message?: string })?.message).toBe("Invalid callbackURL");
 		});
 
 		test("should refresh the access token", async ({ expect }) => {

@@ -76,7 +76,7 @@ describe("organization", async (test) => {
 			{ headers },
 		);
 		expect(existingSlug.error?.status).toBe(400);
-		expect(existingSlug.error?.message).toBe("Slug is taken");
+		expect((existingSlug.error as { message?: string })?.message).toBe("Slug is taken");
 	});
 	test("should create organization directly in the server without cookie", async ({
 		expect,
@@ -472,10 +472,10 @@ describe("organization", async (test) => {
 		const { headers } = await signIn();
 		const {
 			data: { members },
-		} = await client.organization.getFullOrganization.$get(
+		} = (await client.organization.getFullOrganization.$get(
 			{ query: { organizationId } },
 			{ headers, fetchOptions: { throw: true } },
-		);
+		)) as any;
 		const { headers: adminHeaders } = await signInMap.get(adminEmail)!();
 
 		const res = await client.organization.updateMemberRole.$post(
@@ -483,7 +483,7 @@ describe("organization", async (test) => {
 				json: {
 					organizationId: organizationId,
 					role: "admin",
-					memberId: members.find((m) => m.role === "owner")?.id!,
+					memberId: members.find((m: any) => m.role === "owner")?.id!,
 				},
 			},
 			{ headers: adminHeaders },
@@ -751,7 +751,7 @@ describe("organization", async (test) => {
 			},
 		});
 		expect(res0.success).toBe(true);
-		expect(res0.message).not.toBeDefined();
+		expect((res0 as any).message).not.toBeDefined();
 		// toBe(
 		// 	ORGANIZATION_ERROR_CODES.ORGANIZATION_MEMBERSHIP_LIMIT_REACHED,
 		// );
@@ -774,7 +774,7 @@ describe("organization", async (test) => {
 				name: userOverLimit.name,
 			},
 		});
-		if (res.success === false)
+		if ((res as any).success === false)
 			throw new Error(`Failed to sign up ${JSON.stringify(res)}`);
 
 		const { headers: headers2 } = await createUser(true, userOverLimit2);
@@ -1261,7 +1261,8 @@ describe("types", async (test) => {
 	const api = $Infer.api(app);
 
 	test("should infer active organization", async ({ expect }) => {
-		type ActiveOrganization = typeof auth.$Infer.ActiveOrganization;
+		type Infer = typeof auth.$Infer;
+		type ActiveOrganization = Infer extends { ActiveOrganization: infer T } ? T : never;
 
 		type FullOrganization = Awaited<ReturnType<typeof api.getFullOrganization>>;
 		expectTypeOf<FullOrganization>().toEqualTypeOf<ActiveOrganization>();
@@ -1595,7 +1596,10 @@ describe("Additional Fields", async (test) => {
 				},
 				{ headers },
 			)
-			.then((x) => x.data);
+			.then((x) => {
+				if (x.success !== true) throw new Error("Expected success response");
+				return x.data;
+			});
 
 		expect(team!.teamRequiredField).toBe("hey");
 		expect(team!.teamOptionalField).toBe("hey2");
@@ -1622,10 +1626,11 @@ describe("Additional Fields", async (test) => {
 		if (updatedTeam.success === false) throw new Error("Failed to update team");
 		expect(updatedTeam?.data?.teamOptionalField).toBe("hey3");
 		expect(updatedTeam?.data?.teamRequiredField).toBe("hey4");
+		const updatedTeamData = updatedTeam.data!;
 		expectTypeOf<
-			typeof updatedTeam.data.teamRequiredField
+			typeof updatedTeamData.teamRequiredField
 		>().toEqualTypeOf<string>();
-		expectTypeOf<typeof updatedTeam.data.teamOptionalField>().toEqualTypeOf<
+		expectTypeOf<typeof updatedTeamData.teamOptionalField>().toEqualTypeOf<
 			string | undefined
 		>();
 		const row = db.team.find((x) => x.id === updatedTeam?.data?.id)!;

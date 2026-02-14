@@ -139,8 +139,8 @@ class BunSqliteConnection implements DatabaseConnection {
 }
 
 class ConnectionMutex {
-	#promise?: Promise<void>;
-	#resolve?: () => void;
+	#promise?: Promise<void> | undefined;
+	#resolve?: (() => void) | undefined;
 
 	async lock(): Promise<void> {
 		while (this.#promise) {

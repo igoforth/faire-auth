@@ -222,7 +222,7 @@ class ClientRequestImpl<F extends BetterFetch = BetterFetch<CreateOptions>> {
 		url = removeIndexString(url);
 		url = replaceUrlParam(url, this.pathParams);
 
-		if (this.queryParams?.size > 0)
+		if (this.queryParams && this.queryParams.size > 0)
 			url = url + "?" + this.queryParams.toString();
 
 		methodUpperCase = this.method.toUpperCase();

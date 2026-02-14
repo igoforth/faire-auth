@@ -148,7 +148,7 @@ describe("set-cookies", (test) => {
 			}),
 			(_o) => async (ctx) => {
 				setCookie(ctx, "test", "test");
-				return ctx.newResponse(null, 200);
+				return ctx.json(null, 200);
 			},
 		);
 		const response = await execute({ returnHeaders: true });
@@ -167,7 +167,7 @@ describe("set-cookies", (test) => {
 				setCookie(ctx, "test", "test");
 				setCookie(ctx, "test2", "test2");
 				setCookie(ctx, "test3", "test3");
-				return ctx.newResponse(null, 200);
+				return ctx.json(null, 200);
 			},
 		);
 		const response = await execute({ returnHeaders: true });
@@ -192,7 +192,7 @@ describe("set-cookies", (test) => {
 					httpOnly: true,
 					path: "/",
 				});
-				return ctx.newResponse(null, 200);
+				return ctx.json(null, 200);
 			},
 		);
 		const response = await execute({ returnHeaders: true });
@@ -220,7 +220,7 @@ describe("set-cookies", (test) => {
 					httpOnly: true,
 					path: "/",
 				});
-				return ctx.newResponse(null, 200);
+				return ctx.json(null, 200);
 			},
 		);
 		const response = await execute({ returnHeaders: true });
@@ -260,7 +260,7 @@ describe("set-cookies", (test) => {
 			}),
 			(_o) => async (ctx) => {
 				await setSignedCookie(ctx, "test", "test", "test");
-				return ctx.newResponse(null, 200);
+				return ctx.json(null, 200);
 			},
 		);
 		// const response = await executeSet({ returnHeaders: true });

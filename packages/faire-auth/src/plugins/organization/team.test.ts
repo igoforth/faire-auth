@@ -165,8 +165,8 @@ describe("team", async (test) => {
 			{ headers },
 		);
 
-		expect(teamsResponse.data.data).toBeInstanceOf(Array);
-		expect(teamsResponse.data.data).toHaveLength(3);
+		expect(teamsResponse.data!.data).toBeInstanceOf(Array);
+		expect(teamsResponse.data!.data).toHaveLength(3);
 	});
 
 	test("should update a team", async ({ expect }) => {
@@ -186,7 +186,7 @@ describe("team", async (test) => {
 			{ query: {} },
 			{ headers },
 		);
-		expect(teamsBeforeRemoval.data.data).toHaveLength(3);
+		expect(teamsBeforeRemoval.data!.data).toHaveLength(3);
 
 		const removeTeamResponse = await client.organization.removeTeam.$post(
 			{ json: { teamId, organizationId } },
@@ -266,7 +266,9 @@ describe("team", async (test) => {
 		const res = await client.organization.inviteMember.$post(
 			{
 				json: {
-					teamId: createTeamResponse.data?.data.id,
+					...(createTeamResponse.data?.data.id !== undefined && {
+						teamId: createTeamResponse.data.data.id,
+					}),
 					email: invitedUser.email,
 					role: "member",
 				},
@@ -293,7 +295,9 @@ describe("team", async (test) => {
 		const res2 = await client.organization.inviteMember.$post(
 			{
 				json: {
-					teamId: createTeamResponse.data?.data.id,
+					...(createTeamResponse.data?.data.id !== undefined && {
+						teamId: createTeamResponse.data.data.id,
+					}),
 					email: "test2@test.com",
 					role: "member",
 				},
@@ -347,10 +351,12 @@ describe("multi team support", async (test) => {
 		);
 
 		expect(organization.success).toBe(True);
-		expect(organization?.data.id).toBeDefined();
-		expect(organization?.data.name).toBe("Test Organization");
+		if (organization.success !== true)
+			throw new Error("Expected success response");
+		expect(organization.data.id).toBeDefined();
+		expect(organization.data.name).toBe("Test Organization");
 
-		organizationId = organization?.data.id as string;
+		organizationId = organization.data.id as string;
 	});
 
 	test("should create 3 teams", async ({ expect }) => {
@@ -363,6 +369,7 @@ describe("multi team support", async (test) => {
 		);
 
 		expect(team1.success).toBe(True);
+		if (team1.success !== true) throw new Error("Expected success response");
 		expect(team1.data.id).toBeDefined();
 		expect(team1.data.organizationId).toBe(organizationId);
 
@@ -374,6 +381,7 @@ describe("multi team support", async (test) => {
 		);
 
 		expect(team2.success).toBe(True);
+		if (team2.success !== true) throw new Error("Expected success response");
 		expect(team2.data.id).toBeDefined();
 		expect(team2.data.organizationId).toBe(organizationId);
 
@@ -385,6 +393,7 @@ describe("multi team support", async (test) => {
 		);
 
 		expect(team3.success).toBe(True);
+		if (team3.success !== true) throw new Error("Expected success response");
 		expect(team3.data.id).toBeDefined();
 		expect(team3.data.organizationId).toBe(organizationId);
 
@@ -412,6 +421,8 @@ describe("multi team support", async (test) => {
 			{ headers: adminHeaders },
 		);
 
+		if (invitation.success !== true)
+			throw new Error("Expected success response");
 		expect(invitation.data.invitation.status).toBeTypeOf("string");
 		expect(invitation.data.invitation.id).toBeDefined();
 		expect(invitation.data.invitation.teamId).toBe(
@@ -431,8 +442,9 @@ describe("multi team support", async (test) => {
 		);
 
 		expect(accept.success).toBe(True);
-		expect(accept?.data.member).toBeDefined();
-		expect(accept?.data.invitation).toBeDefined();
+		if (accept.success !== true) throw new Error("Expected success response");
+		expect(accept.data.member).toBeDefined();
+		expect(accept.data.invitation).toBeDefined();
 	});
 
 	test("should have joined all 3 teams", async ({ expect }) => {
@@ -443,6 +455,7 @@ describe("multi team support", async (test) => {
 			headers: invitedHeaders,
 		});
 
+		if (teams.success !== true) throw new Error("Expected success response");
 		expect(teams.data).toHaveLength(3);
 	});
 
@@ -464,10 +477,12 @@ describe("multi team support", async (test) => {
 			},
 		);
 
-		expect(team.response?.data.id).toBe(team1Id);
-		expect(team.response?.data.organizationId).toBe(organizationId);
+		if (team.response?.success !== true)
+			throw new Error("Expected success response");
+		expect(team.response.data!.id).toBe(team1Id);
+		expect(team.response.data!.organizationId).toBe(organizationId);
 
-		activeTeamCookie = team.headers.getSetCookie()[0];
+		activeTeamCookie = team.headers.getSetCookie()[0]!;
 	});
 
 	test("should allow you to list team members of the current active team", async ({
@@ -482,6 +497,7 @@ describe("multi team support", async (test) => {
 			{ headers: { cookie: activeTeamCookie } },
 		);
 
+		if (members.success !== true) throw new Error("Expected success response");
 		expect(members.data).toHaveLength(1);
 		expect(members.data.at(0)?.teamId).toBe(team1Id);
 	});
@@ -498,6 +514,8 @@ describe("multi team support", async (test) => {
 			{ headers: invitedHeaders },
 		);
 
+		if (team2Members.success !== true)
+			throw new Error("Expected success response");
 		expect(team2Members.data).toHaveLength(1);
 		expect(team2Members.data.at(0)?.teamId).toBe(team2Id);
 
@@ -506,6 +524,8 @@ describe("multi team support", async (test) => {
 			{ headers: invitedHeaders },
 		);
 
+		if (team3Members.success !== true)
+			throw new Error("Expected success response");
 		expect(team3Members.data).toHaveLength(1);
 		expect(team3Members.data.at(0)?.teamId).toBe(team3Id);
 	});
@@ -520,11 +540,15 @@ describe("multi team support", async (test) => {
 			{ headers: adminHeaders },
 		);
 
+		if (team.success !== true) throw new Error("Expected success response");
+
 		const teamMember = await api.addTeamMember(
 			{ json: { userId: invitedUser.id, teamId: team.data.id } },
 			{ headers: adminHeaders },
 		);
 
+		if (teamMember.success !== true)
+			throw new Error("Expected success response");
 		expect(teamMember.data.teamId).toBe(team.data.id);
 		expect(teamMember.data.userId).toBe(invitedUser.id);
 
@@ -532,6 +556,7 @@ describe("multi team support", async (test) => {
 			headers: invitedHeaders,
 		});
 
+		if (teams.success !== true) throw new Error("Expected success response");
 		expect(teams.data).toHaveLength(4);
 
 		team4Id = team.data.id;
@@ -550,6 +575,7 @@ describe("multi team support", async (test) => {
 			headers: invitedHeaders,
 		});
 
+		if (teams.success !== true) throw new Error("Expected success response");
 		expect(teams.data).toHaveLength(3);
 	});
 });

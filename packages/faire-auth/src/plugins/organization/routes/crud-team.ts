@@ -336,7 +336,7 @@ export const updateTeam = <O extends OrganizationOptions>(options: O) => {
 
 			const member = await adapter.findMemberByOrgId({
 				userId: session.user.id,
-				organizationId,
+				organizationId: organizationId as string,
 			});
 
 			if (!member)
@@ -354,7 +354,7 @@ export const updateTeam = <O extends OrganizationOptions>(options: O) => {
 					role: member.role,
 					options: ctx.get("orgOptions"),
 					permissions: { team: ["update"] },
-					organizationId,
+					organizationId: organizationId as string,
 				},
 				ctx,
 			);
@@ -371,7 +371,7 @@ export const updateTeam = <O extends OrganizationOptions>(options: O) => {
 
 			const team = await adapter.findTeamById({
 				teamId,
-				organizationId,
+				organizationId: organizationId as string,
 			});
 			if (!team || team.organizationId !== organizationId)
 				return ctx.render(
@@ -380,7 +380,7 @@ export const updateTeam = <O extends OrganizationOptions>(options: O) => {
 				);
 
 			const updatedTeam = await adapter.updateTeam(team.id, {
-				name,
+				name: name as string,
 				...additionalFields,
 			});
 
