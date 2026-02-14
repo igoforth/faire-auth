@@ -1407,9 +1407,7 @@ export const stripe = <O extends StripeOptions>(options: O) => {
 					operationId: "stripeWebhook",
 					method: "post",
 					path: "/stripe/webhook",
-					// commenting because must be seen in API type? using SERVER_ONLY instead
-					// isAction: false,
-					SERVER_ONLY: true,
+					client: false,
 					// cloneRequest: true,
 					// //don't parse the body
 					// disableBody: true,
