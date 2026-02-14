@@ -134,7 +134,8 @@ describe("passkey", async () => {
 			);
 
 			expect(updateResult).not.toMatchObject({ success: false });
-			if (updateResult.success !== true) throw new Error("Expected success response");
+			if (updateResult.success !== true)
+				throw new Error("Expected success response");
 			expect(updateResult.data.name).toBe("newName");
 		}
 	});

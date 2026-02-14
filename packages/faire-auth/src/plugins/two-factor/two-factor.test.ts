@@ -161,9 +161,7 @@ describe("two factor", async (test) => {
 				},
 			},
 		);
-		expect(
-			(res.data as Record<string, unknown>)?.twoFactorRedirect,
-		).toBe(True);
+		expect((res.data as Record<string, unknown>)?.twoFactorRedirect).toBe(True);
 		const res2 = await client.twoFactor.sendOtp.$post(
 			{ json: {} },
 			{ headers },
@@ -222,9 +220,7 @@ describe("two factor", async (test) => {
 				},
 			},
 		);
-		expect(
-			(res.data as Record<string, unknown>)?.twoFactorRedirect,
-		).toBe(True);
+		expect((res.data as Record<string, unknown>)?.twoFactorRedirect).toBe(True);
 		await client.twoFactor.sendOtp.$post(
 			{ json: {} },
 			{
@@ -356,9 +352,7 @@ describe("two factor", async (test) => {
 				},
 			},
 		);
-		expect(
-			(res.data as Record<string, unknown>)?.twoFactorRedirect,
-		).toBe(True);
+		expect((res.data as Record<string, unknown>)?.twoFactorRedirect).toBe(True);
 		await client.twoFactor.sendOtp.$post(
 			{ json: {} },
 			{
@@ -498,8 +492,7 @@ describe("two factor auth API", async (test) => {
 		expect(json.data.backupCodes.length).toBe(10);
 		expect(json.data.totpURI).toBeDefined();
 		const session = await api.getSession({ query: {} }, { headers });
-		if (session.success !== true)
-			throw new Error("Expected success response");
+		if (session.success !== true) throw new Error("Expected success response");
 		expect(session.data.user.twoFactorEnabled).toBe(True);
 	});
 
@@ -556,8 +549,7 @@ describe("two factor auth API", async (test) => {
 		);
 		captureCookies()({ response });
 		const session = await api.getSession({ query: {} }, { headers });
-		if (session.success !== true)
-			throw new Error("Expected success response");
+		if (session.success !== true) throw new Error("Expected success response");
 		expect(session.data.user.twoFactorEnabled).toBe(false);
 	});
 });

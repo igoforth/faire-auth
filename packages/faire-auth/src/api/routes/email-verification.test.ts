@@ -181,7 +181,9 @@ describe("Email Verification", async (test) => {
 
 		if (!token) throw new Error("Token not populated");
 		const res = await client.verifyEmail.$get({ query: { token } });
-		expect((res.error as { code?: string })?.code, JSON.stringify(res)).toBe("TOKEN_EXPIRED");
+		expect((res.error as { code?: string })?.code, JSON.stringify(res)).toBe(
+			"TOKEN_EXPIRED",
+		);
 	});
 
 	test("should call onEmailVerification callback when email is verified", async ({

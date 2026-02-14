@@ -208,12 +208,10 @@ export const mongodbAdapter = (db: Db, config?: MongoDBAdapterConfig) => {
 								select.map((field) => [getFieldName({ field, model }), 1]),
 							)
 						: undefined;
-					const res = await db
-						.collection(model)
-						.findOne(clause, {
-							...(session && { session }),
-							...(projection && { projection }),
-						});
+					const res = await db.collection(model).findOne(clause, {
+						...(session && { session }),
+						...(projection && { projection }),
+					});
 					if (!res) return null;
 					return res as any;
 				},
@@ -234,11 +232,9 @@ export const mongodbAdapter = (db: Db, config?: MongoDBAdapterConfig) => {
 				},
 				async count({ model, where }) {
 					const clause = where ? convertWhereClause({ where, model }) : {};
-					const res = await db
-						.collection(model)
-						.countDocuments(clause, {
-							...(session && { session }),
-						});
+					const res = await db.collection(model).countDocuments(clause, {
+						...(session && { session }),
+					});
 					return res;
 				},
 				async update({ model, where, update: values }) {
@@ -275,11 +271,9 @@ export const mongodbAdapter = (db: Db, config?: MongoDBAdapterConfig) => {
 				},
 				async deleteMany({ model, where }) {
 					const clause = convertWhereClause({ where, model });
-					const res = await db
-						.collection(model)
-						.deleteMany(clause, {
-							...(session && { session }),
-						});
+					const res = await db.collection(model).deleteMany(clause, {
+						...(session && { session }),
+					});
 					return res.deletedCount;
 				},
 			};

@@ -76,7 +76,9 @@ describe("organization", async (test) => {
 			{ headers },
 		);
 		expect(existingSlug.error?.status).toBe(400);
-		expect((existingSlug.error as { message?: string })?.message).toBe("Slug is taken");
+		expect((existingSlug.error as { message?: string })?.message).toBe(
+			"Slug is taken",
+		);
 	});
 	test("should create organization directly in the server without cookie", async ({
 		expect,
@@ -1262,7 +1264,9 @@ describe("types", async (test) => {
 
 	test("should infer active organization", async ({ expect }) => {
 		type Infer = typeof auth.$Infer;
-		type ActiveOrganization = Infer extends { ActiveOrganization: infer T } ? T : never;
+		type ActiveOrganization = Infer extends { ActiveOrganization: infer T }
+			? T
+			: never;
 
 		type FullOrganization = Awaited<ReturnType<typeof api.getFullOrganization>>;
 		expectTypeOf<FullOrganization>().toEqualTypeOf<ActiveOrganization>();

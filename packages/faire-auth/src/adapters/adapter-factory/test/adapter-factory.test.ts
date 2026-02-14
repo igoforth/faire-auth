@@ -1537,7 +1537,11 @@ describe("Create Adapter Helper", async (test) => {
 											updatedAt: new Date(),
 											name: "test-name",
 										};
-										r({ model, where, ...(select !== undefined && { select }) });
+										r({
+											model,
+											where,
+											...(select !== undefined && { select }),
+										});
 										return fakeResult as any;
 									},
 								};
@@ -1622,7 +1626,11 @@ describe("Create Adapter Helper", async (test) => {
 											updatedAt: new Date(),
 											name: "test-name",
 										};
-										r({ model, where, ...(select !== undefined && { select }) });
+										r({
+											model,
+											where,
+											...(select !== undefined && { select }),
+										});
 										return fakeResult as any;
 									},
 								};

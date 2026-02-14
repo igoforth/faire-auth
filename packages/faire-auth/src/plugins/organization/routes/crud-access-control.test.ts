@@ -228,7 +228,8 @@ describe("dynamic access control", async (test) => {
 			},
 		);
 		expect(shouldFail.success).toBe(True);
-		if (shouldFail.success !== true) throw new Error("Expected success response");
+		if (shouldFail.success !== true)
+			throw new Error("Expected success response");
 		expect(shouldFail.data).toBe(False);
 
 		// Should pass because the user has the permission to create a project.
@@ -246,7 +247,8 @@ describe("dynamic access control", async (test) => {
 			},
 		);
 		expect(shouldPass.success).toBe(True);
-		if (shouldPass.success !== true) throw new Error("Expected success response");
+		if (shouldPass.success !== true)
+			throw new Error("Expected success response");
 		expect(shouldPass.data).toBe(True);
 	});
 
@@ -770,7 +772,8 @@ describe("dynamic access control", async (test) => {
 
 		// Member should be able to list roles (they have ac:read permission)
 		expect(listAsMembers).toBeDefined();
-		if (listAsMembers.success !== true) throw new Error("Expected success response");
+		if (listAsMembers.success !== true)
+			throw new Error("Expected success response");
 		expect(Array.isArray(listAsMembers.data)).toBe(True);
 	});
 
@@ -820,7 +823,8 @@ describe("dynamic access control", async (test) => {
 
 		// Member should be able to read the role (they have ac:read permission)
 		expect(getRoleAsMember).toBeDefined();
-		if (getRoleAsMember.success !== true) throw new Error("Expected success response");
+		if (getRoleAsMember.success !== true)
+			throw new Error("Expected success response");
 		expect(getRoleAsMember.data.id).toBe(testRole.data.data.roleData.id);
 	});
 
@@ -886,7 +890,8 @@ describe("dynamic access control", async (test) => {
 				headers,
 			},
 		);
-		if (roleCheck.success !== true) throw new Error("Expected success response");
+		if (roleCheck.success !== true)
+			throw new Error("Expected success response");
 		expect(roleCheck.data.permission).toEqual({
 			project: ["read"],
 		});
@@ -957,7 +962,8 @@ describe("dynamic access control", async (test) => {
 			},
 		);
 		expect(adminUpdate).toBeDefined();
-		if (adminUpdate.success !== true) throw new Error("Expected success response");
+		if (adminUpdate.success !== true)
+			throw new Error("Expected success response");
 		expect(adminUpdate.data.role).toContain("admin-updated");
 	});
 

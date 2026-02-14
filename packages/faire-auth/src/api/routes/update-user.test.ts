@@ -319,10 +319,14 @@ describe("delete user", async (test) => {
 		vi.spyOn(auth.options.user!.deleteUser!, "enabled", "get").mockReturnValue(
 			true,
 		);
-		Object.defineProperty(auth.options.user!.deleteUser!, "sendDeleteAccountVerification", {
-			value: undefined,
-			configurable: true,
-		});
+		Object.defineProperty(
+			auth.options.user!.deleteUser!,
+			"sendDeleteAccountVerification",
+			{
+				value: undefined,
+				configurable: true,
+			},
+		);
 		vi.spyOn(
 			auth.options.user!.deleteUser! as Record<string, unknown>,
 			"sendDeleteAccountVerification",
