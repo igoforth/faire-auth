@@ -36,6 +36,5 @@ if (
 	typeof globalThis.localStorage === "undefined" ||
 	typeof globalThis.localStorage?.getItem !== "function"
 ) {
-	// @ts-expect-error - Polyfilling browser API in Node.js environment
 	globalThis.localStorage = new LocalStorageMock();
 }
