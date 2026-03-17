@@ -132,9 +132,15 @@ jobs:
           TURBO_CACHE: remote:rw
         run: pnpm build
 
-      - name: Test
+      - name: Test (other packages)
         env:
           TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
           TURBO_TEAM: ${{ vars.TURBO_TEAM || github.repository_owner }}
-        run: pnpm test
+        run: pnpm turbo test --filter='!faire-auth'
+
+      - name: Test (faire-auth)
+        env:
+          TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+          TURBO_TEAM: ${{ vars.TURBO_TEAM || github.repository_owner }}
+        run: pnpm turbo test --filter=faire-auth
             
