@@ -136,7 +136,10 @@ export const totp2fa = (options?: TOTPOptions) => {
 				key: context.secret,
 				data: twoFactor.secret,
 			});
-			const res = await context.password.checkPassword(session.user.id, ctx as any);
+			const res = await context.password.checkPassword(
+				session.user.id,
+				ctx as any,
+			);
 			if (res instanceof Response) return res;
 
 			const totpURI = createOTP(secret, {

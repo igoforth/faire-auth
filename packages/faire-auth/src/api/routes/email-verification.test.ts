@@ -21,7 +21,10 @@ describe("Email Verification", async (test) => {
 	} = await getTestInstance({
 		secondaryStorage: undefined as any,
 		rateLimit: { enabled: false },
-		emailAndPassword: { enabled: true, requireEmailVerification: false as boolean },
+		emailAndPassword: {
+			enabled: true,
+			requireEmailVerification: false as boolean,
+		},
 		emailVerification: {
 			expiresIn: 3600,
 			autoSignInAfterVerification: false as boolean,

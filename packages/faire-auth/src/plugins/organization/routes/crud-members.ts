@@ -33,7 +33,8 @@ export const addMember = <O extends OrganizationOptions>(option: O) => {
 		InferAdditionalFieldsConfig<"member", O>,
 		true
 	>({
-		fields: (option?.schema?.member?.additionalFields ?? {}) as InferAdditionalFieldsConfig<"member", O>,
+		fields: (option?.schema?.member?.additionalFields ??
+			{}) as InferAdditionalFieldsConfig<"member", O>,
 		isClientSide: true,
 	});
 

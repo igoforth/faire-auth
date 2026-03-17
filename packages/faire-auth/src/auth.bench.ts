@@ -49,7 +49,9 @@ interface Context {
 		signInUser?: SignIn,
 		userOverrides?: Partial<TestUser>,
 	) => Promise<false extends SignIn ? TestUser : RepeatableSignInResult>;
-	cookieCapture: <Res>(context: SuccessContext<Res> | { response: Response }) => void;
+	cookieCapture: <Res>(
+		context: SuccessContext<Res> | { response: Response },
+	) => void;
 	db: DBAdapter;
 	api: Auth<any>["api"];
 	$Infer: Record<string, any>;

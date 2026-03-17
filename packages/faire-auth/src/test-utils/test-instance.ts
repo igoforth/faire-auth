@@ -45,7 +45,9 @@ export interface SignInResult {
 	setCookie: (name: string, value: string) => void;
 	captureCookies: (
 		callback?: (cookieMap: Map<string, string>) => void,
-	) => <Res = {}>(context: SuccessContext<Res> | { response: Response }) => void;
+	) => <Res = {}>(
+		context: SuccessContext<Res> | { response: Response },
+	) => void;
 }
 
 export interface RepeatableSignInResult extends SignInResult {

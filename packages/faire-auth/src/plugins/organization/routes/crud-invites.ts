@@ -1,6 +1,9 @@
 import { createRoute, req, res } from "@faire-auth/core/factory";
 import { False } from "@faire-auth/core/static";
-import type { InferAdditionalFieldsConfig, InferAdditionalFieldsFromPluginOptions } from "@faire-auth/core/types";
+import type {
+	InferAdditionalFieldsConfig,
+	InferAdditionalFieldsFromPluginOptions,
+} from "@faire-auth/core/types";
 import { getDate, toSuccess } from "@faire-auth/core/utils";
 import type { z } from "zod";
 import { createEndpoint } from "../../../api/factory/endpoint";
@@ -31,7 +34,8 @@ export const createInvitation = <O extends OrganizationOptions>(option: O) => {
 		InferAdditionalFieldsConfig<"invitation", O, false>,
 		true
 	>({
-		fields: (option?.schema?.invitation?.additionalFields ?? {}) as InferAdditionalFieldsConfig<"invitation", O, false>,
+		fields: (option?.schema?.invitation?.additionalFields ??
+			{}) as InferAdditionalFieldsConfig<"invitation", O, false>,
 		isClientSide: true,
 	});
 

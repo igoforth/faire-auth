@@ -147,26 +147,28 @@ export const organizationClient = <CO extends OrganizationClientOptions>(
 		// 		};
 		// 	}>
 		// >,
-		$InferServerPlugin: {} as OrganizationPlugin<{
-			ac: CO["ac"] extends AccessControl
-				? CO["ac"]
-				: AccessControl<DefaultStatements>;
-			roles: CO["roles"] extends Record<string, Role>
-				? CO["roles"]
-				: {
-						admin: Role;
-						member: Role;
-						owner: Role;
-					};
-			teams: {
-				enabled: CO["teams"] extends { enabled: true } ? true : false;
-			};
-			dynamicAccessControl: {
-				enabled: CO["dynamicAccessControl"] extends { enabled: true }
-					? true
-					: false;
-			};
-		} & (Schema extends undefined ? {} : { schema: Schema })>,
+		$InferServerPlugin: {} as OrganizationPlugin<
+			{
+				ac: CO["ac"] extends AccessControl
+					? CO["ac"]
+					: AccessControl<DefaultStatements>;
+				roles: CO["roles"] extends Record<string, Role>
+					? CO["roles"]
+					: {
+							admin: Role;
+							member: Role;
+							owner: Role;
+						};
+				teams: {
+					enabled: CO["teams"] extends { enabled: true } ? true : false;
+				};
+				dynamicAccessControl: {
+					enabled: CO["dynamicAccessControl"] extends { enabled: true }
+						? true
+						: false;
+				};
+			} & (Schema extends undefined ? {} : { schema: Schema })
+		>,
 		getActions: ($fetch, _$store, co) => ({
 			$Infer: {
 				ActiveOrganization: {} as OrganizationReturn,

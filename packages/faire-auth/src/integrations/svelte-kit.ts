@@ -46,10 +46,7 @@ export function isAuthPath(url: string, options: FaireAuthOptions) {
 }
 
 export const sveltekitCookies = (
-	getRequestEvent: () => RequestEvent<
-		Record<string, string>,
-		string | null
-	>,
+	getRequestEvent: () => RequestEvent<Record<string, string>, string | null>,
 ) => {
 	return {
 		id: "sveltekit-cookies",

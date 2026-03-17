@@ -169,8 +169,9 @@ export const init = <O extends FaireAuthOptions>(options: O) => {
 					);
 				if (!(key in socialProviders))
 					throw new Error(`${key} does not exist in known social providers`);
-				const provider =
-					socialProviders[key as keyof typeof socialProviders](value as any);
+				const provider = socialProviders[key as keyof typeof socialProviders](
+					value as any,
+				);
 				if (value.disableImplicitSignUp)
 					(provider as OAuthProvider).disableImplicitSignUp =
 						value.disableImplicitSignUp;

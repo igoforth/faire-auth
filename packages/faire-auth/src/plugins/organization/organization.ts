@@ -361,7 +361,9 @@ export function organization<
 export function organization<O extends OrganizationOptions>(
 	options?: O,
 ): OrganizationPlugin<O>;
-export function organization<O extends OrganizationOptions>(options?: O): OrganizationPlugin<O> {
+export function organization<O extends OrganizationOptions>(
+	options?: O,
+): OrganizationPlugin<O> {
 	let endpoints = {
 		/**
 		 * ### Endpoint

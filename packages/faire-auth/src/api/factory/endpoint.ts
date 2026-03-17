@@ -212,7 +212,12 @@ export const createEndpoint = <C extends AuthRouteConfig>(
 			config.operationId,
 			"immediate",
 		);
-		(execute as AuthProperties<C>).toArgs = (builtSchemas, context, api, routeHook = hook as FromFn<RouteHook<any>>) => {
+		(execute as AuthProperties<C>).toArgs = (
+			builtSchemas,
+			context,
+			api,
+			routeHook = hook as FromFn<RouteHook<any>>,
+		) => {
 			if (!bundle)
 				bundle = buildRouteBundle(
 					config,
