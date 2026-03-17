@@ -136,7 +136,7 @@ jobs:
         env:
           TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
           TURBO_TEAM: ${{ vars.TURBO_TEAM || github.repository_owner }}
-        run: pnpm turbo test --filter='!faire-auth'
+        run: pnpm turbo test --filter='@faire-auth/*'
 
       - name: Test (faire-auth)
         env:
