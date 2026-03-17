@@ -273,6 +273,31 @@ export type InferAdditionalFieldsFromPluginOptions<
 		: FieldAttributeToObject<Field>
 	: {};
 
+/**
+ * Like InferAdditionalFieldsFromPluginOptions, but returns the raw
+ * FieldAttribute config record instead of the resolved value types.
+ * Use this when passing to toZodSchema which expects field definitions.
+ */
+export type InferAdditionalFieldsConfig<
+	SchemaName extends string,
+	Options extends {
+		schema?: {
+			[key in SchemaName]?: {
+				additionalFields?: Record<string, FieldAttribute>;
+			};
+		};
+	},
+	isClientSide extends boolean = true,
+> = Options["schema"] extends {
+	[key in SchemaName]?: {
+		additionalFields: infer Field extends Record<string, FieldAttribute>;
+	};
+}
+	? isClientSide extends true
+		? RemoveFieldsWithInputFalse<Field>
+		: Field
+	: {};
+
 type RemoveFieldsWithInputFalse<T extends Record<string, FieldAttribute>> = {
 	[K in keyof T as T[K]["input"] extends false ? never : K]: T[K];
 };

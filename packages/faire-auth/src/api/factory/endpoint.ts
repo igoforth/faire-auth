@@ -125,7 +125,7 @@ export const createEndpoint = <C extends AuthRouteConfig>(
 	hook?: FromFn<RouteHook<C>>,
 ): AuthEndpoint<C> => {
 	let bundle: Bundle<C> | null = null;
-	return (options) => {
+	return ((options: FaireAuthOptions) => {
 		const resolvedHandler: RouteHandler<C, ContextVars> = handler(
 			options,
 		) as any;
@@ -134,8 +134,8 @@ export const createEndpoint = <C extends AuthRouteConfig>(
 		// 			config.operationId,
 		// 			"immediate",
 		// 		))
-		const execute: AuthProperties<C> = LoggerAPI.wrap(
-			async (...args) => {
+		const execute = LoggerAPI.wrap(
+			async (...args: any[]) => {
 				if (!bundle)
 					throw new Error(
 						`${config.operationId} config() must be called before using execute()!`,
@@ -207,12 +207,12 @@ export const createEndpoint = <C extends AuthRouteConfig>(
 						);
 					},
 				);
-				return bundle.parser(out) as any;
+				return bundle.parser(out as Response) as any;
 			},
 			config.operationId,
 			"immediate",
 		);
-		execute.toArgs = (builtSchemas, context, api, routeHook = hook) => {
+		(execute as AuthProperties<C>).toArgs = (builtSchemas, context, api, routeHook = hook as FromFn<RouteHook<any>>) => {
 			if (!bundle)
 				bundle = buildRouteBundle(
 					config,
@@ -247,10 +247,10 @@ export const createEndpoint = <C extends AuthRouteConfig>(
 					`${config.operationId} handler() was called when already initialized`,
 				);
 
-			return [bundle.resolvedConfig, resolvedHandler, routeHook];
+			return [bundle.resolvedConfig, resolvedHandler, routeHook] as AuthArgs<C>;
 		};
-		return execute;
-	};
+		return execute as AuthProperties<C>;
+	}) as unknown as AuthEndpoint<C>;
 };
 
 export const createAPI = <T extends Record<string, AuthProperties<any>>>(

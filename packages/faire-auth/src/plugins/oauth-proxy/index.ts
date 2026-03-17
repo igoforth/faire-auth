@@ -46,15 +46,15 @@ export const oAuthProxy = (opts?: OAuthProxyOptions) => {
 		return new URL(opts?.currentURL ?? ctx.req.url);
 	};
 
-	const shimCallbackURL = <V extends object>(
+	const shimCallbackURL = (
 		input:
 			| {
 					target: LiteralStringUnion<"json">;
 					success: true;
-					data: { callbackURL?: string | undefined };
+					data: Record<string, any> & { callbackURL?: string | undefined };
 			  }
 			| { success: false; error: z.ZodError<unknown> },
-		ctx: Context<ContextVars<V>>,
+		ctx: Context<any, any, {}>,
 	) => {
 		// return if validation unsuccessful
 		if (input.success === false) return;

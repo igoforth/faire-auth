@@ -262,6 +262,11 @@ export type OrganizationPlugin<O extends OrganizationOptions> = {
 export function organization<
 	O extends OrganizationOptions & {
 		teams: { enabled: true };
+		dynamicAccessControl?:
+			| {
+					enabled?: false | undefined;
+			  }
+			| undefined;
 	},
 >(
 	options?: O,
@@ -273,8 +278,8 @@ export function organization<
 		Organization: InferOrganization<O>;
 		Invitation: InferInvitation<O>;
 		Member: InferMember<O>;
-		Team: O["teams"] extends { enabled: true } ? Team : unknown;
-		TeamMember: O["teams"] extends { enabled: true } ? TeamMember : unknown;
+		Team: O["teams"] extends { enabled: true } ? Team : never;
+		TeamMember: O["teams"] extends { enabled: true } ? TeamMember : never;
 		ActiveOrganization: O["teams"] extends { enabled: true }
 			? {
 					members: InferMember<O, false>[];
@@ -325,6 +330,7 @@ export function organization<
 export function organization<
 	O extends OrganizationOptions & {
 		dynamicAccessControl: { enabled: true };
+		teams?: { enabled?: false | undefined } | undefined;
 	},
 >(
 	options?: O,
@@ -354,31 +360,8 @@ export function organization<
 };
 export function organization<O extends OrganizationOptions>(
 	options?: O,
-): {
-	id: "organization";
-	routes: OrganizationEndpoints<O>;
-	schema: OrganizationSchema<O>;
-	$Infer: {
-		Organization: InferOrganization<O>;
-		Invitation: InferInvitation<O>;
-		Member: InferMember<O>;
-		Team: O["teams"] extends { enabled: true } ? Team : any;
-		TeamMember: O["teams"] extends { enabled: true } ? TeamMember : any;
-		ActiveOrganization: O["teams"] extends { enabled: true }
-			? {
-					members: InferMember<O, false>[];
-					invitations: InferInvitation<O, false>[];
-					teams: InferTeam<O, false>[];
-				} & InferOrganization<O, false>
-			: {
-					members: InferMember<O, false>[];
-					invitations: InferInvitation<O, false>[];
-				} & InferOrganization<O, false>;
-	};
-	$ERROR_CODES: typeof ORGANIZATION_ERROR_CODES;
-	options: O;
-};
-export function organization<O extends OrganizationOptions>(options?: O) {
+): OrganizationPlugin<O>;
+export function organization<O extends OrganizationOptions>(options?: O): OrganizationPlugin<O> {
 	let endpoints = {
 		/**
 		 * ### Endpoint
@@ -1209,5 +1192,5 @@ export function organization<O extends OrganizationOptions>(options?: O) {
 		},
 		$ERROR_CODES: ORGANIZATION_ERROR_CODES,
 		options: options as O,
-	} satisfies FaireAuthPlugin;
+	} satisfies FaireAuthPlugin as any;
 }

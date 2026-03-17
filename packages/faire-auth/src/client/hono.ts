@@ -288,7 +288,7 @@ export const createHonoClient = <
 	options: CreateOptions<S>,
 	routes: any,
 	$fetch: BetterFetch<
-		Exclude<(typeof options)["createFetchOptions"], undefined>
+		Exclude<(typeof options)["createFetchOptions"], undefined> & CreateFetchOption
 	>,
 	atoms?: Record<string, Atom>,
 	atomListeners?: FaireAuthClientPlugin["atomListeners"],

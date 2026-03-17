@@ -237,7 +237,7 @@ describe("two factor", async (test) => {
 			{
 				headers,
 				fetchOptions: {
-					onResponse: captureCookies((parsed) => {
+					onSuccess: captureCookies((parsed) => {
 						// Session should not be defined when two factor cookie is missing
 						expect(parsed.get("faire-auth.session_token")).not.toBeDefined();
 					}),
@@ -308,11 +308,13 @@ describe("two factor", async (test) => {
 			{ json: { code: backupCode } },
 			{
 				headers,
-				fetchOptions: captureCookies((parsed) => {
-					const token = parsed.get("faire-auth.session_token");
-					expect(token).toBeDefined();
-					expect(token!.length).toBeGreaterThan(0);
-				}),
+				fetchOptions: {
+					onSuccess: captureCookies((parsed) => {
+						const token = parsed.get("faire-auth.session_token");
+						expect(token).toBeDefined();
+						expect(token!.length).toBeGreaterThan(0);
+					}),
+				},
 			},
 		);
 		const currentBackupCodes = await api.viewBackupCodes({

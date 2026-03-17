@@ -1,6 +1,6 @@
 import { createRoute, req, res } from "@faire-auth/core/factory";
 import { Definitions, False, SCHEMAS, True } from "@faire-auth/core/static";
-import type { InferAdditionalFieldsFromPluginOptions } from "@faire-auth/core/types";
+import type { InferAdditionalFieldsConfig, InferAdditionalFieldsFromPluginOptions } from "@faire-auth/core/types";
 import { toSuccess } from "@faire-auth/core/utils";
 import * as z from "zod";
 import { createEndpoint } from "../../../api/factory/endpoint";
@@ -261,10 +261,10 @@ export const removeTeam = <O extends OrganizationOptions>(options: O) =>
 
 export const updateTeam = <O extends OrganizationOptions>(options: O) => {
 	const additionalFieldsSchema = toZodSchema<
-		InferAdditionalFieldsFromPluginOptions<"team", O>,
+		InferAdditionalFieldsConfig<"team", O>,
 		true
 	>({
-		fields: options?.schema?.team?.additionalFields ?? {},
+		fields: (options?.schema?.team?.additionalFields ?? {}) as InferAdditionalFieldsConfig<"team", O>,
 		isClientSide: true,
 	});
 

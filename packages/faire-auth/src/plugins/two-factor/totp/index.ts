@@ -6,7 +6,7 @@ import { createRoute } from "@faire-auth/core/factory";
 import { sessionMiddleware } from "../../../api/routes/session";
 import { symmetricDecrypt } from "../../../crypto";
 import { createOTP } from "@faire-auth/core/datatypes";
-import type { User } from "../../../types/models";
+import type { User } from "@faire-auth/core/db";
 import { False } from "@faire-auth/core/static";
 import { setSessionCookie } from "../../../utils/cookies";
 import { BASE_ERROR_CODES } from "@faire-auth/core/error";
@@ -136,7 +136,7 @@ export const totp2fa = (options?: TOTPOptions) => {
 				key: context.secret,
 				data: twoFactor.secret,
 			});
-			const res = await context.password.checkPassword(session.user.id, ctx);
+			const res = await context.password.checkPassword(session.user.id, ctx as any);
 			if (res instanceof Response) return res;
 
 			const totpURI = createOTP(secret, {

@@ -13,6 +13,7 @@ declare module "vitest" {
 		mongodb: MongoDBConnection;
 		postgresDrizzle: PostgreSQLConnection;
 		postgresKysely: PostgreSQLConnection;
+		postgresKysely2: PostgreSQLConnection;
 		postgresPrisma: PostgreSQLConnection;
 		mysqlDrizzle: MySQLConnection;
 		mysqlKysely: MySQLConnection;

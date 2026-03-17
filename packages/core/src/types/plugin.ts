@@ -22,7 +22,7 @@ export interface FaireAuthPlugin<E extends Env = any> {
 	init?:
 		| ((ctx: AuthContext<E>) => {
 				context?: DeepPartial<ExK<AuthContext<E>, "options">>;
-				options?: Partial<FaireAuthOptions>;
+				options?: DeepPartial<FaireAuthOptions> | Record<string, any>;
 		  } | void)
 		| undefined;
 	/**

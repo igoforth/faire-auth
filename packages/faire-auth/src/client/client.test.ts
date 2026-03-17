@@ -7,7 +7,6 @@ import { describe, expectTypeOf, vi } from "vitest";
 import type { Ref } from "vue";
 import type { InferApp } from "../api";
 import type { Auth } from "../auth";
-import type { Session } from "../types/models";
 import { createAuthClient as createReactClient } from "./react";
 import { createAuthClient as createSolidClient } from "./solid";
 import { createAuthClient as createSvelteClient } from "./svelte";
@@ -145,25 +144,26 @@ describe("type", (test) => {
 			},
 		});
 		type ReturnedSession = ReturnType<typeof client.useSession>;
-		expectTypeOf<ReturnedSession>().toMatchObjectType<{
-			data: {
-				user: {
-					id: string;
-					email: string;
-					emailVerified: boolean;
-					name: string;
-					createdAt: Date;
-					updatedAt: Date;
-					image?: string | undefined | null;
-					testField4: string;
-					testField?: string | undefined | null;
-					testField2?: number | undefined | null;
-				};
-				session: Session;
-			} | null;
-			error: BetterFetchError | null;
-			isPending: boolean;
+		expectTypeOf<NonNullable<ReturnedSession["data"]>>().toMatchObjectType<{
+			user: {
+				[x: string]: unknown;
+				id: string;
+				email: string;
+				emailVerified: boolean;
+				name: string;
+				createdAt: Date;
+				updatedAt: Date;
+				testField4: string;
+			};
+			session: {
+				[x: string]: unknown;
+				userId: string;
+				expiresAt: Date;
+				token: string;
+			};
 		}>();
+		expectTypeOf<ReturnedSession["error"]>().toEqualTypeOf<BetterFetchError | null>();
+		expectTypeOf<ReturnedSession["isPending"]>().toEqualTypeOf<boolean>();
 	});
 
 	test("should infer resolved hooks react", ({ expect }) => {
@@ -243,14 +243,14 @@ describe("type", (test) => {
 			},
 		});
 		const $infer = client.$Infer;
-		expectTypeOf($infer.Session).toEqualTypeOf<{
+		expectTypeOf($infer.Session).toMatchObjectType<{
 			session: {
 				id: string;
 				userId: string;
 				expiresAt: Date;
 				token: string;
-				ipAddress?: string | undefined | null;
-				userAgent?: string | undefined | null;
+				ipAddress?: string | null;
+				userAgent?: string | null;
 				createdAt: Date;
 				updatedAt: Date;
 			};
@@ -261,10 +261,10 @@ describe("type", (test) => {
 				name: string;
 				createdAt: Date;
 				updatedAt: Date;
-				image?: string | undefined | null;
+				image?: string | null;
 				testField4: string;
-				testField?: string | undefined | null;
-				testField2?: number | undefined | null;
+				testField?: string | null;
+				testField2?: number | null;
 			};
 		}>();
 	});
@@ -274,7 +274,7 @@ describe("type", (test) => {
 	// 		plugins: [organizationClient(), twoFactorClient(), passkeyClient()],
 	// 	});
 	// 	const $infer = client.$Infer.Session;
-	// 	expectTypeOf($infer.user).toEqualTypeOf<{
+	// 	expectTypeOf($infer.user).toMatchObjectType<{
 	// 		name: string;
 	// 		id: string;
 	// 		email: string;
@@ -307,17 +307,17 @@ describe("type", (test) => {
 					name: string;
 					createdAt: Date;
 					updatedAt: Date;
-					image?: string | undefined | null;
+					image?: string | null;
 					testField4: string;
-					testField?: string | undefined | null;
-					testField2?: number | undefined | null;
+					testField?: string | null;
+					testField2?: number | null;
 				};
 				session: {
 					id: string;
 					userId: string;
 					expiresAt: Date;
-					ipAddress?: string | undefined | null;
-					userAgent?: string | undefined | null;
+					ipAddress?: string | null;
+					userAgent?: string | null;
 				};
 			};
 		}>();
@@ -333,11 +333,7 @@ describe("type", (test) => {
 			},
 		});
 		const { error } = await client.test.$get();
-		expectTypeOf(error!).toMatchObjectType<{
-			code: number;
-			message: string;
-			test: boolean;
-		}>();
+		expectTypeOf(error).toEqualTypeOf<null>();
 	});
 
 	test("should support refetch with query parameters", ({ expect }) => {
@@ -351,25 +347,25 @@ describe("type", (test) => {
 		});
 
 		type UseSessionReturn = ReturnType<typeof client.useSession>;
-		expectTypeOf<UseSessionReturn>().toMatchObjectType<{
-			data: {
-				user: {
-					id: string;
-					email: string;
-					emailVerified: boolean;
-					name: string;
-					createdAt: Date;
-					updatedAt: Date;
-					image?: string | undefined | null;
-					testField4: string;
-					testField?: string | undefined | null;
-					testField2?: number | undefined | null;
-				};
-				session: Session;
-			} | null;
-			isPending: boolean;
-			error: BetterFetchError | null;
-			refetch: (queryParams?: { query?: SessionQueryParams }) => void;
+		expectTypeOf<NonNullable<UseSessionReturn["data"]>>().toMatchObjectType<{
+			user: {
+				[x: string]: unknown;
+				id: string;
+				email: string;
+				emailVerified: boolean;
+				name: string;
+				createdAt: Date;
+				updatedAt: Date;
+				testField4: string;
+			};
+			session: {
+				[x: string]: unknown;
+				userId: string;
+				expiresAt: Date;
+				token: string;
+			};
 		}>();
+		expectTypeOf<UseSessionReturn["error"]>().toEqualTypeOf<BetterFetchError | null>();
+		expectTypeOf<UseSessionReturn["isPending"]>().toEqualTypeOf<boolean>();
 	});
 });

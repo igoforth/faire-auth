@@ -2,6 +2,7 @@ import { BASE_ERROR_CODES } from "@faire-auth/core/error";
 import { createRoute, req, res } from "@faire-auth/core/factory";
 import { False } from "@faire-auth/core/static";
 import type {
+	InferAdditionalFieldsConfig,
 	InferAdditionalFieldsFromPluginOptions,
 	LiteralStringUnion,
 } from "@faire-auth/core/types";
@@ -29,10 +30,10 @@ import type { OrganizationOptions } from "../types";
 
 export const addMember = <O extends OrganizationOptions>(option: O) => {
 	const additionalFieldsSchema = toZodSchema<
-		InferAdditionalFieldsFromPluginOptions<"member", O>,
+		InferAdditionalFieldsConfig<"member", O>,
 		true
 	>({
-		fields: option?.schema?.member?.additionalFields ?? {},
+		fields: (option?.schema?.member?.additionalFields ?? {}) as InferAdditionalFieldsConfig<"member", O>,
 		isClientSide: true,
 	});
 
@@ -80,13 +81,13 @@ export const addMember = <O extends OrganizationOptions>(option: O) => {
 		}),
 		(_authOptions) => async (ctx) => {
 			let { organizationId, role, userId, teamId, ...additionalFields } =
-				ctx.req.valid("json");
+				ctx.req.valid("json") as any;
 			const session =
 				userId == null || organizationId == null
 					? (ctx.get("session") ?? null)
 					: null;
 			userId ??= session?.user.id!;
-			organizationId ??= session?.session.activeOrganizationId!;
+			organizationId ??= session?.session.activeOrganizationId as string;
 			if (!organizationId)
 				return ctx.render(
 					{
@@ -775,7 +776,7 @@ export const listMembers = <O extends OrganizationOptions>(option: O) =>
 				organizationId,
 			} = ctx.req.valid("query");
 
-			organizationId ??= session?.session.activeOrganizationId!;
+			organizationId ??= session?.session.activeOrganizationId as string;
 			if (!organizationId)
 				return ctx.render(
 					{
@@ -863,7 +864,7 @@ export const getActiveMemberRole = <O extends OrganizationOptions>(option: O) =>
 					? (ctx.get("session") ?? null)
 					: null;
 			userId ??= session?.user.id;
-			organizationId ??= session?.session.activeOrganizationId!;
+			organizationId ??= session?.session.activeOrganizationId as string;
 			if (!organizationId || !userId)
 				return ctx.render(
 					{

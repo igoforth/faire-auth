@@ -135,7 +135,7 @@ export const getSession = createEndpoint(
 					sessionDataPayload.expiresAt < Date.now() ||
 					session.session.expiresAt < new Date();
 				if (!hasExpired) {
-					ctx.set("session", session);
+					ctx.set("session" as any, session);
 					return ctx.render(session, 200);
 				}
 
@@ -148,7 +148,7 @@ export const getSession = createEndpoint(
 
 			const session =
 				await context.internalAdapter.findSession(sessionCookieToken);
-			ctx.set("session", session);
+			ctx.set("session" as any, session);
 			if (!session || session.session.expiresAt < new Date()) {
 				deleteSessionCookie(ctx);
 				if (session) {
@@ -310,7 +310,7 @@ export const getSessionFromCtx = async <
 			401,
 		);
 
-	ctx.set("session", newSession.data);
+	ctx.set("session" as any, newSession.data);
 	return newSession.data as any;
 };
 

@@ -102,21 +102,18 @@ export const username = (options?: UsernameOptions) => {
 	};
 
 	// TODO: Created updateJson in utils/hono to move back to hooks if desired
-	const shimUsername = async <V extends object>(
+	const shimUsername = async (
 		input:
 			| {
 					target: LiteralStringUnion<"json">;
 					success: true;
-					data: {
+					data: Record<string, any> & {
 						username?: string | undefined;
 						displayUsername?: string | undefined;
-						[x: string]: unknown;
 					};
 			  }
 			| { success: false; error: z.ZodError<unknown> },
-		ctx: Context<
-			ContextVars<V & { session: { session: Session; user: User } }>
-		>,
+		ctx: Context<any, any, {}>,
 	) => {
 		// return if validation unsuccessful
 		if (input.success === false) return;
@@ -552,7 +549,10 @@ export const username = (options?: UsernameOptions) => {
 			}),
 			options?.schema,
 		),
-		routeHooks: { signUpEmail: shimUsername, updateUser: shimUsername },
+		routeHooks: {
+			signUpEmail: shimUsername as any,
+			updateUser: shimUsername as any,
+		},
 
 		// hooks: {
 		//   before: [

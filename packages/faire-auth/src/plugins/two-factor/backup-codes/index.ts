@@ -275,7 +275,7 @@ export const backupCode2fa = (options?: BackupCodeOptions) => {
 							400,
 						);
 
-					const res = await context.password.checkPassword(user.id, ctx);
+					const res = await context.password.checkPassword(user.id, ctx as any);
 					if (res instanceof Response) return res;
 
 					const backupCodes = await generateBackupCodes(

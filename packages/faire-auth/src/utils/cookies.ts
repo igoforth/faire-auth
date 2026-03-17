@@ -503,7 +503,7 @@ export const createCookieSetter =
 export const createCookieCapture =
 	(headers: Headers) =>
 	(callback?: (cookieMap: Map<string, string>) => void) =>
-	<Res = {}>(context: SuccessContext<Res>) => {
+	<Res = {}>(context: SuccessContext<Res> | { response: Response }) => {
 		const setCookieHeader = context.response.headers.getSetCookie();
 		if (setCookieHeader.length === 0) return;
 

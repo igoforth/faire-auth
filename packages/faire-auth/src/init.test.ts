@@ -126,7 +126,7 @@ describe("init", async (test) => {
 			},
 		});
 		const ok = await client.$fetch("/ok");
-		expect(ok.data.success).toBe(True);
+		expect((ok.data as any).success).toBe(True);
 	});
 
 	test("should allow plugins to set config values", async ({ expect }) => {

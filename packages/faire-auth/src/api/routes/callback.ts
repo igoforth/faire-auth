@@ -199,7 +199,7 @@ const handleCallbackOAuth = async (
 				...tokens,
 				...(tokens.scopes &&
 					tokens.scopes.length > 0 && { scope: tokens.scopes.join(",") }),
-			},
+			} as any,
 			callbackURL,
 			disableSignUp:
 				(provider.disableImplicitSignUp === true &&

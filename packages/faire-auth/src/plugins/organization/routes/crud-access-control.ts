@@ -1309,8 +1309,8 @@ async function checkIfMemberHasPermission<V extends object>({
 	const missingPermissions = hasNecessaryPermissions
 		.filter((x) => x.hasPermission === false)
 		.map((x) => {
-			const key = Object.keys(x.resource)[0];
-			return `${key}:${x.resource[key][0]}` as const;
+			const key = Object.keys(x.resource)[0]!;
+			return `${key}:${x.resource[key]![0]}` as const;
 		});
 	if (missingPermissions.length > 0) {
 		ctx

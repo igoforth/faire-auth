@@ -42,16 +42,17 @@ type ToInput<I, S extends string> = I extends { in: { [K in S]: infer Q } }
 	: {};
 
 interface Context {
-	testUser: CreatedTestUser;
+	testUser: TestUser | undefined;
 	currentTestUser?: typeof BenchUtils.testUser | undefined;
 	signIn: () => Promise<SignInResult>;
 	createUser: <SignIn extends boolean = true>(
 		signInUser?: SignIn,
 		userOverrides?: Partial<TestUser>,
 	) => Promise<false extends SignIn ? TestUser : RepeatableSignInResult>;
-	cookieCapture: <Res>(context: SuccessContext<Res>) => void;
+	cookieCapture: <Res>(context: SuccessContext<Res> | { response: Response }) => void;
 	db: DBAdapter;
 	api: Auth<any>["api"];
+	$Infer: Record<string, any>;
 }
 
 const BenchUtils = {
@@ -304,12 +305,12 @@ class RequestSecBenchmark<O extends FaireAuthOptions> extends BenchmarkBase {
 			let headers: HeadersInit = new Headers({
 				"Content-Type": "application/json",
 			});
-			const ctx: Context = {
+			const ctx = {
 				api,
 				cookieCapture: createCookieCapture(headers)(),
 				...rest,
 				currentTestUser: undefined,
-			};
+			} as Context;
 
 			const fetchHandler = async () =>
 				await client.$fetch(path, {

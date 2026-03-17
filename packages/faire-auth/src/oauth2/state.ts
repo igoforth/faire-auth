@@ -97,9 +97,9 @@ export const parseState = async <V extends object>(
 > => {
 	let state: string;
 	try {
-		state = ctx.req.valid("json").state;
+		state = ctx.req.valid("json").state as string;
 	} catch {
-		state = ctx.req.valid("query").state;
+		state = ctx.req.valid("query").state as string;
 	}
 
 	const context = ctx.get("context");

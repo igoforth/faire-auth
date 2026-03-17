@@ -57,7 +57,7 @@ describe("adapter test", async (test) => {
 				create: {
 					async before(user, context) {
 						hookUserCreateBefore(user, context);
-						return { data: user };
+						return { data: user } as any;
 					},
 					async after(user, context) {
 						hookUserCreateAfter(user, context);

@@ -1,6 +1,6 @@
 import { createRoute, req, res } from "@faire-auth/core/factory";
 import { False } from "@faire-auth/core/static";
-import type { InferAdditionalFieldsFromPluginOptions } from "@faire-auth/core/types";
+import type { InferAdditionalFieldsConfig, InferAdditionalFieldsFromPluginOptions } from "@faire-auth/core/types";
 import { getDate, toSuccess } from "@faire-auth/core/utils";
 import type { z } from "zod";
 import { createEndpoint } from "../../../api/factory/endpoint";
@@ -28,10 +28,10 @@ import type { OrganizationOptions } from "../types";
 
 export const createInvitation = <O extends OrganizationOptions>(option: O) => {
 	const additionalFieldsSchema = toZodSchema<
-		InferAdditionalFieldsFromPluginOptions<"invitation", O, false>,
+		InferAdditionalFieldsConfig<"invitation", O, false>,
 		true
 	>({
-		fields: option?.schema?.invitation?.additionalFields ?? {},
+		fields: (option?.schema?.invitation?.additionalFields ?? {}) as InferAdditionalFieldsConfig<"invitation", O, false>,
 		isClientSide: true,
 	});
 
@@ -132,7 +132,7 @@ export const createInvitation = <O extends OrganizationOptions>(option: O) => {
 				resend,
 				teamId,
 				...additionalFields
-			} = ctx.req.valid("json");
+			} = ctx.req.valid("json") as any;
 			const organizationId =
 				requestOrganizationId ?? session.session.activeOrganizationId;
 			if (!organizationId) {
@@ -273,7 +273,7 @@ export const createInvitation = <O extends OrganizationOptions>(option: O) => {
 							...member,
 							user: session.user,
 						},
-						invitation: updatedInvitation,
+						invitation: updatedInvitation as any,
 					},
 					ctx.req,
 				);

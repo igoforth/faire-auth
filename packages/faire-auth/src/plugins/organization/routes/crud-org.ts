@@ -1,6 +1,6 @@
 import { createRoute, req, res } from "@faire-auth/core/factory";
 import { Definitions, False, SCHEMAS, True } from "@faire-auth/core/static";
-import type { InferAdditionalFieldsFromPluginOptions } from "@faire-auth/core/types";
+import type { InferAdditionalFieldsConfig, InferAdditionalFieldsFromPluginOptions } from "@faire-auth/core/types";
 import { toSuccess } from "@faire-auth/core/utils";
 import * as z from "zod";
 import { createEndpoint } from "../../../api/factory/endpoint";
@@ -298,10 +298,10 @@ export const updateOrganization = <O extends OrganizationOptions>(
 	options: O,
 ) => {
 	const additionalFieldsSchema = toZodSchema<
-		InferAdditionalFieldsFromPluginOptions<"organization", O>,
+		InferAdditionalFieldsConfig<"organization", O>,
 		true
 	>({
-		fields: options?.schema?.organization?.additionalFields ?? {},
+		fields: (options?.schema?.organization?.additionalFields ?? {}) as InferAdditionalFieldsConfig<"organization", O>,
 		isClientSide: true,
 	});
 	type Body = {

@@ -19,12 +19,12 @@ describe("Email Verification", async (test) => {
 		createUser,
 		client,
 	} = await getTestInstance({
-		secondaryStorage: undefined,
+		secondaryStorage: undefined as any,
 		rateLimit: { enabled: false },
-		emailAndPassword: { enabled: true, requireEmailVerification: false },
+		emailAndPassword: { enabled: true, requireEmailVerification: false as boolean },
 		emailVerification: {
 			expiresIn: 3600,
-			autoSignInAfterVerification: false,
+			autoSignInAfterVerification: false as boolean,
 			onEmailVerification: undefined as any,
 			async sendVerificationEmail({ user, url, token: _token }) {
 				token = _token;
@@ -33,7 +33,7 @@ describe("Email Verification", async (test) => {
 		},
 		user: {
 			changeEmail: {
-				enabled: false,
+				enabled: false as boolean,
 				async sendChangeEmailVerification({ token: _token }) {
 					token = _token;
 				},

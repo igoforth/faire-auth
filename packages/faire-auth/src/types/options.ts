@@ -31,10 +31,12 @@ export type Hooks = {
 
 export type DTO = {
 	[K in LiteralStringUnion<BaseDefinitions>]?: K extends BaseDefinitions
-		? DTOTransformer<z.output<(typeof SCHEMAS)[K]["default"]>> extends (
-				...args: infer A
-			) => infer R
-			? (...args: A) => R
+		? (typeof SCHEMAS)[K] extends { default: infer D }
+			? DTOTransformer<z.output<D & z.ZodType>> extends (
+					...args: infer A
+				) => infer R
+				? (...args: A) => R
+				: never
 			: never
 		: (schema: any) => any | Promise<any>;
 };

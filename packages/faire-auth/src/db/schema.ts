@@ -110,7 +110,7 @@ export function parseInputData<T extends Record<string, any>>(
 					fieldError = ctx.render(
 						{ success: False, message: `${key} is not allowed to be set` },
 						400,
-					);
+					) as unknown as Response;
 					break;
 				}
 				continue;
@@ -138,7 +138,7 @@ export function parseInputData<T extends Record<string, any>>(
 			fieldError = ctx.render(
 				{ success: False, message: `${key} is required` },
 				400,
-			);
+			) as unknown as Response;
 			break;
 		}
 	}

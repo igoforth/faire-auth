@@ -88,6 +88,8 @@ export type RouteHandler<
 	P,
 	I,
 	// If response type is defined, only TypedResponse is allowed.
+	// When FeedIn is true (internal handlers), also allow Response since
+	// the output is parsed by bundle.parser anyway.
 	R extends {
 		responses: {
 			[statusCode: number]: {
@@ -97,8 +99,10 @@ export type RouteHandler<
 			};
 		};
 	}
-		? Awaitable<RouteConfigToTypedResponse<R, FeedIn>>
-		: Awaitable<RouteConfigToTypedResponse<R, FeedIn>> | Awaitable<Response>
+		? FeedIn extends true
+			? Awaitable<RouteConfigToTypedResponse<R, FeedIn> | Response>
+			: Awaitable<RouteConfigToTypedResponse<R, FeedIn>>
+		: Awaitable<RouteConfigToTypedResponse<R, FeedIn> | Response>
 >;
 
 export type ExecOpts<

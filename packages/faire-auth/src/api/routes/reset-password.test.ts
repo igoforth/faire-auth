@@ -346,7 +346,7 @@ describe("revoke sessions on password reset", async (test) => {
 				token = url.split("?")[0]?.split("/").pop() || "";
 				await mockSendEmail();
 			},
-			revokeSessionsOnPasswordReset: true,
+			revokeSessionsOnPasswordReset: true as boolean,
 		},
 	});
 
