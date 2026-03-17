@@ -471,12 +471,11 @@ describe("organization", async (test) => {
 		expect,
 	}) => {
 		const { headers } = await signIn();
-		const {
-			data: { members },
-		} = (await client.organization.getFullOrganization.$get(
+		const fullOrgRes = (await client.organization.getFullOrganization.$get(
 			{ query: { organizationId } },
 			{ headers },
 		)) as any;
+		const members = fullOrgRes.data?.members ?? fullOrgRes.data?.data?.members;
 		const { headers: adminHeaders } = await signInMap.get(adminEmail)!();
 
 		const res = await client.organization.updateMemberRole.$post(
