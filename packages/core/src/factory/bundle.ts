@@ -67,7 +67,7 @@ export const buildRouteBundle = <C extends AuthRouteConfig>(
 		resolvedConfig,
 		routeApp: new OpenAPIHono().openapi(
 			resolvedConfig,
-			resolvedHandler,
+			resolvedHandler as any,
 			hook ?? hookFor(config.operationId, options),
 		) as any,
 		builder: buildRequest(resolvedConfig, baseURL),
