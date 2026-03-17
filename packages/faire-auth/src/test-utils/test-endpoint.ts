@@ -34,7 +34,7 @@ export const createTestEndpoint = <
 			? ([o.context, o.options] as const)
 			: init(options);
 	const schemas = buildSchemas(SCHEMAS, opts);
-	const api = { execute: createEndpoint(c, h)(opts) };
+	const api = { execute: createEndpoint(c, h as any)(opts) };
 	const [config, handler] = api.execute.toArgs(schemas, context, {});
 	return {
 		config,

@@ -52,7 +52,7 @@ export interface OrganizationOptions {
 	 * Configure the roles and permissions for the
 	 * organization plugin.
 	 */
-	ac?: AccessControl;
+	ac?: AccessControl<any>;
 	/**
 	 * Custom permissions for roles.
 	 */

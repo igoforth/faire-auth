@@ -7,7 +7,7 @@ import type { FaireAuthPlugin } from "../types/plugin";
 import { useAuthQuery } from "./query";
 import type { FaireAuthClientPlugin } from "./types";
 
-const serverPlugin = {
+export const serverPlugin = {
 	id: "test",
 	routes: {
 		test: createEndpoint(

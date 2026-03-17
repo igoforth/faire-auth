@@ -161,13 +161,12 @@ export const organizationClient = <CO extends OrganizationClientOptions>(
 			teams: {
 				enabled: CO["teams"] extends { enabled: true } ? true : false;
 			};
-			schema: Schema;
 			dynamicAccessControl: {
 				enabled: CO["dynamicAccessControl"] extends { enabled: true }
 					? true
 					: false;
 			};
-		}>,
+		} & (Schema extends undefined ? {} : { schema: Schema })>,
 		getActions: ($fetch, _$store, co) => ({
 			$Infer: {
 				ActiveOrganization: {} as OrganizationReturn,

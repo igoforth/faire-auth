@@ -25,7 +25,7 @@ export type Hooks = {
 	[K in LiteralStringUnion<BaseRoutes>]?: FromFn<
 		K extends BaseRoutes ? RouteHook<Config<K>> : DefaultHook
 	> extends (...args: infer A) => infer R
-		? (...args: A) => R
+		? (...args: A) => R | void
 		: never;
 };
 

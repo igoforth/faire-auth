@@ -1,3 +1,4 @@
+/// <reference path="test/overrides.d.ts" />
 import { availableParallelism } from "os";
 import { defineConfig, defaultExclude } from "vitest/config";
 
