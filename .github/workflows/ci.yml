@@ -87,12 +87,14 @@ jobs:
           TURBO_CACHE: remote:rw
         run: pnpm build
 
+      - name: Clean TS cache
+        run: find packages -path '*/node_modules/.cache/ts' -type d -exec rm -rf {} + 2>/dev/null || true
+
       - name: Typecheck
         env:
           NODE_OPTIONS: --max-old-space-size=6144
           TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
           TURBO_TEAM: ${{ vars.TURBO_TEAM || github.repository_owner }}
-          TURBO_CACHE: remote:rw
         run: pnpm typecheck
 
   test:
