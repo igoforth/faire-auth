@@ -5,7 +5,6 @@ import { defineConfig, defaultExclude } from "vitest/config";
 export default defineConfig({
 	cacheDir: "/tmp/.vite",
 	test: {
-		testTimeout: 30_000,
 		// typecheck: { enabled: true },
 		env: {
 			FAIRE_AUTH_URL: "http://localhost:3000",
@@ -34,6 +33,7 @@ export default defineConfig({
 				test: {
 					name: "adapters",
 					environment: "edge-runtime",
+					testTimeout: 30_000,
 					include: [
 						"src/adapters/**/*.test.ts",
 						"src/db/get-migration-schema.test.ts",
