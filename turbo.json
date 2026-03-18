@@ -39,8 +39,7 @@
     },
     "typecheck": {
       "dependsOn": ["^typecheck"],
-      "outputs": ["node_modules/.cache/ts/**"],
-      "cache": true
+      "cache": false
     },
     "deploy": {
       "cache": false
