@@ -87,8 +87,10 @@ jobs:
           TURBO_CACHE: remote:rw
         run: pnpm build
 
-      - name: Clean TS cache
-        run: find packages -path '*/node_modules/.cache/ts' -type d -exec rm -rf {} + 2>/dev/null || true
+      - name: Clean TS build cache
+        run: |
+          find . -path '*/node_modules/.cache/ts' -type d -prune -exec rm -rf {} + 2>/dev/null || true
+          find . -name '*.tsbuildinfo' -not -path '*/node_modules/*' -delete 2>/dev/null || true
 
       - name: Typecheck
         env:
