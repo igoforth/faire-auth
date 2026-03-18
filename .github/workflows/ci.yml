@@ -89,6 +89,7 @@ jobs:
 
       - name: Typecheck
         env:
+          NODE_OPTIONS: --max-old-space-size=6144
           TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
           TURBO_TEAM: ${{ vars.TURBO_TEAM || github.repository_owner }}
           TURBO_CACHE: remote:rw
