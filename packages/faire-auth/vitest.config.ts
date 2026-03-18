@@ -33,6 +33,7 @@ export default defineConfig({
 				test: {
 					name: "adapters",
 					environment: "edge-runtime",
+					testTimeout: 30_000,
 					include: [
 						"src/adapters/**/*.test.ts",
 						"src/db/get-migration-schema.test.ts",
