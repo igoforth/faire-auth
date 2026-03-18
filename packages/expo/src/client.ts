@@ -24,11 +24,14 @@ export function parseSetCookieHeader(
 	cookies.forEach((cookie) => {
 		const parts = cookie.split(";").map((p) => p.trim());
 		const [nameValue, ...attributes] = parts;
+		if (!nameValue) return;
 		const [name, ...valueParts] = nameValue.split("=");
+		if (!name) return;
 		const value = valueParts.join("=");
 		const cookieObj: CookieAttributes = { value };
 		attributes.forEach((attr) => {
 			const [attrName, ...attrValueParts] = attr.split("=");
+			if (!attrName) return;
 			const attrValue = attrValueParts.join("=");
 			cookieObj[attrName.toLowerCase() as "value"] = attrValue;
 		});
@@ -134,8 +137,8 @@ function getOrigin(scheme: string) {
 export const expoClient = ({
 	storage,
 	disableCache,
-	scheme: rawScheme = Constants.expoConfig?.scheme ||
-		Constants.platform?.scheme,
+	scheme: rawScheme = (Constants.expoConfig?.scheme ||
+		Constants.platform?.scheme) as string | undefined,
 	storagePrefix = "faire-auth",
 }: ExpoClientOptions) => {
 	let store: Store | null = null;
@@ -253,7 +256,7 @@ export const expoClient = ({
 						cookie,
 						"expo-origin": getOrigin(scheme!),
 						"x-skip-oauth-proxy": "true", // skip oauth proxy for expo
-					});
+					}) as HeadersInit;
 
 					// Note: callback URLs are normalized by the schema to relative paths on the server
 					// They are transformed to expo scheme URLs in the onSuccess hook when needed
