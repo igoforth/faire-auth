@@ -4,14 +4,32 @@ import type {
 	CreateFetchOption,
 	Schema,
 } from "@better-fetch/fetch";
-import { isPromise } from "@faire-auth/core/static";
 import type { AnyHono, ExK, UnionToIntersection } from "@faire-auth/core/types";
-import { isHonoRequestLike } from "@faire-auth/core/utils";
 import type { Hono, ValidationTargets } from "hono";
 import type { HonoRequest } from "hono/request";
+
+// Inlined from @faire-auth/core to avoid pulling in modules with Node-only
+// dependencies (node:module, node:util) into the browser client bundle.
+const isPromise = <T>(value: T | Promise<T>): value is Promise<T> =>
+	value != null && typeof (value as any).then === "function";
+const isHonoRequestLike = (value: unknown): value is HonoRequest =>
+	value != null &&
+	typeof value === "object" &&
+	"raw" in value &&
+	value.raw instanceof Request &&
+	"header" in value &&
+	typeof value.header === "function" &&
+	"query" in value &&
+	typeof value.query === "function" &&
+	"param" in value &&
+	typeof value.param === "function" &&
+	"json" in value &&
+	typeof value.json === "function" &&
+	"path" in value &&
+	typeof value.path === "string";
 import type { FormValue } from "hono/types";
 import type { Atom } from "nanostores";
-import { serialize } from "../utils/cookies";
+import { serialize } from "hono/utils/cookie";
 import { defu } from "../utils/defu";
 import {
 	buildSearchParams,

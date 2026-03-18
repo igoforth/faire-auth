@@ -1,4 +1,7 @@
-import { isPromise } from "@faire-auth/core/static";
+// Inlined to avoid pulling @faire-auth/core/static (which bundles schema code
+// with Node-only CJS interop) into the browser client bundle.
+const isPromise = <T>(value: T | Promise<T>): value is Promise<T> =>
+	value != null && typeof (value as any).then === "function";
 
 // Cookie and Content-Type will overwrite
 export const normaliseHeaders = (

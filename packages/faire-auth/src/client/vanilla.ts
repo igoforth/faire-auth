@@ -5,7 +5,10 @@ import type {
 	Prettify,
 	UnionToIntersection,
 } from "@faire-auth/core/types";
-import { capitalizeFirstLetter } from "@faire-auth/core/utils";
+// Inlined from @faire-auth/core/utils/random to avoid pulling in the full
+// utils barrel (which includes Node-only modules) into the browser client bundle.
+const capitalizeFirstLetter = <T extends string>(str: T): Capitalize<T> =>
+	(str.charAt(0).toUpperCase() + str.slice(1)) as Capitalize<T>;
 import type { Hono } from "hono";
 import type { Atom } from "nanostores";
 import type { DefaultApp } from "../api/types";

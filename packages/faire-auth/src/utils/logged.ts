@@ -1,7 +1,23 @@
 import { isCI, isTest } from "@faire-auth/core/env";
-import { inspect as nodeInspect } from "node:util";
 
-const inspect = (object: any) => nodeInspect(object, { colors: true });
+let _nodeInspect: typeof import("node:util").inspect | undefined;
+
+const inspect = (object: any): string => {
+	if (!_nodeInspect) {
+		// Fallback for browser environments where node:util is unavailable
+		return String(object);
+	}
+	return _nodeInspect(object, { colors: true });
+};
+
+// Eagerly load node:util when available (not in browser)
+if (typeof globalThis.process !== "undefined") {
+	import("node:util")
+		.then((m) => {
+			_nodeInspect = m.inspect;
+		})
+		.catch(() => {});
+}
 const MAX_SIZE = 100;
 
 // Logging storage
