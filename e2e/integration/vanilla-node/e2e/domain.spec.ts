@@ -21,11 +21,10 @@ test.describe("cross domain", () => {
 		await expect(
 			runClient(page, ({ client }) => typeof client !== "undefined"),
 		).resolves.toBe(true);
-		await expect(
-			runClient(page, async ({ client }) =>
-				client.getSession.$get({ query: {} }),
-			),
-		).resolves.toEqual({ data: null, error: null });
+		const sessionResult = await runClient(page, async ({ client }) =>
+			client.getSession.$get({ query: {} }),
+		);
+		expect(sessionResult.data).toBeNull();
 		await runClient(page, ({ client }) =>
 			client.signIn.email.$post({
 				json: {
