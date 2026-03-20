@@ -362,7 +362,7 @@ export const createHonoClient = <
 				clientOpts.headers,
 			);
 
-			if (method === "url") {
+			if (method === "url" || method === "path") {
 				let result = url;
 
 				if (input.param) result = replaceUrlParam(url, input.param);
@@ -373,7 +373,12 @@ export const createHonoClient = <
 				}
 
 				result = removeIndexString(result);
-				return new URL(result);
+
+				if (method === "url") return new URL(result);
+
+				// $path — strip the baseURL prefix and ensure leading slash
+				const base = (options.baseURL ?? "").replace(/\/+$/, "");
+				return result.slice(base.length).replace(/^\/?/, "/");
 			}
 			if (method === "ws") {
 				const webSocketUrl = replaceUrlProtocol(

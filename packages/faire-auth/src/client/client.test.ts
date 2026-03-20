@@ -132,6 +132,92 @@ describe("run time proxy", async (test) => {
 		expect(proxy.catch).toBeUndefined();
 		expect(proxy.finally).toBeUndefined();
 	});
+
+	test("$url should return a URL for the route", async ({ expect }) => {
+		const client = createVanillaClient<PluginApp>()({
+			baseURL: "http://localhost:3000/api/auth",
+			plugins: [testClientPlugin()],
+			fetchOptions: {
+				customFetchImpl: async () => new Response(),
+			},
+		});
+		const url = client.getSession.$url();
+		expect(url).toBeInstanceOf(URL);
+		expect(url.pathname).toBe("/api/auth/get-session");
+		expect(url.origin).toBe("http://localhost:3000");
+	});
+
+	test("$url should substitute path params", async ({ expect }) => {
+		const client = createVanillaClient<PluginApp>()({
+			baseURL: "http://localhost:3000/api/auth",
+			plugins: [testClientPlugin()],
+			fetchOptions: {
+				customFetchImpl: async () => new Response(),
+			},
+		});
+		const url = (client as any).user[":id"].$url({
+			param: { id: "abc123" },
+		});
+		expect(url).toBeInstanceOf(URL);
+		expect(url.pathname).toBe("/api/auth/user/abc123");
+	});
+
+	test("$url should append query params", async ({ expect }) => {
+		const client = createVanillaClient<PluginApp>()({
+			baseURL: "http://localhost:3000/api/auth",
+			plugins: [testClientPlugin()],
+			fetchOptions: {
+				customFetchImpl: async () => new Response(),
+			},
+		});
+		const url = client.getSession.$url({
+			query: { disableCookieCache: "true" },
+		});
+		expect(url).toBeInstanceOf(URL);
+		expect(url.search).toBe("?disableCookieCache=true");
+	});
+
+	test("$path should return the path portion without baseURL", async ({
+		expect,
+	}) => {
+		const client = createVanillaClient<PluginApp>()({
+			baseURL: "http://localhost:3000/api/auth",
+			plugins: [testClientPlugin()],
+			fetchOptions: {
+				customFetchImpl: async () => new Response(),
+			},
+		});
+		const path = client.getSession.$path();
+		expect(path).toBe("/get-session");
+	});
+
+	test("$path should substitute path params", async ({ expect }) => {
+		const client = createVanillaClient<PluginApp>()({
+			baseURL: "http://localhost:3000/api/auth",
+			plugins: [testClientPlugin()],
+			fetchOptions: {
+				customFetchImpl: async () => new Response(),
+			},
+		});
+		const path = (client as any).user[":id"].$path({
+			param: { id: "abc123" },
+		});
+		expect(path).toBe("/user/abc123");
+	});
+
+	test("$path should append query params", async ({ expect }) => {
+		const client = createVanillaClient<PluginApp>()({
+			baseURL: "http://localhost:3000/api/auth",
+			plugins: [testClientPlugin()],
+			fetchOptions: {
+				customFetchImpl: async () => new Response(),
+			},
+		});
+		const path = client.getSession.$path({
+			query: { disableCookieCache: "true" },
+		});
+		expect(path).toBe("/get-session?disableCookieCache=true");
+	});
 });
 
 describe("type", (test) => {
