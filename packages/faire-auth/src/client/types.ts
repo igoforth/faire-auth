@@ -355,7 +355,7 @@ type BuildChain<
 	Throw extends boolean,
 	Idx extends number = 0,
 > = Idx extends Segs["length"]
-	? ClientRequest<Sch[Original]> extends infer I
+	? ClientRequest<string, Original, Sch[Original]> extends infer I
 		? {
 				[K in keyof I]: I[K] extends (
 					...args: [infer In extends object, infer _Opt, ...infer Rest]

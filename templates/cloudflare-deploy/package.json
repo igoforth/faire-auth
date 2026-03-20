@@ -39,7 +39,7 @@
   "dependencies": {
     "drizzle-orm": "^0.44.7",
     "faire-auth": "latest",
-    "hono": "^4.9.8"
+    "hono": "^4.12.7"
   },
   "devDependencies": {
     "@better-fetch/fetch": "^1.1.18",
