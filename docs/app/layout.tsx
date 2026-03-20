@@ -3,14 +3,33 @@ import "./global.css";
 import { RootProvider } from "fumadocs-ui/provider";
 import type { ReactNode } from "react";
 import { NavbarProvider } from "@/components/nav-mobile";
-import { GeistMono } from "geist/font/mono";
-import { GeistSans } from "geist/font/sans";
+import { Inter, Cormorant_Garamond, JetBrains_Mono } from "next/font/google";
 import { baseUrl, createMetadata } from "@/lib/metadata";
 import { Analytics } from "@vercel/analytics/react";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { CustomSearchDialog } from "@/components/search-dialog";
 import { AnchorScroll } from "@/components/anchor-scroll-fix";
+
+const inter = Inter({
+	subsets: ["latin"],
+	variable: "--font-sans",
+	display: "swap",
+});
+
+const cormorant = Cormorant_Garamond({
+	subsets: ["latin"],
+	weight: ["400", "500", "600", "700"],
+	style: ["normal", "italic"],
+	variable: "--font-display",
+	display: "swap",
+});
+
+const jetbrainsMono = JetBrains_Mono({
+	subsets: ["latin"],
+	variable: "--font-mono",
+	display: "swap",
+});
 
 export const metadata = createMetadata({
 	title: {
@@ -39,7 +58,7 @@ export default function Layout({ children }: { children: ReactNode }) {
 				/>
 			</head>
 			<body
-				className={`${GeistSans.variable} ${GeistMono.variable} bg-background font-sans relative `}
+				className={`${inter.variable} ${cormorant.variable} ${jetbrainsMono.variable} bg-background font-sans relative `}
 			>
 				<ThemeProvider
 					attribute="class"
@@ -66,7 +85,7 @@ export default function Layout({ children }: { children: ReactNode }) {
 							<Toaster
 								toastOptions={{
 									style: {
-										borderRadius: "0px",
+										borderRadius: "8px",
 										fontSize: "11px",
 									},
 								}}

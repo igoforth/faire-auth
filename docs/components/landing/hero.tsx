@@ -56,21 +56,13 @@ export default function Hero() {
 					<div className="relative z-10 text-left mt-0 sm:mt-2 md:mt-8 lg:mt-0 md:text-center lg:text-left">
 						<div className="relative">
 							<div className="flex flex-col items-center lg:items-start gap-2">
-								<div className="flex items-end gap-1 mt-2 ">
-									<div className="flex items-center gap-1">
-										<svg
-											xmlns="http://www.w3.org/2000/svg"
-											width="0.8em"
-											height="0.8em"
-											viewBox="0 0 24 24"
-										>
-											<path
-												fill="currentColor"
-												d="M13 4V2c4.66.5 8.33 4.19 8.85 8.85c.6 5.49-3.35 10.43-8.85 11.03v-2c3.64-.45 6.5-3.32 6.96-6.96A7.994 7.994 0 0 0 13 4m-7.33.2A9.8 9.8 0 0 1 11 2v2.06c-1.43.2-2.78.78-3.9 1.68zM2.05 11a9.8 9.8 0 0 1 2.21-5.33L5.69 7.1A8 8 0 0 0 4.05 11zm2.22 7.33A10.04 10.04 0 0 1 2.06 13h2c.18 1.42.75 2.77 1.63 3.9zm1.4 1.41l1.39-1.37h.04c1.13.88 2.48 1.45 3.9 1.63v2c-1.96-.21-3.82-1-5.33-2.26M12 17l1.56-3.42L17 12l-3.44-1.56L12 7l-1.57 3.44L7 12l3.43 1.58z"
-											></path>
-										</svg>
-										<span className="text-xs text-opacity-75">
-											Own Your Auth
+								<div className="flex items-end gap-1.5 mt-2">
+									<div className="flex items-center gap-1.5">
+										<span className="inline-block w-1.5 h-1.5 rounded-full bg-brand-red"></span>
+										<span className="inline-block w-1.5 h-1.5 rounded-full bg-brand-yellow"></span>
+										<span className="inline-block w-1.5 h-1.5 rounded-full bg-brand-blue"></span>
+										<span className="text-xs text-opacity-75 ml-1">
+											Auth for Every Stage
 										</span>
 									</div>
 								</div>
@@ -87,13 +79,13 @@ export default function Hero() {
 												<span className="text-[#4498c8]">git:</span>
 												<span className="text-[#F07178]">(main) </span>
 											</span>
-											<span className="italic text-amber-600"> x</span>
+											<span className="italic text-brand-red"> x</span>
 										</p>
 										<p className=" relative inline tracking-tight opacity-90 md:text-sm text-xs dark:text-white font-mono text-black">
 											npm add{" "}
-											<span className="relative dark:text-fuchsia-100 text-fuchsia-950">
+											<span className="relative dark:text-blue-200 text-blue-900">
 												faire-auth
-												<span className="absolute h-2 bg-gradient-to-tr from-white via-stone-200 to-stone-300 blur-3xl w-full top-0 left-2"></span>
+												<span className="absolute h-2 bg-gradient-to-tr from-white via-slate-200 to-blue-200 blur-3xl w-full top-0 left-2"></span>
 											</span>
 										</p>
 									</div>
@@ -164,8 +156,8 @@ export default function Hero() {
 
 					<div className="relative hidden md:block lg:static xl:pl-10">
 						<div className="relative">
-							<div className="from-sky-300 via-sky-300/70 to-blue-300 absolute inset-0 rounded-none bg-gradient-to-tr opacity-5 blur-lg" />
-							<div className="from-stone-300 via-stone-300/70 to-blue-300 absolute inset-0 rounded-none bg-gradient-to-tr opacity-5" />
+							<div className="from-brand-red/30 via-brand-yellow/20 to-brand-blue/30 absolute inset-0 rounded-none bg-gradient-to-tr opacity-10 blur-lg" />
+							<div className="from-brand-red/20 via-brand-yellow/10 to-brand-blue/20 absolute inset-0 rounded-none bg-gradient-to-tr opacity-10" />
 							<CodePreview />
 						</div>
 					</div>
@@ -207,7 +199,7 @@ function CodePreview() {
 			<MotionConfig transition={{ duration: 0.5, type: "spring", bounce: 0 }}>
 				<motion.div
 					animate={{ height: height > 0 ? height : undefined }}
-					className="from-stone-100 to-stone-200 dark:to-black/90 dark:via-black dark:from-stone-950/90 relative overflow-hidden rounded-sm bg-gradient-to-tr ring-1 ring-white/10 backdrop-blur-lg"
+					className="from-slate-50 to-slate-100 dark:to-black/90 dark:via-black dark:from-neutral-950/90 relative overflow-hidden rounded-sm bg-gradient-to-tr ring-1 ring-white/10 backdrop-blur-lg"
 				>
 					<div ref={ref}>
 						<div className="absolute -top-px left-0 right-0 h-px" />
@@ -223,7 +215,7 @@ function CodePreview() {
 										className={clsx(
 											"relative isolate flex h-6 cursor-pointer items-center justify-center rounded-full px-2.5",
 											currentTab === tab.name
-												? "text-stone-300"
+												? "text-slate-200"
 												: "text-slate-500",
 										)}
 									>
@@ -231,7 +223,7 @@ function CodePreview() {
 										{tab.name === currentTab && (
 											<motion.div
 												layoutId="tab-code-preview"
-												className="bg-stone-800 absolute inset-0 -z-10 rounded-full"
+												className="bg-neutral-800 absolute inset-0 -z-10 rounded-full"
 											/>
 										)}
 									</button>
@@ -365,162 +357,162 @@ export function HeroBackground(props: React.ComponentPropsWithoutRef<"svg">) {
 				<path
 					opacity=".3"
 					d="M584.5 770.4v-474M484.5 770.4v-474M384.5 770.4v-474M283.5 769.4v-474M183.5 768.4v-474M83.5 767.4v-474"
-					stroke="#334155"
+					stroke="#2d3a4e"
 				/>
 				<path
 					d="M83.5 221.275v6.587a50.1 50.1 0 0 0 22.309 41.686l55.581 37.054a50.102 50.102 0 0 1 22.309 41.686v6.587M83.5 716.012v6.588a50.099 50.099 0 0 0 22.309 41.685l55.581 37.054a50.102 50.102 0 0 1 22.309 41.686v6.587M183.7 584.5v6.587a50.1 50.1 0 0 0 22.31 41.686l55.581 37.054a50.097 50.097 0 0 1 22.309 41.685v6.588M384.101 277.637v6.588a50.1 50.1 0 0 0 22.309 41.685l55.581 37.054a50.1 50.1 0 0 1 22.31 41.686v6.587M384.1 770.288v6.587a50.1 50.1 0 0 1-22.309 41.686l-55.581 37.054A50.099 50.099 0 0 0 283.9 897.3v6.588"
-					stroke="#334155"
+					stroke="#2d3a4e"
 				/>
 				<path
 					d="M384.1 770.288v6.587a50.1 50.1 0 0 1-22.309 41.686l-55.581 37.054A50.099 50.099 0 0 0 283.9 897.3v6.588M484.3 594.937v6.587a50.1 50.1 0 0 1-22.31 41.686l-55.581 37.054A50.1 50.1 0 0 0 384.1 721.95v6.587M484.3 872.575v6.587a50.1 50.1 0 0 1-22.31 41.686l-55.581 37.054a50.098 50.098 0 0 0-22.309 41.686v6.582M584.501 663.824v39.988a50.099 50.099 0 0 1-22.31 41.685l-55.581 37.054a50.102 50.102 0 0 0-22.309 41.686v6.587M283.899 945.637v6.588a50.1 50.1 0 0 1-22.309 41.685l-55.581 37.05a50.12 50.12 0 0 0-22.31 41.69v6.59M384.1 277.637c0 19.946 12.763 37.655 31.686 43.962l137.028 45.676c18.923 6.308 31.686 24.016 31.686 43.962M183.7 463.425v30.69c0 21.564 13.799 40.709 34.257 47.529l134.457 44.819c18.922 6.307 31.686 24.016 31.686 43.962M83.5 102.288c0 19.515 13.554 36.412 32.604 40.645l235.391 52.309c19.05 4.234 32.605 21.13 32.605 40.646M83.5 463.425v-58.45M183.699 542.75V396.625M283.9 1068.8V945.637M83.5 363.225v-141.95M83.5 179.524v-77.237M83.5 60.537V0M384.1 630.425V277.637M484.301 830.824V594.937M584.5 1068.8V663.825M484.301 555.275V452.988M584.5 622.075V452.988M384.1 728.537v-56.362M384.1 1068.8v-20.88M384.1 1006.17V770.287M283.9 903.888V759.85M183.699 1066.71V891.362M83.5 1068.8V716.012M83.5 674.263V505.175"
-					stroke="#334155"
+					stroke="#2d3a4e"
 				/>
 				<circle
 					cx="83.5"
 					cy="384.1"
 					r="10.438"
 					transform="rotate(-180 83.5 384.1)"
-					fill="#1E293B"
-					stroke="#334155"
+					fill="#1a2332"
+					stroke="#2d3a4e"
 				/>
 				<circle
 					cx="83.5"
 					cy="200.399"
 					r="10.438"
 					transform="rotate(-180 83.5 200.399)"
-					stroke="#334155"
+					stroke="#2d3a4e"
 				/>
 				<circle
 					cx="83.5"
 					cy="81.412"
 					r="10.438"
 					transform="rotate(-180 83.5 81.412)"
-					stroke="#334155"
+					stroke="#2d3a4e"
 				/>
 				<circle
 					cx="183.699"
 					cy="375.75"
 					r="10.438"
 					transform="rotate(-180 183.699 375.75)"
-					fill="#1E293B"
-					stroke="#334155"
+					fill="#1a2332"
+					stroke="#2d3a4e"
 				/>
 				<circle
 					cx="183.699"
 					cy="563.625"
 					r="10.438"
 					transform="rotate(-180 183.699 563.625)"
-					fill="#1E293B"
-					stroke="#334155"
+					fill="#1a2332"
+					stroke="#2d3a4e"
 				/>
 				<circle
 					cx="384.1"
 					cy="651.3"
 					r="10.438"
 					transform="rotate(-180 384.1 651.3)"
-					fill="#1E293B"
-					stroke="#334155"
+					fill="#1a2332"
+					stroke="#2d3a4e"
 				/>
 				<circle
 					cx="484.301"
 					cy="574.062"
 					r="10.438"
 					transform="rotate(-180 484.301 574.062)"
-					fill="#0EA5E9"
+					fill="#0066a6"
 					fillOpacity=".42"
-					stroke="#0EA5E9"
+					stroke="#0066a6"
 				/>
 				<circle
 					cx="384.1"
 					cy="749.412"
 					r="10.438"
 					transform="rotate(-180 384.1 749.412)"
-					fill="#1E293B"
-					stroke="#334155"
+					fill="#1a2332"
+					stroke="#2d3a4e"
 				/>
 				<circle
 					cx="384.1"
 					cy="1027.05"
 					r="10.438"
 					transform="rotate(-180 384.1 1027.05)"
-					stroke="#334155"
+					stroke="#2d3a4e"
 				/>
 				<circle
 					cx="283.9"
 					cy="924.763"
 					r="10.438"
 					transform="rotate(-180 283.9 924.763)"
-					stroke="#334155"
+					stroke="#2d3a4e"
 				/>
 				<circle
 					cx="183.699"
 					cy="870.487"
 					r="10.438"
 					transform="rotate(-180 183.699 870.487)"
-					stroke="#334155"
+					stroke="#2d3a4e"
 				/>
 				<circle
 					cx="283.9"
 					cy="738.975"
 					r="10.438"
 					transform="rotate(-180 283.9 738.975)"
-					fill="#1E293B"
-					stroke="#334155"
+					fill="#1a2332"
+					stroke="#2d3a4e"
 				/>
 				<circle
 					cx="83.5"
 					cy="695.138"
 					r="10.438"
 					transform="rotate(-180 83.5 695.138)"
-					fill="#1E293B"
-					stroke="#334155"
+					fill="#1a2332"
+					stroke="#2d3a4e"
 				/>
 				<circle
 					cx="83.5"
 					cy="484.3"
 					r="10.438"
 					transform="rotate(-180 83.5 484.3)"
-					fill="#0EA5E9"
+					fill="#0066a6"
 					fillOpacity=".42"
-					stroke="#0EA5E9"
+					stroke="#0066a6"
 				/>
 				<circle
 					cx="484.301"
 					cy="432.112"
 					r="10.438"
 					transform="rotate(-180 484.301 432.112)"
-					fill="#1E293B"
-					stroke="#334155"
+					fill="#1a2332"
+					stroke="#2d3a4e"
 				/>
 				<circle
 					cx="584.5"
 					cy="432.112"
 					r="10.438"
 					transform="rotate(-180 584.5 432.112)"
-					fill="#1E293B"
-					stroke="#334155"
+					fill="#1a2332"
+					stroke="#2d3a4e"
 				/>
 				<circle
 					cx="584.5"
 					cy="642.95"
 					r="10.438"
 					transform="rotate(-180 584.5 642.95)"
-					fill="#1E293B"
-					stroke="#334155"
+					fill="#1a2332"
+					stroke="#2d3a4e"
 				/>
 				<circle
 					cx="484.301"
 					cy="851.699"
 					r="10.438"
 					transform="rotate(-180 484.301 851.699)"
-					stroke="#334155"
+					stroke="#2d3a4e"
 				/>
 				<circle
 					cx="384.1"
 					cy="256.763"
 					r="10.438"
 					transform="rotate(-180 384.1 256.763)"
-					stroke="#334155"
+					stroke="#2d3a4e"
 				/>
 			</g>
 		</svg>

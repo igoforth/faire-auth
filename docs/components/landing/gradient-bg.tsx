@@ -23,10 +23,10 @@ export function GradientBG({
 			</div>
 			<div
 				className={cn(
-					"flex-none inset-0 overflow-hidden absolute z-0 rounded-none bg-gradient-to-tl dark:from-amber-100/30 dark:via-zinc-900 dark:to-black blur-md opacity-50",
+					"flex-none inset-0 overflow-hidden absolute z-0 rounded-none bg-gradient-to-tl dark:from-brand-blue/30 dark:via-neutral-900 dark:to-black blur-md opacity-50",
 				)}
 			/>
-			<div className="bg-zinc-100 dark:bg-zinc-950 absolute z-1 flex-none inset-[2px] " />
+			<div className="bg-slate-50 dark:bg-neutral-950 absolute z-1 flex-none inset-[2px] " />
 		</div>
 	);
 }

@@ -36,9 +36,9 @@ export default {
 	theme: {
 		extend: {
 			fontFamily: {
-				sans: ["var(--font-geist-sans)"],
-				mono: ["var(--font-geist-mono)"],
-				display: [...defaultTheme.fontFamily.sans],
+				sans: ["var(--font-sans)", ...defaultTheme.fontFamily.sans],
+				mono: ["var(--font-mono)", ...defaultTheme.fontFamily.mono],
+				display: ["var(--font-display)", ...defaultTheme.fontFamily.serif],
 			},
 			borderRadius: {
 				lg: "var(--radius)",
