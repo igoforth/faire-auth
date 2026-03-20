@@ -44,7 +44,7 @@ catalog:
   lru-cache: ^11.1.0
   lucide-react: ^0.542.0
   nanostores: ^1.0.1
-  next: ^15.5.13
+  next: ^15.5.14
   next-themes: ^0.4.6
   oauth2-mock-server: ^7.2.1
   openapi3-ts: ^4.5.0
@@ -111,12 +111,4 @@ catalogs:
 
 neverBuiltDependencies: []
 
-overrides:
-  brace-expansion@>=1.0.0 <=1.1.11: '>=1.1.12'
-  cookie@<0.7.0: '>=0.7.0'
-  esbuild@<0.25.0: '>=0.25.0'
-  glob@<10.5.0: '>=10.5.0'
-  js-yaml@<4.1.1: '>=4.1.1'
-  jws@<3.2.3: '>=3.2.3'
-  mdast-util-to-hast@<13.2.1: '>=13.2.1'
-  node-forge@<1.3.2: '>=1.3.2'
+overrides: {}
