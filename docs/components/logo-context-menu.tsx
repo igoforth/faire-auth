@@ -73,11 +73,11 @@ export default function LogoContextMenu({
 	};
 
 	return (
-		<div className="relative">
+		<div className="relative h-full">
 			<div
 				ref={logoRef}
 				onContextMenu={handleContextMenu}
-				className="cursor-pointer"
+				className="cursor-pointer h-full"
 			>
 				{logo}
 			</div>

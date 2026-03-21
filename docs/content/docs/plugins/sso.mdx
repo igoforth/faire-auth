@@ -115,7 +115,7 @@ await authClient.sso.register({
 ```ts title="register-oidc-provider.ts"
 const { headers } = await signInWithTestUser();
 await auth.api.registerSSOProvider({
-    body: {
+    json: {
         providerId: "example-provider",
         issuer: "https://idp.example.com",
         domain: "example.com",
@@ -208,7 +208,7 @@ await authClient.sso.register({
 ```ts title="register-saml-provider.ts"
 const { headers } = await signInWithTestUser();
 await auth.api.registerSSOProvider({
-    body: {
+    json: {
         providerId: "saml-provider",
         issuer: "https://idp.example.com",
         domain: "example.com",
@@ -328,7 +328,7 @@ To use the server API you can use `signInSSO`
 
 ```ts title="sign-in-org.ts"
 const res = await auth.api.signInSSO({
-    body: {
+    json: {
         organizationSlug: "example-org",
         callbackURL: "/dashboard",
     }
@@ -526,7 +526,7 @@ When registering an SSO provider, you can link it to a specific organization:
 
 ```ts title="register-org-provider.ts"
 await auth.api.registerSSOProvider({
-    body: {
+    json: {
         providerId: "acme-corp-saml",
         issuer: "https://acme-corp.okta.com",
         domain: "acmecorp.com",
@@ -548,7 +548,7 @@ You can set up multiple SSO providers for different organizations:
 ```ts title="multi-org-setup.ts"
 // Acme Corp SAML provider
 await auth.api.registerSSOProvider({
-    body: {
+    json: {
         providerId: "acme-corp",
         issuer: "https://acme.okta.com",
         domain: "acmecorp.com",
@@ -560,7 +560,7 @@ await auth.api.registerSSOProvider({
 
 // TechStart OIDC provider
 await auth.api.registerSSOProvider({
-    body: {
+    json: {
         providerId: "techstart-google",
         issuer: "https://accounts.google.com",
         domain: "techstart.io",

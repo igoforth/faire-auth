@@ -16,8 +16,6 @@ import { File, Folder, Files } from "fumadocs-ui/components/files";
 import { Accordion, Accordions } from "fumadocs-ui/components/accordion";
 import { Pre } from "fumadocs-ui/components/codeblock";
 import ChangelogPage, { Glow } from "../_components/default-changelog";
-import { IconLink } from "../_components/changelog-layout";
-import { XIcon } from "../_components/icons";
 import { StarField } from "../_components/stat-field";
 import { GridPatterns } from "../_components/grid-pattern";
 import { Callout } from "@/components/ui/callout";
@@ -61,11 +59,6 @@ export default async function Page({
 						{description}
 					</p>
 					<hr className="mt-4" />
-					<p className="absolute bottom-10 text-[0.8125rem]/6 text-gray-500">
-						<IconLink href="https://x.com/faire_auth" icon={XIcon} compact>
-							FAIRE-AUTH.
-						</IconLink>
-					</p>
 				</div>
 			</div>
 			<div className="px-4 relative md:px-8 pb-12 md:py-12">

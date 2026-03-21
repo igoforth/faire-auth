@@ -639,7 +639,7 @@ If you want to check a user's permissions server-side, you can use the `userHasP
 import { auth } from "@/auth";
 
 await auth.api.userHasPermission({
-  body: {
+  json: {
     userId: 'id', //the user id
     permissions: {
       project: ["create"], // This must match the structure in your access control
@@ -649,7 +649,7 @@ await auth.api.userHasPermission({
 
 // You can also just pass the role directly
 await auth.api.userHasPermission({
-  body: {
+  json: {
    role: "admin",
     permissions: {
       project: ["create"], // This must match the structure in your access control
@@ -659,7 +659,7 @@ await auth.api.userHasPermission({
 
 // You can also check multiple resource permissions at the same time
 await auth.api.userHasPermission({
-  body: {
+  json: {
    role: "admin",
     permissions: {
       project: ["create"], // This must match the structure in your access control

@@ -2,10 +2,9 @@ import { formatBlogDate } from "@/lib/blog";
 import Link from "next/link";
 import { blogs } from "@/lib/source";
 import { IconLink } from "./changelog-layout";
-import { GitHubIcon, BookIcon, XIcon } from "./icons";
+import { GitHubIcon, BookIcon } from "./icons";
 import { Glow } from "./default-changelog";
 import { StarField } from "./stat-field";
-import { DiscordLogoIcon } from "@radix-ui/react-icons";
 import Image from "next/image";
 
 export async function BlogPage() {
@@ -42,19 +41,7 @@ export async function BlogPage() {
 						>
 							GitHub
 						</IconLink>
-						<IconLink
-							href="https://discord.gg/faire-auth"
-							icon={DiscordLogoIcon}
-							className="flex-none text-gray-600 dark:text-gray-300"
-						>
-							Community
-						</IconLink>
 					</div>
-					<p className="flex items-baseline absolute bottom-4 max-md:left-1/2 max-md:-translate-x-1/2 gap-x-2 text-[0.8125rem]/6 text-gray-500">
-						<IconLink href="https://x.com/faire_auth" icon={XIcon} compact>
-							FAIRE-AUTH.
-						</IconLink>
-					</p>
 				</div>
 			</div>
 			<div className="py-6 lg:py-10 px-3">

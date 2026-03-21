@@ -387,3 +387,10 @@ html:not([data-anchor-scrolling]) {
 .streaming-cursor {
 	animation: stream-pulse 1s ease-in-out infinite;
 }
+
+/* Doc page h1 uses display font */
+.prose h1:first-of-type,
+[data-mdx] h1:first-of-type {
+	font-family: var(--font-display), serif;
+	font-style: italic;
+}

@@ -1,11 +1,31 @@
 "use client";
-import { createRandomStringGenerator } from "@faire-auth/core/utils";
 import { useState } from "react";
 import { Button } from "./ui/button";
 
+const CHARSET =
+	"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+
+const generateRandomString = (length: number): string => {
+	const maxValid = Math.floor(256 / CHARSET.length) * CHARSET.length;
+	const buf = new Uint8Array(length * 2);
+	let result = "";
+	let bufIndex = buf.length;
+
+	while (result.length < length) {
+		if (bufIndex >= buf.length) {
+			crypto.getRandomValues(buf);
+			bufIndex = 0;
+		}
+		const rand = buf[bufIndex++]!;
+		if (rand < maxValid) {
+			result += CHARSET[rand % CHARSET.length];
+		}
+	}
+	return result;
+};
+
 export const GenerateSecret = () => {
 	const [generated, setGenerated] = useState(false);
-	const generateRandomString = createRandomStringGenerator("a-z", "0-9", "A-Z");
 	return (
 		<div className="my-2">
 			<Button

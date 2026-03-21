@@ -1,245 +1,159 @@
 ---
-title: Hooks
-description: Faire Auth Hooks let you customize FaireAuth's behavior
+title: Hooks & Middleware
+description: Faire Auth hooks and middleware let you customize behavior per-route.
 ---
 
-Hooks in Faire Auth let you "hook into" the lifecycle and execute custom logic. They provide a way to customize Faire Auth's behavior without writing a full plugin.
+Faire Auth provides two mechanisms for customizing endpoint behavior: **route hooks** and **typed middleware**. Both are keyed by `operationId` (e.g. `signUpEmail`, `getSession`) and receive full type inference from your plugin configuration.
 
 <Callout>
-We highly recommend using hooks if you need to make custom adjustments to an endpoint rather than making another endpoint outside of Faire Auth.
+These are new Faire Auth features. If you need global before/after hooks that run on every request, see [Global Hooks](#global-hooks) below.
 </Callout>
 
-## Before Hooks
+## Route Hooks
 
-**Before hooks** run *before* an endpoint is executed. Use them to modify requests, pre validate data, or return early.
+**Route hooks** run after Zod request validation but before the route handler. They receive the validation result and can short-circuit the request by returning a response.
 
-### Example: Enforce Email Domain Restriction
+```ts title="auth.ts"
+import { faireAuth, defineOptions } from "faire-auth";
 
-This hook ensures that users can only sign up if their email ends with `@example.com`:
+const cfg = defineOptions({
+    baseURL: "http://localhost:3000",
+    plugins: [organization()],
+    routeHooks: {
+        signUpEmail: (result, ctx) => {
+            if (!result.success) return; // let default error handling take over
+            const { email } = result.data.body;
+            if (!email.endsWith("@example.com")) {
+                return ctx.json({ error: "Only @example.com emails allowed" }, 403);
+            }
+        },
+    },
+})
+
+const auth = faireAuth(cfg)
+```
+
+Route hooks are typed per-route — the `result.data` shape matches the specific endpoint's validated input.
+
+## Typed Middleware
+
+**Typed middleware** runs before the route handler in the Hono middleware chain. It's standard Hono middleware with full type inference for the route's context variables.
+
+```ts title="auth.ts"
+import { faireAuth, defineOptions } from "faire-auth";
+import { createMiddleware } from "faire-auth/plugins";
+
+const cfg = defineOptions({
+    baseURL: "http://localhost:3000",
+    middleware: {
+        getSession: createMiddleware()(async (ctx, next) => {
+            console.log("getSession called at", new Date().toISOString());
+            await next();
+        }),
+    },
+})
+
+const auth = faireAuth(cfg)
+```
+
+Use `createMiddleware<E>()()` (curried) to create middleware with custom context variable types:
+
+```ts
+import { createMiddleware } from "faire-auth/plugins";
+
+const adminOnly = createMiddleware<{ isAdmin: boolean }>()(async (ctx, next) => {
+    const session = ctx.get("session");
+    ctx.set("isAdmin", session?.user?.role === "admin");
+    await next();
+});
+```
+
+## DTO Transforms
+
+**DTO transforms** let you control what data is exposed to clients. They're keyed by schema name (`user`, `session`, `account`, etc.) and applied automatically to all route responses.
+
+```ts title="auth.ts"
+const cfg = defineOptions({
+    baseURL: "http://localhost:3000",
+    dto: {
+        user: (user) => ({
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            // omit internal fields like createdAt, updatedAt
+        }),
+    },
+})
+```
+
+DTO transforms are type-threaded — the client's inferred response types will reflect the transformed shape, not the raw database model.
+
+## Global Hooks
+
+For hooks that run on every request (not per-route), use the `hooks.before` and `hooks.after` options. These are factory functions that receive the auth options and return a hook handler:
 
 ```ts title="auth.ts"
 import { faireAuth } from "faire-auth";
-import { createAuthMiddleware, APIError } from "faire-auth/api";
+import { createHook } from "faire-auth/plugins";
 
-export const auth = faireAuth({
+const auth = faireAuth({
+    baseURL: "http://localhost:3000",
     hooks: {
-        before: createAuthMiddleware(async (ctx) => {
-            if (ctx.path !== "/sign-up/email") {
-                return;
-            }
-            if (!ctx.body?.email.endsWith("@example.com")) {
-                throw new APIError("BAD_REQUEST", {
-                    message: "Email must end with @example.com",
-                });
-            }
+        before: (options) => createHook()(async (ctx) => {
+            // runs before every endpoint
+            console.log("Request to:", ctx.req.path);
+        }),
+        after: (options) => createHook()(async (ctx) => {
+            // runs after every endpoint
         }),
     },
-});
+})
 ```
 
-### Example: Modify Request Context
+<Callout type="info">
+`createHook` and `createMiddleware` are both curried factories exported from `faire-auth/plugins`. The first call sets the type parameters, the second provides the handler.
+</Callout>
 
-To adjust the request context before proceeding:
+## Context
+
+Inside middleware and hooks, the Hono context `ctx` provides:
+
+- **`ctx.req`**: The Hono request object with typed `param()`, `query()`, `json()`, `header()`.
+- **`ctx.get("session")`**: The current session (if session middleware has run).
+- **`ctx.json(data, status)`**: Send a JSON response.
+- **`ctx.redirect(url)`**: Redirect the client.
+- **`ctx.header(name, value)`**: Set response headers.
+
+Auth-specific context is available via `ctx.get()`:
+
+- **`ctx.get("options")`**: The resolved Faire Auth options.
+- **`ctx.get("secret")`**: The auth secret.
+- **`ctx.get("authCookies")`**: Cookie configuration for session tokens.
+- **`ctx.get("adapter")`**: The database adapter with `findOne`, `findMany`, `create`, `update`, `delete`.
+- **`ctx.get("internalAdapter")`**: Higher-level operations like `createSession`, `createUser`.
+- **`ctx.get("generateId")`**: ID generation function.
+
+## Rate Limiting
+
+Rate limiting is built-in and configurable per-route:
 
 ```ts title="auth.ts"
-import { faireAuth } from "faire-auth";
-import { createAuthMiddleware } from "faire-auth/api";
-
-export const auth = faireAuth({
-    hooks: {
-        before: createAuthMiddleware(async (ctx) => {
-            if (ctx.path === "/sign-up/email") {
-                return {
-                    context: {
-                        ...ctx,
-                        body: {
-                            ...ctx.body,
-                            name: "John Doe",
-                        },
-                    }
-                };
-            }
-        }),
+const cfg = defineOptions({
+    baseURL: "http://localhost:3000",
+    rateLimit: {
+        enabled: true,
+        customRules: {
+            "/sign-in/email": (req) => {
+                // return false to skip rate limiting for this request
+                return true;
+            },
+        },
     },
-});
+})
 ```
 
-## After Hooks
-
-**After hooks** run *after* an endpoint is executed. Use them to modify responses.
-
-### Example: Send a notification to your channel when a new user is registered
-
-```ts title="auth.ts"
-import { faireAuth } from "faire-auth";
-import { createAuthMiddleware } from "faire-auth/api";
-import { sendMessage } from "@/lib/notification"
-
-export const auth = faireAuth({
-    hooks: {
-        after: createAuthMiddleware(async (ctx) => {
-            if(ctx.path.startsWith("/sign-up")){
-                const newSession = ctx.context.newSession;
-                if(newSession){
-                    sendMessage({
-                        type: "user-register",
-                        name: newSession.user.name,
-                    })
-                }
-            }
-        }),
-    },
-});
-```
-
-## Ctx
-
-When you call `createAuthMiddleware` a `ctx` object is passed that provides a lot of useful properties. Including:
-
-- **Path:** `ctx.path` to get the current endpoint path.
-- **Body:** `ctx.body` for parsed request body (available for POST requests).
-- **Headers:** `ctx.headers` to access request headers.
-- **Request:** `ctx.request` to access the request object (may not exist in server-only endpoints).
-- **Query Parameters:** `ctx.query` to access query parameters.
-- **Context**: `ctx.context` auth related context, useful for accessing new session, auth cookies configuration, password hashing, config...
-
-and more.
-
-### Request Response
-
-This utilities allows you to get request information and to send response from a hook.
-
-#### JSON Responses
-
-Use `ctx.json` to send JSON responses:
-
-```ts
-const hook = createAuthMiddleware(async (ctx) => {
-    return ctx.json({
-        message: "Hello World",
-    });
-});
-```
-
-#### Redirects
-
-Use `ctx.redirect` to redirect users:
-
-```ts
-import { createAuthMiddleware } from "faire-auth/api";
-
-const hook = createAuthMiddleware(async (ctx) => {
-    throw ctx.redirect("/sign-up/name");
-});
-```
-
-#### Cookies
-
-- Set cookies: `ctx.setCookies` or `ctx.setSignedCookie`.
-- Get cookies: `ctx.getCookies` or `ctx.getSignedCookie`.
-
-Example:
-
-```ts
-import { createAuthMiddleware } from "faire-auth/api";
-
-const hook = createAuthMiddleware(async (ctx) => {
-    ctx.setCookies("my-cookie", "value");
-    await ctx.setSignedCookie("my-signed-cookie", "value", ctx.context.secret, {
-        maxAge: 1000,
-    });
-
-    const cookie = ctx.getCookies("my-cookie");
-    const signedCookie = await ctx.getSignedCookie("my-signed-cookie");
-});
-```
-
-#### Errors
-
-Throw errors with `APIError` for a specific status code and message:
-
-```ts
-import { createAuthMiddleware, APIError } from "faire-auth/api";
-
-const hook = createAuthMiddleware(async (ctx) => {
-    throw new APIError("BAD_REQUEST", {
-        message: "Invalid request",
-    });
-});
-```
-
-
-
-### Context
-
-The `ctx` object contains another `context` object inside that's meant to hold contexts related to auth. Including a newly created session on after hook, cookies configuration, password hasher and so on.
-
-#### New Session
-
-The newly created session after an endpoint is run. This only exist in after hook.
-
-```ts title="auth.ts"
-createAuthMiddleware(async (ctx) => {
-    const newSession = ctx.context.newSession
-});
-```
-
-#### Returned
-
-The returned value from the hook is passed to the next hook in the chain.
-
-```ts title="auth.ts"
-createAuthMiddleware(async (ctx) => {
-    const returned = ctx.context.returned; //this could be a successful response or an APIError
-});
-```
-
-#### Response Headers
-
-The response headers added by endpoints and hooks that run before this hook.
-
-```ts title="auth.ts"
-createAuthMiddleware(async (ctx) => {
-    const responseHeaders = ctx.context.responseHeaders;
-});
-```
-
-#### Predefined Auth Cookies
-
-Access FaireAuth’s predefined cookie properties:
-
-```ts title="auth.ts"
-createAuthMiddleware(async (ctx) => {
-    const cookieName = ctx.context.authCookies.sessionToken.name;
-});
-```
-
-#### Secret
-
-You can access the `secret` for your auth instance on `ctx.context.secret`
-
-#### Password
-
-The password object provider `hash` and `verify`
-
-- `ctx.context.password.hash`: let's you hash a given password.
-- `ctx.context.password.verify`: let's you verify given `password` and a `hash`.
-
-#### Adapter
-
-Adapter exposes the adapter methods used by Faire Auth. Including `findOne`, `findMany`, `create`, `delete`, `update` and `updateMany`. You generally should use your actually `db` instance from your orm rather than this adapter.
-
-
-#### Internal Adapter
-
-These are calls to your db that perform specific actions. `createUser`, `createSession`, `updateSession`...
-
-This may be useful to use instead of using your db directly to get access to `databaseHooks`, proper `secondaryStorage` support and so on. If you're make a query similar to what exist in this internal adapter actions it's worth a look.
-
-#### generateId
-
-You can use `ctx.context.generateId` to generate Id for various reasons.
+Custom rules receive a typed `HonoRequest` specific to the route path.
 
 ## Reusable Hooks
 
-If you need to reuse a hook across multiple endpoints, consider creating a plugin. Learn more in the [Plugins Documentation](/docs/concepts/plugins).
+If you need to reuse hooks or middleware across multiple routes, consider creating a plugin. Plugins can declare their own `routeHooks` and `middleware` which are merged with the top-level options. Learn more in the [Plugins Documentation](/docs/concepts/plugins).

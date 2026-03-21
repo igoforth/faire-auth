@@ -18,20 +18,24 @@ import { useI18n } from "fumadocs-ui/contexts/i18n";
 import { AIChatModal, aiChatModalAtom } from "./ai-chat-modal";
 import { useAtom } from "jotai";
 
-const client = new OramaClient({
-	endpoint: process.env.NEXT_PUBLIC_ORAMA_ENDPOINT!,
-	api_key: process.env.NEXT_PUBLIC_ORAMA_PUBLIC_API_KEY!,
-});
+const client =
+	process.env.NEXT_PUBLIC_ORAMA_ENDPOINT &&
+	process.env.NEXT_PUBLIC_ORAMA_PUBLIC_API_KEY
+		? new OramaClient({
+				endpoint: process.env.NEXT_PUBLIC_ORAMA_ENDPOINT,
+				api_key: process.env.NEXT_PUBLIC_ORAMA_PUBLIC_API_KEY,
+			})
+		: undefined;
 
 export function CustomSearchDialog(props: SharedProps) {
 	const { locale } = useI18n();
 	const [isAIModalOpen, setIsAIModalOpen] = useAtom(aiChatModalAtom);
 
-	const { search, setSearch, query } = useDocsSearch({
-		type: "orama-cloud",
-		client,
-		locale,
-	});
+	const { search, setSearch, query } = useDocsSearch(
+		client != null
+			? { type: "orama-cloud" as const, client, locale }
+			: { type: "fetch" as const, locale },
+	);
 
 	const handleAskAIClick = () => {
 		props.onOpenChange?.(false);

@@ -13,7 +13,7 @@ export function createMetadata(override: Metadata): Metadata {
 		},
 		twitter: {
 			card: "summary_large_image",
-			creator: "@beakcru",
+			creator: "@igoforth",
 			title: override.title ?? undefined,
 			description: override.description ?? undefined,
 			images: "https://faire-auth.com/og.png",

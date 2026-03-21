@@ -15,7 +15,6 @@ import { TechStackDisplay } from "./display-techstack";
 import { Ripple } from "./ripple";
 import { GithubStat } from "./github-stat";
 import { cn } from "@/lib/utils";
-import { Testimonial } from "./landing/testimonials";
 const features = [
 	{
 		id: 1,
@@ -112,9 +111,6 @@ export default function Features({ stars }: { stars: string | null }) {
 							</div>
 						</div>
 					))}
-				</div>
-				<div className="w-full border-l-2 hidden md:block">
-					<Testimonial />
 				</div>
 				<div className="relative col-span-3 border-t-[1.2px] border-l-[1.2px] md:border-b-[1.2px] dark:border-b-0  h-full py-20">
 					<div className="w-full h-full p-16 pt-10 md:px-10 2xl:px-16">

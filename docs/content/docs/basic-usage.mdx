@@ -15,82 +15,90 @@ But also can easily be extended using plugins, such as: [username](/docs/plugins
 To enable email and password authentication:
 
 ```ts title="auth.ts"
-import { faireAuth } from "faire-auth"
+import { faireAuth, defineOptions } from "faire-auth"
 
-export const auth = faireAuth({
+const cfg = defineOptions({
+    baseURL: "http://localhost:3000",
     emailAndPassword: {    // [!code highlight]
         enabled: true // [!code highlight]
     } // [!code highlight]
 })
+
+export const auth = faireAuth(cfg)
+export const App = auth.$Infer.App(cfg)
 ```
 
 ### Sign Up
 
-To sign up a user you need to call the client method `signUp.email` with the user's information.
+To sign up a user, call `signUp.email.$post` on the client with the user's information:
 
 ```ts title="sign-up.ts"
 import { authClient } from "@/lib/auth-client"; //import the auth client // [!code highlight]
 
-const { data, error } = await authClient.signUp.email({
-        email, // user email address
-        password, // user password -> min 8 characters by default
-        name, // user display name
-        image, // User image URL (optional)
-        callbackURL: "/dashboard" // A URL to redirect to after the user verifies their email (optional)
-    }, {
-        onRequest: (ctx) => {
-            //show loading
+const { data, error } = await authClient.signUp.email.$post(
+    {
+        json: {
+            email, // user email address
+            password, // user password -> min 8 characters by default
+            name, // user display name
+            image, // User image URL (optional)
+            callbackURL: "/dashboard" // A URL to redirect to after the user verifies their email (optional)
         },
-        onSuccess: (ctx) => {
-            //redirect to the dashboard or sign in page
+    },
+    {
+        fetchOptions: {
+            onRequest: (ctx) => {
+                //show loading
+            },
+            onSuccess: (ctx) => {
+                //redirect to the dashboard or sign in page
+            },
+            onError: (ctx) => {
+                // display the error message
+                alert(ctx.error.message);
+            },
         },
-        onError: (ctx) => {
-            // display the error message
-            alert(ctx.error.message);
-        },
-});
+    },
+);
 ```
 
 By default, the users are automatically signed in after they successfully sign up. To disable this behavior you can set `autoSignIn` to `false`.
 
 ```ts title="auth.ts"
-import { faireAuth } from "faire-auth"
+import { faireAuth, defineOptions } from "faire-auth"
 
-export const auth = faireAuth({
+const cfg = defineOptions({
+    baseURL: "http://localhost:3000",
     emailAndPassword: {
     	enabled: true,
     	autoSignIn: false //defaults to true // [!code highlight]
-  },
+    },
 })
+
+export const auth = faireAuth(cfg)
 ```
 
 
 ### Sign In
 
-To sign a user in, you can use the `signIn.email` function provided by the client.
+To sign a user in, you can use `signIn.email.$post` on the client:
 
-```ts title="sign-in"
-const { data, error } = await authClient.signIn.email({
-        /**
-         * The user email
-         */
-        email,
-        /**
-         * The user password
-         */
-        password,
-        /**
-         * A URL to redirect to after the user verifies their email (optional)
-         */
-        callbackURL: "/dashboard",
-        /**
-         * remember the user session after the browser is closed.
-         * @default true
-         */
-        rememberMe: false
-}, {
-    //callbacks
-})
+```ts title="sign-in.ts"
+const { data, error } = await authClient.signIn.email.$post(
+    {
+        json: {
+            email,
+            password,
+            callbackURL: "/dashboard", // optional
+            rememberMe: false // remember session after browser close, default: true
+        },
+    },
+    {
+        fetchOptions: {
+            // callbacks
+        },
+    },
+);
 ```
 
 <Callout type="warn">
@@ -99,13 +107,13 @@ Always invoke client methods from the client side. Don't call them from the serv
 
 ### Server-Side Authentication
 
-To authenticate a user on the server, you can use the `auth.api` methods.
+To authenticate a user on the server, you can use the `auth.api` methods. The server API uses `json:` for request bodies:
 
 ```ts title="server.ts"
 import { auth } from "./auth"; // path to your Faire Auth server instance
 
 const response = await auth.api.signInEmail({
-    body: {
+    json: {
         email,
         password
     },
@@ -122,9 +130,10 @@ If the server cannot return a response object, you'll need to manually parse and
 Faire Auth supports multiple social providers, including Google, GitHub, Apple, Discord, and more. To use a social provider, you need to configure the ones you need in the `socialProviders` option on your `auth` object.
 
 ```ts title="auth.ts"
-import { faireAuth } from "faire-auth";
+import { faireAuth, defineOptions } from "faire-auth";
 
-export const auth = faireAuth({
+const cfg = defineOptions({
+    baseURL: "http://localhost:3000",
     socialProviders: { // [!code highlight]
         github: { // [!code highlight]
             clientId: process.env.GITHUB_CLIENT_ID!, // [!code highlight]
@@ -132,39 +141,25 @@ export const auth = faireAuth({
         } // [!code highlight]
     }, // [!code highlight]
 })
+
+export const auth = faireAuth(cfg)
 ```
 
 ### Sign in with social providers
 
-To sign in using a social provider you need to call `signIn.social`. It takes an object with the following properties:
+To sign in using a social provider you need to call `signIn.social.$post`. It takes an object with the following properties:
 
 ```ts title="sign-in.ts"
 import { authClient } from "@/lib/auth-client"; //import the auth client // [!code highlight]
 
-await authClient.signIn.social({
-    /**
-     * The social provider ID
-     * @example "github", "google", "apple"
-     */
-    provider: "github",
-    /**
-     * A URL to redirect after the user authenticates with the provider
-     * @default "/"
-     */
-    callbackURL: "/dashboard",
-    /**
-     * A URL to redirect if an error occurs during the sign in process
-     */
-    errorCallbackURL: "/error",
-    /**
-     * A URL to redirect if the user is newly registered
-     */
-    newUserCallbackURL: "/welcome",
-    /**
-     * disable the automatic redirect to the provider.
-     * @default false
-     */
-    disableRedirect: true,
+await authClient.signIn.social.$post({
+    json: {
+        provider: "github",
+        callbackURL: "/dashboard", // A URL to redirect after the user authenticates with the provider
+        errorCallbackURL: "/error", // A URL to redirect if an error occurs
+        newUserCallbackURL: "/welcome", // A URL to redirect if the user is newly registered
+        disableRedirect: true, // disable the automatic redirect to the provider (default: false)
+    },
 });
 ```
 
@@ -172,22 +167,25 @@ You can also authenticate using `idToken` or `accessToken` from the social provi
 
 ## Signout
 
-To signout a user, you can use the `signOut` function provided by the client.
+To signout a user, you can use `signOut.$post` on the client:
 
 ```ts title="user-card.tsx"
-await authClient.signOut();
+await authClient.signOut.$post();
 ```
 
 you can pass `fetchOptions` to redirect onSuccess
 
 ```ts title="user-card.tsx"
-await authClient.signOut({
-  fetchOptions: {
-    onSuccess: () => {
-      router.push("/login"); // redirect to login page
+await authClient.signOut.$post(
+    {},
+    {
+        fetchOptions: {
+            onSuccess: () => {
+                router.push("/login"); // redirect to login page
+            },
+        },
     },
-  },
-});
+);
 ```
 
 ## Session
@@ -233,7 +231,7 @@ Faire Auth provides a `useSession` hook to easily access session data on the cli
             <div>
                 <div>
                     <pre>{{ session.data }}</pre>
-                    <button v-if="session.data" @click="authClient.signOut()">
+                    <button v-if="session.data" @click="authClient.signOut.$post()">
                         Sign out
                     </button>
                 </div>
@@ -255,7 +253,7 @@ Faire Auth provides a `useSession` hook to easily access session data on the cli
             ```
         </Tab>
          <Tab value="Vanilla">
-            ```ts title="user.svelte"
+            ```ts title="user.ts"
             import { authClient } from "~/lib/auth-client"; //import the auth client
 
             authClient.useSession.subscribe((value)=>{
@@ -280,19 +278,19 @@ Faire Auth provides a `useSession` hook to easily access session data on the cli
 
 #### Get Session
 
-If you prefer not to use the hook, you can use the `getSession` method provided by the client.
+If you prefer not to use the hook, you can use `getSession.$get`:
 
 ```ts title="user.tsx"
 import { authClient } from "@/lib/auth-client" // import the auth client // [!code highlight]
 
-const { data: session, error } = await authClient.getSession()
+const { data: session, error } = await authClient.getSession.$get({ query: {} })
 ```
 
 You can also use it with client-side data-fetching libraries like [TanStack Query](https://tanstack.com/query/latest).
 
 ### Server Side
 
-The server provides a `session` object that you can use to access the session data. It requires request headers object to be passed to the `getSession` method.
+The server provides a `getSession` endpoint that you can use to access the session data. It requires request headers to be passed.
 
 **Example: Using some popular frameworks**
 
@@ -407,15 +405,18 @@ Below is an example of how to add two factor authentication using two factor plu
 To add a plugin, you need to import the plugin and pass it to the `plugins` option of the auth instance. For example, to add two factor authentication, you can use the following code:
 
 ```ts title="auth.ts"
-import { faireAuth } from "faire-auth"
+import { faireAuth, defineOptions } from "faire-auth"
 import { twoFactor } from "faire-auth/plugins" // [!code highlight]
 
-export const auth = faireAuth({
-    //...rest of the options
+const cfg = defineOptions({
+    baseURL: "http://localhost:3000",
     plugins: [ // [!code highlight]
         twoFactor() // [!code highlight]
     ] // [!code highlight]
 })
+
+export const auth = faireAuth(cfg)
+export const App = auth.$Infer.App(cfg)
 ```
 now two factor related routes and method will be available on the server.
 
@@ -450,8 +451,9 @@ Once we're done with the server, we need to add the plugin to the client. To do 
 ```ts title="auth-client.ts"
 import { createAuthClient } from "faire-auth/client";
 import { twoFactorClient } from "faire-auth/client/plugins"; // [!code highlight]
+import type { App } from "./auth"; // [!code highlight]
 
-const authClient = createAuthClient({
+const authClient = createAuthClient<typeof App>()({ // [!code highlight]
     plugins: [ // [!code highlight]
         twoFactorClient({ // [!code highlight]
             twoFactorPage: "/two-factor" // the page to redirect if a user needs to verify 2nd factor // [!code highlight]
@@ -466,32 +468,30 @@ now two factor related methods will be available on the client.
 import { authClient } from "./auth-client"
 
 const enableTwoFactor = async() => {
-    const data = await authClient.twoFactor.enable({
-        password // the user password is required
+    const data = await authClient.twoFactor.enable.$post({
+        json: { password } // the user password is required
     }) // this will enable two factor
 }
 
 const disableTwoFactor = async() => {
-    const data = await authClient.twoFactor.disable({
-        password // the user password is required
+    const data = await authClient.twoFactor.disable.$post({
+        json: { password } // the user password is required
     }) // this will disable two factor
 }
 
 const signInWith2Factor = async() => {
-    const data = await authClient.signIn.email({
-        //...
+    const data = await authClient.signIn.email.$post({
+        json: { email, password }
     })
     //if the user has two factor enabled, it will redirect to the two factor page
 }
 
 const verifyTOTP = async() => {
-    const data = await authClient.twoFactor.verifyTOTP({
-        code: "123456", // the code entered by the user
-        /**
-         * If the device is trusted, the user won't
-         * need to pass 2FA again on the same device
-         */
-        trustDevice: true
+    const data = await authClient.twoFactor.verifyTOTP.$post({
+        json: {
+            code: "123456", // the code entered by the user
+            trustDevice: true // If trusted, the user won't need 2FA again on the same device
+        }
     })
 }
 ```

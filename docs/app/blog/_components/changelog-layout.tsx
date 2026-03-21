@@ -1,7 +1,6 @@
 import Link from "next/link";
 
 import clsx from "clsx";
-import { DiscordLogoIcon } from "@radix-ui/react-icons";
 
 function BookIcon(props: React.ComponentPropsWithoutRef<"svg">) {
 	return (
@@ -67,13 +66,6 @@ export function Intro() {
 				>
 					GitHub
 				</IconLink>
-				<IconLink
-					href="https://discord.gg/faire-auth"
-					icon={DiscordLogoIcon}
-					className="flex-none text-gray-600 dark:text-gray-300"
-				>
-					Community
-				</IconLink>
 			</div>
 		</>
 	);
@@ -82,10 +74,8 @@ export function Intro() {
 export function IntroFooter() {
 	return (
 		<p className="flex items-baseline gap-x-2 text-[0.8125rem]/6 text-gray-500">
-			Brought to you by{" "}
-			<IconLink href="#" icon={XIcon} compact>
-				FAIRE-AUTH.
-			</IconLink>
+			<span className="font-display italic font-semibold text-sm">Faire</span>{" "}
+			<span className="font-medium">Auth</span>
 		</p>
 	);
 }

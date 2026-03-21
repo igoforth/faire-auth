@@ -159,7 +159,7 @@ When you call `auth.api.signInEmail` on the server, and the user has 2FA enabled
 
 ```ts
 const response = await auth.api.signInEmail({
-	body: {
+	json: {
 		email: "test@test.com",
 		password: "test",
 	},

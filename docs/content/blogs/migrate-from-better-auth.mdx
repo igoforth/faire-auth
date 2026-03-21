@@ -1,0 +1,133 @@
+---
+title: "Migrate from Better Auth to Faire Auth"
+description: "A step-by-step guide to migrating your project from Better Auth to Faire Auth."
+date: 2026-03-20
+author:
+  name: "Ian Goforth"
+  avatar: "/avatars/ian.jpg"
+  twitter: "igoforth"
+image: "/og.png"
+tags: ["migration", "better-auth", "faire-auth", "guide"]
+---
+
+## Why Migrate?
+
+Faire Auth builds on top of Better Auth's foundation and adds first-class Hono integration, typed middleware, route hooks, DTO transforms, and a plugin architecture designed for composability. If you're already using Better Auth, migrating is straightforward — the database schema is compatible and most of the API surface is the same.
+
+## Step 1: Swap the Package
+
+```package-install
+npm install faire-auth
+```
+
+Remove `better-auth` from your dependencies:
+
+```package-install
+npm uninstall better-auth
+```
+
+## Step 2: Update Imports
+
+Replace all `better-auth` imports with `faire-auth`:
+
+```ts
+// Before
+import { betterAuth } from "better-auth";
+import { createAuthClient } from "better-auth/client";
+
+// After
+import { faireAuth, defineOptions } from "faire-auth";
+import { createAuthClient } from "faire-auth/client";
+```
+
+Plugin imports follow the same pattern:
+
+```ts
+// Before
+import { organization } from "better-auth/plugins";
+
+// After
+import { organization } from "faire-auth/plugins";
+```
+
+## Step 3: Update Your Auth Configuration
+
+The `betterAuth()` function is replaced by `faireAuth()` with `defineOptions()`:
+
+```ts
+// Before
+export const auth = betterAuth({
+  database: new Pool({ connectionString: DATABASE_URL }),
+  emailAndPassword: { enabled: true },
+  plugins: [organization(), twoFactor()],
+});
+
+// After
+const cfg = defineOptions({
+  baseURL: "http://localhost:3000",
+  plugins: [organization(), twoFactor()],
+  // New: typed middleware
+  middleware: {
+    getSession: async (ctx, next) => await next(),
+  },
+  // New: rate limiting
+  rateLimit: { enabled: true },
+});
+
+const { $Infer } = faireAuth(cfg);
+export const App = $Infer.App(cfg);
+```
+
+## Step 4: Update Your Client
+
+The client API is largely the same but now provides `$path` and `$url` helpers:
+
+```ts
+const client = createAuthClient<typeof App>()({});
+
+// Existing calls work as before
+await client.getSession.$get();
+
+// New: get typed paths and URLs
+client.getSession.$path(); // "/get-session"
+client.getSession.$url();  // URL object
+```
+
+## Step 5: Database
+
+Faire Auth uses the same database schema as Better Auth. No migration is needed — your existing tables, sessions, and accounts will work without changes.
+
+If you've added custom fields via plugins, regenerate your schema to pick up any new columns:
+
+```bash
+npx @faire-auth/cli generate
+```
+
+## Step 6: Update Framework Integration
+
+Framework integrations use the same pattern with updated imports:
+
+```ts
+// Next.js — before
+import { toNextJsHandler } from "better-auth/next-js";
+
+// Next.js — after
+import { toNextJsHandler } from "faire-auth/next-js";
+```
+
+The same applies for SvelteKit, Nuxt, Astro, and other integrations.
+
+## What's New
+
+After migrating, you get access to Faire Auth's additions:
+
+- **Typed middleware** — add per-route middleware with full type inference
+- **Route hooks** — transform responses before they're sent
+- **DTO transforms** — control what data is exposed to clients
+- **`$path` / `$url`** — typed route helpers on the client proxy
+- **Rate limiting** — built-in configurable rate limiter
+- **Hono-native** — runs on any Hono-compatible runtime
+
+## Need Help?
+
+If you run into issues during migration, check the [docs](/docs) or open an issue on [GitHub](https://github.com/igoforth/faire-auth).

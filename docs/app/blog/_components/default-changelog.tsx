@@ -2,8 +2,7 @@ import Link from "next/link";
 import { useId } from "react";
 import { cn } from "@/lib/utils";
 import { IconLink } from "./changelog-layout";
-import { BookIcon, GitHubIcon, XIcon } from "./icons";
-import { DiscordLogoIcon } from "@radix-ui/react-icons";
+import { BookIcon, GitHubIcon } from "./icons";
 import { StarField } from "./stat-field";
 import { betterFetch } from "@better-fetch/fetch";
 import Markdown from "react-markdown";
@@ -78,40 +77,6 @@ const ChangelogPage = async () => {
 						All of the changes made will be{" "}
 						<span className="">available here.</span>
 					</h1>
-					<p className="mt-4 text-sm text-gray-600 dark:text-gray-300">
-						Faire Auth is comprehensive authentication library for TypeScript
-						that provides a wide range of features to make authentication easier
-						and more secure.
-					</p>
-					<hr className="h-px bg-gray-300 mt-5" />
-					<div className="mt-8 flex flex-wrap text-gray-600 dark:text-gray-300 gap-x-1 gap-y-3 sm:gap-x-2">
-						<IconLink
-							href="/docs"
-							icon={BookIcon}
-							className="flex-none text-gray-600 dark:text-gray-300"
-						>
-							Documentation
-						</IconLink>
-						<IconLink
-							href="https://github.com/igoforth/faire-auth"
-							icon={GitHubIcon}
-							className="flex-none text-gray-600 dark:text-gray-300"
-						>
-							GitHub
-						</IconLink>
-						<IconLink
-							href="https://discord.gg/faire-auth"
-							icon={DiscordLogoIcon}
-							className="flex-none text-gray-600 dark:text-gray-300"
-						>
-							Community
-						</IconLink>
-					</div>
-					<p className="flex items-baseline absolute bottom-4 max-md:left-1/2 max-md:-translate-x-1/2 gap-x-2 text-[0.8125rem]/6 text-gray-500">
-						<IconLink href="https://x.com/faire_auth" icon={XIcon} compact>
-							FAIRE-AUTH.
-						</IconLink>
-					</p>
 				</div>
 			</div>
 			<div className="px-4 relative md:px-8 pb-12 md:py-12">

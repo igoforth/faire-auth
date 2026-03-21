@@ -610,17 +610,16 @@ Request lifecycle hooks.
 
 ```ts
 import { faireAuth } from "faire-auth";
-import { createAuthMiddleware } from "faire-auth/api";
+import { createHook } from "faire-auth/plugins";
 
 export const auth = faireAuth({
 	hooks: {
-		before: createAuthMiddleware(async (ctx) => {
+		before: (options) => createHook()(async (ctx) => {
 			// Execute before processing the request
-			console.log("Request path:", ctx.path);
+			console.log("Request path:", ctx.req.path);
 		}),
-		after: createAuthMiddleware(async (ctx) => {
+		after: (options) => createHook()(async (ctx) => {
 			// Execute after processing the request
-			console.log("Response:", ctx.context.returned);
 		})
 	},
 })

@@ -24,9 +24,9 @@ const calloutVariants = cva(
 	{
 		variants: {
 			type: {
-				info: "border-s-blue-500/50",
-				warn: "border-s-orange-500/50",
-				error: "border-s-red-500/50",
+				info: "border-s-brand-blue",
+				warn: "border-s-brand-yellow",
+				error: "border-s-brand-red",
 				success: "border-s-green-500/50",
 			},
 		},
@@ -50,11 +50,11 @@ export const Callout = forwardRef<HTMLDivElement, CalloutProps>(
 			>
 				{icon ??
 					{
-						info: <Info className="size-5 fill-blue-500 text-fd-card" />,
+						info: <Info className="size-5 fill-brand-blue text-fd-card" />,
 						warn: (
-							<TriangleAlert className="size-5 fill-orange-500 text-fd-card" />
+							<TriangleAlert className="size-5 fill-brand-yellow text-fd-card" />
 						),
-						error: <CircleX className="size-5 fill-red-500 text-fd-card" />,
+						error: <CircleX className="size-5 fill-brand-red text-fd-card" />,
 						success: (
 							<CircleCheck className="size-5 fill-green-500 text-fd-card" />
 						),

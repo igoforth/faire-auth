@@ -82,6 +82,21 @@ export default function Layout({ children }: { children: ReactNode }) {
 						<NavbarProvider>
 							<Navbar />
 							{children}
+							<footer className="border-t border-border py-8 px-4">
+								<div className="max-w-7xl mx-auto flex flex-col items-center gap-3 text-sm text-muted-foreground">
+									<div className="flex items-center gap-1.5">
+										<span className="inline-block w-1.5 h-1.5 rounded-full bg-brand-red" />
+										<span className="inline-block w-1.5 h-1.5 rounded-full bg-brand-yellow" />
+										<span className="inline-block w-1.5 h-1.5 rounded-full bg-brand-blue" />
+									</div>
+									<p>
+										<span className="font-display italic font-semibold text-foreground text-base">
+											Faire
+										</span>{" "}
+										<span className="font-medium text-foreground">Auth</span>
+									</p>
+								</div>
+							</footer>
 							<Toaster
 								toastOptions={{
 									style: {

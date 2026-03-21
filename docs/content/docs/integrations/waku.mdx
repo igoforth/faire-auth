@@ -132,7 +132,7 @@ function wakuCookies() {
           matcher(ctx) {
             return true;
           },
-          handler: createAuthMiddleware(async (ctx) => {
+          handler: createHook()(async (ctx) => {
             const returned = ctx.context.responseHeaders;
             if ("_flag" in ctx && ctx._flag === "router") {
               return;
@@ -160,7 +160,7 @@ import { auth } from "../auth"
 
 const signIn = async () => {
     await auth.api.signInEmail({
-        body: {
+        json: {
             email: "user@email.com",
             password: "password",
         }

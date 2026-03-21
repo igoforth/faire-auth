@@ -243,7 +243,7 @@ import { auth } from "@/lib/auth";
 // check on the backend if the customer can send a message
 const { allowed } = await auth.api.check({
   headers: await headers(), // pass the request headers
-  body: {
+  json: {
     featureId: "messages",
   },
 });
@@ -253,7 +253,7 @@ const { allowed } = await auth.api.check({
 // then track the usage
 await auth.api.track({
   headers: await headers(),
-  body: {
+  json: {
     featureId: "messages",
     value: 2,
   },

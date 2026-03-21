@@ -462,7 +462,7 @@ For each API key, you can customize the rate-limit options on create.
 
 ```ts
 const apiKey = await auth.api.createApiKey({
-  body: {
+  json: {
     rateLimitEnabled: true,
     rateLimitTimeWindow: 1000 * 60 * 60 * 24, // 1 day
     rateLimitMax: 10, // 10 requests per day
@@ -574,7 +574,7 @@ Then, you can store metadata in the `metadata` field of the API key object.
 
 ```ts
 const apiKey = await auth.api.createApiKey({
-  body: {
+  json: {
     metadata: {
       plan: "premium",
     },
@@ -586,7 +586,7 @@ You can then retrieve the metadata from the API key object.
 
 ```ts
 const apiKey = await auth.api.getApiKey({
-  body: {
+  json: {
     keyId: "your_api_key_id_here",
   },
 });
@@ -802,7 +802,7 @@ When creating an API key, you can specify custom permissions:
 
 ```ts
 const apiKey = await auth.api.createApiKey({
-  body: {
+  json: {
     name: "My API Key",
     permissions: {
       files: ["read", "write"],
@@ -819,7 +819,7 @@ When verifying an API key, you can check if it has the required permissions:
 
 ```ts
 const result = await auth.api.verifyApiKey({
-  body: {
+  json: {
     key: "your_api_key_here",
     permissions: {
       files: ["read"],
@@ -840,7 +840,7 @@ You can update the permissions of an existing API key:
 
 ```ts
 const apiKey = await auth.api.updateApiKey({
-  body: {
+  json: {
     keyId: existingApiKeyId,
     permissions: {
       files: ["read", "write", "delete"],

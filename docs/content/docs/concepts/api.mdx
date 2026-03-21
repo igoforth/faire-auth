@@ -3,7 +3,7 @@ title: API
 description: Faire Auth API.
 ---
 
-When you create a new Faire Auth instance, it provides you with an `api` object. This object exposes every endpoint that exists in your Faire Auth instance. And you can use this to interact with Faire Auth server side.
+When you create a new Faire Auth instance, it provides you with an `api` object. This object exposes every endpoint that exists in your Faire Auth instance, keyed by `operationId`. You can use this to interact with Faire Auth server-side.
 
 Any endpoint added to Faire Auth, whether from plugins or the core, will be accessible through the `api` object.
 
@@ -12,12 +12,14 @@ Any endpoint added to Faire Auth, whether from plugins or the core, will be acce
 To call an API endpoint on the server, import your `auth` instance and call the endpoint using the `api` object.
 
 ```ts title="server.ts"
-import { faireAuth } from "faire-auth";
+import { faireAuth, defineOptions } from "faire-auth";
 import { headers } from "next/headers";
 
-export const auth = faireAuth({
-    //...
+const cfg = defineOptions({
+    baseURL: "http://localhost:3000",
 })
+
+const auth = faireAuth(cfg)
 
 // calling get session on the server
 await auth.api.getSession({
@@ -27,7 +29,7 @@ await auth.api.getSession({
 
 ### Body, Headers, Query
 
-Unlike the client, the server needs the values to be passed as an object with the key `body` for the body, `headers` for the headers, and `query` for query parameters.
+Unlike the client, the server needs the values to be passed as an object with the key `json` for the request body, `headers` for the headers, and `query` for query parameters.
 
 ```ts title="server.ts"
 await auth.api.getSession({
@@ -35,7 +37,7 @@ await auth.api.getSession({
 })
 
 await auth.api.signInEmail({
-    body: {
+    json: {
         email: "john@doe.com",
         password: "password"
     },
@@ -50,8 +52,32 @@ await auth.api.verifyEmail({
 ```
 
 <Callout>
-Faire Auth API endpoints are built on top of [better-call](https://github.com/bekacru/better-call), a tiny web framework that lets you call REST API endpoints as if they were regular functions and allows us to easily infer client types from the server.
+Faire Auth's API layer is built on <Link href="https://hono.dev">Hono</Link> using `OpenAPIHono`, which provides type-safe endpoints with automatic OpenAPI schema generation. This lets you call REST API endpoints as if they were regular functions and allows us to infer client types from the server.
 </Callout>
+
+### Type Inference with `$Infer`
+
+Faire Auth provides powerful type inference through the `$Infer` namespace:
+
+```ts title="server.ts"
+import { faireAuth, defineOptions } from "faire-auth";
+
+const cfg = defineOptions({
+    baseURL: "http://localhost:3000",
+    plugins: [organization(), twoFactor()],
+})
+
+const { $Infer } = faireAuth(cfg)
+
+// Get the full typed Hono app — use this to type your client
+export const App = $Infer.App(cfg)
+
+// Get the typed server-side API object
+export const Api = $Infer.Api(App)
+
+// Get the session type (user + session with plugin fields)
+type Session = typeof $Infer.Session
+```
 
 ### Getting `headers` and `Response` Object
 
@@ -78,7 +104,7 @@ The `headers` will be a `Headers` object, which you can use to get the cookies o
 
 ```ts
 const cookies = headers.get("set-cookie");
-const headers = headers.get("x-custom-header");
+const customHeader = headers.get("x-custom-header");
 ```
 
 #### Getting `Response` Object
@@ -87,7 +113,7 @@ To get the `Response` object, you can pass the `asResponse` option to the endpoi
 
 ```ts title="server.ts"
 const response = await auth.api.signInEmail({
-    body: {
+    json: {
         email: "",
         password: ""
     },
@@ -100,11 +126,11 @@ const response = await auth.api.signInEmail({
 When you call an API endpoint on the server, it will throw an error if the request fails. You can catch the error and handle it as you see fit. The error instance is an instance of `APIError`.
 
 ```ts title="server.ts"
-import { APIError } from "faire-auth/api";
+import { APIError } from "faire-auth";
 
 try {
     await auth.api.signInEmail({
-        body: {
+        json: {
             email: "",
             password: ""
         }
@@ -112,6 +138,20 @@ try {
 } catch (error) {
     if (error instanceof APIError) {
         console.log(error.message, error.status)
+    }
+}
+```
+
+### Edge Deployment
+
+The `handler` returned by `faireAuth()` supports edge runtimes natively. It accepts optional Cloudflare Worker bindings and execution context:
+
+```ts title="worker.ts"
+const auth = faireAuth(cfg)
+
+export default {
+    fetch(request: Request, env: Env, ctx: ExecutionContext) {
+        return auth.handler(request, env, ctx)
     }
 }
 ```

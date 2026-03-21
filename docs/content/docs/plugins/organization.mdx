@@ -1402,7 +1402,7 @@ import { auth } from "@/auth";
 
 await auth.api.hasPermission({
   headers: await headers(),
-  body: {
+  json: {
     permissions: {
       project: ["create"], // This must match the structure in your access control
     },
@@ -1412,7 +1412,7 @@ await auth.api.hasPermission({
 // You can also check multiple resource permissions at the same time
 await auth.api.hasPermission({
   headers: await headers(),
-  body: {
+  json: {
     permissions: {
       project: ["create"], // This must match the structure in your access control
       sale: ["create"],

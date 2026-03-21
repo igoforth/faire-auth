@@ -43,7 +43,7 @@ await authClient.signIn.social({
 ```ts
 // server-side usage
 await auth.api.signInSocial({
-  body: {
+  json: {
     provider: "google", // or any other provider id
   },
 });
@@ -63,7 +63,7 @@ server-side usage:
 
 ```ts
 await auth.api.linkSocialAccount({
-  body: {
+  json: {
     provider: "google", // or any other provider id
   },
   headers: // pass headers with authenticated token
@@ -85,7 +85,7 @@ server-side usage:
 
 ```ts
 await auth.api.getAccessToken({
-  body: {
+  json: {
     providerId: "google", // or any other provider id
     accountId: "accountId", // optional, if you want to get the access token for a specific account
     userId: "userId", // optional, if you don't provide headers with authenticated token
@@ -108,7 +108,7 @@ server-side usage:
 
 ```ts
 await auth.api.accountInfo({
-  body: { accountId: "accountId" },
+  json: { accountId: "accountId" },
   headers: // pass headers with authenticated token
 });
 ```

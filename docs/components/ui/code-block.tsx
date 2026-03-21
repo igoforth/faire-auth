@@ -110,7 +110,7 @@ export function CodeBlock({
 			{...props}
 			className={cn(
 				isTab ? [bg, "rounded-lg"] : "my-4 rounded-lg bg-fd-card",
-				"group shiki relative border shadow-sm outline-none not-prose overflow-hidden text-sm",
+				"group shiki relative border border-t-2 border-t-brand-red/40 shadow-sm outline-none not-prose overflow-hidden text-sm",
 				props.className,
 			)}
 		>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useId, useState } from "react";
+import { useEffect, useState } from "react";
 import useMeasure from "react-use-measure";
 import Link from "next/link";
 import clsx from "clsx";
@@ -10,32 +10,76 @@ import { useTheme } from "next-themes";
 import { Highlight, themes } from "prism-react-renderer";
 import { AnimatePresence, motion, MotionConfig } from "framer-motion";
 import { Builder } from "../builder";
-import { Spotlight } from "./spotlight";
-import { GradientBG } from "./gradient-bg";
-const tabs: { name: "auth.ts" | "client.ts"; code: string }[] = [
+
+const tabs: { name: "config.ts" | "app.ts" | "client.ts"; code: string }[] = [
 	{
-		name: "auth.ts",
-		code: `export const auth = faireAuth({
-	database: new Pool({
-		connectionString: DATABASE_URL,
-	}),
-    emailAndPassword: {
-        enabled: true,
-    },
-	plugins: [
-	  organization(),
-      twoFactor(),
-	]
+		name: "config.ts",
+		code: `export const cfg = defineOptions({
+  baseURL: "http://localhost:3000",
+  plugins: [organization(), twoFactor()],
+  middleware: {
+    getSession: async (ctx, next) =>
+      await next(),
+  },
+  rateLimit: { enabled: true },
 })`,
 	},
 	{
+		name: "app.ts",
+		code: `const { $Infer } = faireAuth(cfg)
+export const App = $Infer.App(cfg)
+export const Api = $Infer.Api(App)`,
+	},
+	{
 		name: "client.ts",
-		code: `const client = createAuthClient({
-    plugins: [passkeyClient()]
-});
-        `,
+		code: `const client = createAuthClient<
+  typeof App
+>()({})
+
+await client.getSession.$get()`,
 	},
 ];
+
+export default function Hero() {
+	return (
+		<section className="relative w-full min-h-[33vh] flex flex-col items-center justify-center px-4 py-12 md:py-16">
+			<div className="flex flex-col items-center gap-6 max-w-4xl mx-auto w-full">
+				<div className="flex items-center gap-2">
+					<span className="inline-block w-2 h-2 rounded-full bg-brand-red" />
+					<span className="inline-block w-2 h-2 rounded-full bg-brand-yellow" />
+					<span className="inline-block w-2 h-2 rounded-full bg-brand-blue" />
+				</div>
+
+				<h1 className="text-center tracking-tight text-3xl md:text-5xl text-foreground text-balance">
+					<span className="whitespace-nowrap">Better Auth</span>
+					{" + "}
+					<span className="whitespace-nowrap">Hono</span>
+					{" = "}
+					<span className="whitespace-nowrap">
+						<span className="font-display italic font-bold text-4xl md:text-6xl">
+							Faire
+						</span>{" "}
+						<span className="font-sans font-medium">Auth</span>
+					</span>
+				</h1>
+
+				<div className="flex flex-wrap items-center justify-center gap-3 mt-2">
+					<Link
+						href="/docs"
+						className="rounded-md bg-foreground text-background px-6 py-2 text-sm font-medium transition hover:opacity-90"
+					>
+						Get Started
+					</Link>
+					<Builder />
+				</div>
+
+				<div className="w-full max-w-2xl mt-4">
+					<CodePreview />
+				</div>
+			</div>
+		</section>
+	);
+}
 
 function TrafficLightsIcon(props: React.ComponentPropsWithoutRef<"svg">) {
 	return (
@@ -47,130 +91,10 @@ function TrafficLightsIcon(props: React.ComponentPropsWithoutRef<"svg">) {
 	);
 }
 
-export default function Hero() {
-	return (
-		<section className="max-h-[40rem] relative w-full flex md:items-center md:justify-center dark:bg-black/[0.96] antialiased bg-grid-white/[0.02] overflow-hidden md:min-h-[40rem]">
-			<Spotlight />
-			<div className="overflow-hidden px-2 bg-transparent dark:-mb-32 dark:mt-[-4.75rem] dark:pb-32 dark:pt-[4.75rem] md:w-10/12 mx-auto">
-				<div className="mx-auto grid lg:max-w-8xl xl:max-w-full grid-cols-1 items-center gap-x-8 gap-y-16 px-4 py-2 lg:grid-cols-2 lg:px-8 lg:py-4 xl:gap-x-16 xl:px-0">
-					<div className="relative z-10 text-left mt-0 sm:mt-2 md:mt-8 lg:mt-0 md:text-center lg:text-left">
-						<div className="relative">
-							<div className="flex flex-col items-center lg:items-start gap-2">
-								<div className="flex items-end gap-1.5 mt-2">
-									<div className="flex items-center gap-1.5">
-										<span className="inline-block w-1.5 h-1.5 rounded-full bg-brand-red"></span>
-										<span className="inline-block w-1.5 h-1.5 rounded-full bg-brand-yellow"></span>
-										<span className="inline-block w-1.5 h-1.5 rounded-full bg-brand-blue"></span>
-										<span className="text-xs text-opacity-75 ml-1">
-											Auth for Every Stage
-										</span>
-									</div>
-								</div>
-							</div>
-
-							<p className="text-zinc-800 dark:text-zinc-300 mt-3 tracking-tight text-2xl md:text-3xl">
-								The most comprehensive authentication framework for TypeScript.
-							</p>
-							<div className="relative mt-2 md:flex items-center gap-2 w-10/12 hidden border border-white/5">
-								<GradientBG className="w-full flex items-center justify-between">
-									<div className="w-full flex items-center gap-2">
-										<p className="md:text-sm text-xs font-mono select-none">
-											<span>
-												<span className="text-[#4498c8]">git:</span>
-												<span className="text-[#F07178]">(main) </span>
-											</span>
-											<span className="italic text-brand-red"> x</span>
-										</p>
-										<p className=" relative inline tracking-tight opacity-90 md:text-sm text-xs dark:text-white font-mono text-black">
-											npm add{" "}
-											<span className="relative dark:text-blue-200 text-blue-900">
-												faire-auth
-												<span className="absolute h-2 bg-gradient-to-tr from-white via-slate-200 to-blue-200 blur-3xl w-full top-0 left-2"></span>
-											</span>
-										</p>
-									</div>
-									<div className="flex gap-2 items-center">
-										<Link
-											href="https://www.npmjs.com/package/faire-auth"
-											target="_blank"
-										>
-											<svg
-												xmlns="http://www.w3.org/2000/svg"
-												width="1em"
-												height="1em"
-												viewBox="0 0 128 128"
-											>
-												<path
-													fill="#cb3837"
-													d="M0 7.062C0 3.225 3.225 0 7.062 0h113.88c3.838 0 7.063 3.225 7.063 7.062v113.88c0 3.838-3.225 7.063-7.063 7.063H7.062c-3.837 0-7.062-3.225-7.062-7.063zm23.69 97.518h40.395l.05-58.532h19.494l-.05 58.581h19.543l.05-78.075l-78.075-.1l-.1 78.126z"
-												></path>
-												<path
-													fill="#fff"
-													d="M25.105 65.52V26.512H40.96c8.72 0 26.274.034 39.008.075l23.153.075v77.866H83.645v-58.54H64.057v58.54H25.105z"
-												></path>
-											</svg>
-										</Link>
-										<Link
-											href="https://github.com/igoforth/faire-auth"
-											target="_blank"
-										>
-											<svg
-												xmlns="http://www.w3.org/2000/svg"
-												width="1em"
-												height="1em"
-												viewBox="0 0 256 256"
-											>
-												<g fill="none">
-													<rect
-														width="256"
-														height="256"
-														fill="#242938"
-														rx="60"
-													></rect>
-													<path
-														fill="#fff"
-														d="M128.001 30C72.779 30 28 74.77 28 130.001c0 44.183 28.653 81.667 68.387 94.89c4.997.926 6.832-2.169 6.832-4.81c0-2.385-.093-10.262-.136-18.618c-27.82 6.049-33.69-11.799-33.69-11.799c-4.55-11.559-11.104-14.632-11.104-14.632c-9.073-6.207.684-6.079.684-6.079c10.042.705 15.33 10.305 15.33 10.305c8.919 15.288 23.394 10.868 29.1 8.313c.898-6.464 3.489-10.875 6.349-13.372c-22.211-2.529-45.56-11.104-45.56-49.421c0-10.918 3.906-19.839 10.303-26.842c-1.039-2.519-4.462-12.69.968-26.464c0 0 8.398-2.687 27.508 10.25c7.977-2.215 16.531-3.326 25.03-3.364c8.498.038 17.06 1.149 25.051 3.365c19.087-12.939 27.473-10.25 27.473-10.25c5.443 13.773 2.019 23.945.98 26.463c6.412 7.003 10.292 15.924 10.292 26.842c0 38.409-23.394 46.866-45.662 49.341c3.587 3.104 6.783 9.189 6.783 18.519c0 13.38-.116 24.149-.116 27.443c0 2.661 1.8 5.779 6.869 4.797C199.383 211.64 228 174.169 228 130.001C228 74.771 183.227 30 128.001 30M65.454 172.453c-.22.497-1.002.646-1.714.305c-.726-.326-1.133-1.004-.898-1.502c.215-.512.999-.654 1.722-.311c.727.326 1.141 1.01.89 1.508m4.919 4.389c-.477.443-1.41.237-2.042-.462c-.654-.697-.777-1.629-.293-2.078c.491-.442 1.396-.235 2.051.462c.654.706.782 1.631.284 2.078m3.374 5.616c-.613.426-1.615.027-2.234-.863c-.613-.889-.613-1.955.013-2.383c.621-.427 1.608-.043 2.236.84c.611.904.611 1.971-.015 2.406m5.707 6.504c-.548.604-1.715.442-2.57-.383c-.874-.806-1.118-1.95-.568-2.555c.555-.606 1.729-.435 2.59.383c.868.804 1.133 1.957.548 2.555m7.376 2.195c-.242.784-1.366 1.14-2.499.807c-1.13-.343-1.871-1.26-1.642-2.052c.235-.788 1.364-1.159 2.505-.803c1.13.341 1.871 1.252 1.636 2.048m8.394.932c.028.824-.932 1.508-2.121 1.523c-1.196.027-2.163-.641-2.176-1.452c0-.833.939-1.51 2.134-1.53c1.19-.023 2.163.639 2.163 1.459m8.246-.316c.143.804-.683 1.631-1.864 1.851c-1.161.212-2.236-.285-2.383-1.083c-.144-.825.697-1.651 1.856-1.865c1.183-.205 2.241.279 2.391 1.097"
-													></path>
-												</g>
-											</svg>
-										</Link>
-									</div>
-								</GradientBG>
-							</div>
-
-							{
-								<>
-									<div className="mt-4 flex w-fit flex-col gap-4 font-sans md:flex-row md:justify-center lg:justify-start items-center">
-										<Link
-											href="/docs"
-											className="hover:shadow-sm dark:border-stone-100 dark:hover:shadow-sm border-2 border-black bg-white px-4 py-1.5 text-sm uppercase text-black shadow-[1px_1px_rgba(0,0,0),2px_2px_rgba(0,0,0),3px_3px_rgba(0,0,0),4px_4px_rgba(0,0,0),5px_5px_0px_0px_rgba(0,0,0)] transition duration-200 md:px-8 dark:shadow-[1px_1px_rgba(255,255,255),2px_2px_rgba(255,255,255),3px_3px_rgba(255,255,255),4px_4px_rgba(255,255,255),5px_5px_0px_0px_rgba(255,255,255)]"
-										>
-											Get Started
-										</Link>
-										<Builder />
-									</div>
-								</>
-							}
-						</div>
-					</div>
-
-					<div className="relative hidden md:block lg:static xl:pl-10">
-						<div className="relative">
-							<div className="from-brand-red/30 via-brand-yellow/20 to-brand-blue/30 absolute inset-0 rounded-none bg-gradient-to-tr opacity-10 blur-lg" />
-							<div className="from-brand-red/20 via-brand-yellow/10 to-brand-blue/20 absolute inset-0 rounded-none bg-gradient-to-tr opacity-10" />
-							<CodePreview />
-						</div>
-					</div>
-				</div>
-			</div>
-		</section>
-	);
-}
-
 function CodePreview() {
-	const [currentTab, setCurrentTab] = useState<"auth.ts" | "client.ts">(
-		"auth.ts",
-	);
+	const [currentTab, setCurrentTab] = useState<
+		"config.ts" | "app.ts" | "client.ts"
+	>("config.ts");
 
 	const theme = useTheme();
 
@@ -199,13 +123,11 @@ function CodePreview() {
 			<MotionConfig transition={{ duration: 0.5, type: "spring", bounce: 0 }}>
 				<motion.div
 					animate={{ height: height > 0 ? height : undefined }}
-					className="from-slate-50 to-slate-100 dark:to-black/90 dark:via-black dark:from-neutral-950/90 relative overflow-hidden rounded-sm bg-gradient-to-tr ring-1 ring-white/10 backdrop-blur-lg"
+					className="relative overflow-hidden rounded-lg border border-border/50 bg-card/50 backdrop-blur-sm"
 				>
 					<div ref={ref}>
-						<div className="absolute -top-px left-0 right-0 h-px" />
-						<div className="absolute -bottom-px left-11 right-20 h-px" />
 						<div className="pl-4 pt-4">
-							<TrafficLightsIcon className="stroke-slate-500/30 h-2.5 w-auto" />
+							<TrafficLightsIcon className="stroke-muted-foreground/30 h-2.5 w-auto" />
 
 							<div className="mt-4 flex space-x-2 text-xs">
 								{tabs.map((tab) => (
@@ -215,15 +137,15 @@ function CodePreview() {
 										className={clsx(
 											"relative isolate flex h-6 cursor-pointer items-center justify-center rounded-full px-2.5",
 											currentTab === tab.name
-												? "text-slate-200"
-												: "text-slate-500",
+												? "text-foreground"
+												: "text-muted-foreground",
 										)}
 									>
 										{tab.name}
 										{tab.name === currentTab && (
 											<motion.div
 												layoutId="tab-code-preview"
-												className="bg-neutral-800 absolute inset-0 -z-10 rounded-full"
+												className="bg-muted absolute inset-0 -z-10 rounded-full"
 											/>
 										)}
 									</button>
@@ -255,7 +177,7 @@ function CodePreview() {
 								>
 									<div
 										aria-hidden="true"
-										className="border-slate-300/5 text-slate-600 select-none border-r pr-4 font-mono"
+										className="border-border/10 text-muted-foreground select-none border-r pr-4 font-mono"
 									>
 										{Array.from({
 											length: code.split("\n").length,
@@ -308,7 +230,7 @@ function CodePreview() {
 									<Link
 										href="https://demo.faire-auth.com"
 										target="_blank"
-										className="shadow-md  border shadow-primary-foreground mb-4 ml-auto mr-4 mt-auto flex cursor-pointer items-center gap-2 px-3 py-1 transition-all ease-in-out hover:opacity-70"
+										className="border border-border/50 rounded-md mb-4 ml-auto mr-4 mt-auto flex cursor-pointer items-center gap-2 px-3 py-1 text-sm text-muted-foreground transition-all hover:text-foreground hover:border-border"
 									>
 										<svg
 											xmlns="http://www.w3.org/2000/svg"
@@ -321,7 +243,7 @@ function CodePreview() {
 												d="M10 20H8V4h2v2h2v3h2v2h2v2h-2v2h-2v3h-2z"
 											></path>
 										</svg>
-										<p className="text-sm">Demo</p>
+										Demo
 									</Link>
 								</motion.div>
 							</div>
@@ -330,191 +252,5 @@ function CodePreview() {
 				</motion.div>
 			</MotionConfig>
 		</AnimatePresence>
-	);
-}
-
-export function HeroBackground(props: React.ComponentPropsWithoutRef<"svg">) {
-	const id = useId();
-	return (
-		<svg
-			aria-hidden="true"
-			viewBox="0 0 668 1069"
-			width={668}
-			height={1069}
-			fill="none"
-			{...props}
-		>
-			<defs>
-				<clipPath id={`${id}-clip-path`}>
-					<path
-						fill="#fff"
-						transform="rotate(-180 334 534.4)"
-						d="M0 0h668v1068.8H0z"
-					/>
-				</clipPath>
-			</defs>
-			<g opacity=".4" clipPath={`url(#${id}-clip-path)`} strokeWidth={4}>
-				<path
-					opacity=".3"
-					d="M584.5 770.4v-474M484.5 770.4v-474M384.5 770.4v-474M283.5 769.4v-474M183.5 768.4v-474M83.5 767.4v-474"
-					stroke="#2d3a4e"
-				/>
-				<path
-					d="M83.5 221.275v6.587a50.1 50.1 0 0 0 22.309 41.686l55.581 37.054a50.102 50.102 0 0 1 22.309 41.686v6.587M83.5 716.012v6.588a50.099 50.099 0 0 0 22.309 41.685l55.581 37.054a50.102 50.102 0 0 1 22.309 41.686v6.587M183.7 584.5v6.587a50.1 50.1 0 0 0 22.31 41.686l55.581 37.054a50.097 50.097 0 0 1 22.309 41.685v6.588M384.101 277.637v6.588a50.1 50.1 0 0 0 22.309 41.685l55.581 37.054a50.1 50.1 0 0 1 22.31 41.686v6.587M384.1 770.288v6.587a50.1 50.1 0 0 1-22.309 41.686l-55.581 37.054A50.099 50.099 0 0 0 283.9 897.3v6.588"
-					stroke="#2d3a4e"
-				/>
-				<path
-					d="M384.1 770.288v6.587a50.1 50.1 0 0 1-22.309 41.686l-55.581 37.054A50.099 50.099 0 0 0 283.9 897.3v6.588M484.3 594.937v6.587a50.1 50.1 0 0 1-22.31 41.686l-55.581 37.054A50.1 50.1 0 0 0 384.1 721.95v6.587M484.3 872.575v6.587a50.1 50.1 0 0 1-22.31 41.686l-55.581 37.054a50.098 50.098 0 0 0-22.309 41.686v6.582M584.501 663.824v39.988a50.099 50.099 0 0 1-22.31 41.685l-55.581 37.054a50.102 50.102 0 0 0-22.309 41.686v6.587M283.899 945.637v6.588a50.1 50.1 0 0 1-22.309 41.685l-55.581 37.05a50.12 50.12 0 0 0-22.31 41.69v6.59M384.1 277.637c0 19.946 12.763 37.655 31.686 43.962l137.028 45.676c18.923 6.308 31.686 24.016 31.686 43.962M183.7 463.425v30.69c0 21.564 13.799 40.709 34.257 47.529l134.457 44.819c18.922 6.307 31.686 24.016 31.686 43.962M83.5 102.288c0 19.515 13.554 36.412 32.604 40.645l235.391 52.309c19.05 4.234 32.605 21.13 32.605 40.646M83.5 463.425v-58.45M183.699 542.75V396.625M283.9 1068.8V945.637M83.5 363.225v-141.95M83.5 179.524v-77.237M83.5 60.537V0M384.1 630.425V277.637M484.301 830.824V594.937M584.5 1068.8V663.825M484.301 555.275V452.988M584.5 622.075V452.988M384.1 728.537v-56.362M384.1 1068.8v-20.88M384.1 1006.17V770.287M283.9 903.888V759.85M183.699 1066.71V891.362M83.5 1068.8V716.012M83.5 674.263V505.175"
-					stroke="#2d3a4e"
-				/>
-				<circle
-					cx="83.5"
-					cy="384.1"
-					r="10.438"
-					transform="rotate(-180 83.5 384.1)"
-					fill="#1a2332"
-					stroke="#2d3a4e"
-				/>
-				<circle
-					cx="83.5"
-					cy="200.399"
-					r="10.438"
-					transform="rotate(-180 83.5 200.399)"
-					stroke="#2d3a4e"
-				/>
-				<circle
-					cx="83.5"
-					cy="81.412"
-					r="10.438"
-					transform="rotate(-180 83.5 81.412)"
-					stroke="#2d3a4e"
-				/>
-				<circle
-					cx="183.699"
-					cy="375.75"
-					r="10.438"
-					transform="rotate(-180 183.699 375.75)"
-					fill="#1a2332"
-					stroke="#2d3a4e"
-				/>
-				<circle
-					cx="183.699"
-					cy="563.625"
-					r="10.438"
-					transform="rotate(-180 183.699 563.625)"
-					fill="#1a2332"
-					stroke="#2d3a4e"
-				/>
-				<circle
-					cx="384.1"
-					cy="651.3"
-					r="10.438"
-					transform="rotate(-180 384.1 651.3)"
-					fill="#1a2332"
-					stroke="#2d3a4e"
-				/>
-				<circle
-					cx="484.301"
-					cy="574.062"
-					r="10.438"
-					transform="rotate(-180 484.301 574.062)"
-					fill="#0066a6"
-					fillOpacity=".42"
-					stroke="#0066a6"
-				/>
-				<circle
-					cx="384.1"
-					cy="749.412"
-					r="10.438"
-					transform="rotate(-180 384.1 749.412)"
-					fill="#1a2332"
-					stroke="#2d3a4e"
-				/>
-				<circle
-					cx="384.1"
-					cy="1027.05"
-					r="10.438"
-					transform="rotate(-180 384.1 1027.05)"
-					stroke="#2d3a4e"
-				/>
-				<circle
-					cx="283.9"
-					cy="924.763"
-					r="10.438"
-					transform="rotate(-180 283.9 924.763)"
-					stroke="#2d3a4e"
-				/>
-				<circle
-					cx="183.699"
-					cy="870.487"
-					r="10.438"
-					transform="rotate(-180 183.699 870.487)"
-					stroke="#2d3a4e"
-				/>
-				<circle
-					cx="283.9"
-					cy="738.975"
-					r="10.438"
-					transform="rotate(-180 283.9 738.975)"
-					fill="#1a2332"
-					stroke="#2d3a4e"
-				/>
-				<circle
-					cx="83.5"
-					cy="695.138"
-					r="10.438"
-					transform="rotate(-180 83.5 695.138)"
-					fill="#1a2332"
-					stroke="#2d3a4e"
-				/>
-				<circle
-					cx="83.5"
-					cy="484.3"
-					r="10.438"
-					transform="rotate(-180 83.5 484.3)"
-					fill="#0066a6"
-					fillOpacity=".42"
-					stroke="#0066a6"
-				/>
-				<circle
-					cx="484.301"
-					cy="432.112"
-					r="10.438"
-					transform="rotate(-180 484.301 432.112)"
-					fill="#1a2332"
-					stroke="#2d3a4e"
-				/>
-				<circle
-					cx="584.5"
-					cy="432.112"
-					r="10.438"
-					transform="rotate(-180 584.5 432.112)"
-					fill="#1a2332"
-					stroke="#2d3a4e"
-				/>
-				<circle
-					cx="584.5"
-					cy="642.95"
-					r="10.438"
-					transform="rotate(-180 584.5 642.95)"
-					fill="#1a2332"
-					stroke="#2d3a4e"
-				/>
-				<circle
-					cx="484.301"
-					cy="851.699"
-					r="10.438"
-					transform="rotate(-180 484.301 851.699)"
-					stroke="#2d3a4e"
-				/>
-				<circle
-					cx="384.1"
-					cy="256.763"
-					r="10.438"
-					transform="rotate(-180 384.1 256.763)"
-					stroke="#2d3a4e"
-				/>
-			</g>
-		</svg>
 	);
 }
