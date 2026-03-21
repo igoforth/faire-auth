@@ -67,11 +67,11 @@ description: Zoom provider setup and usage.
 
     ```ts title="auth-client.ts"
     import { createAuthClient } from "faire-auth/client"
-    const authClient =  createAuthClient()
+    const authClient = createAuthClient()({})
 
     const signIn = async () => {
-      const data = await authClient.signIn.social({
-        provider: "zoom"
+      const data = await authClient.signIn.social.$post({
+        json: { provider: "zoom" },
       })
     }
     ```

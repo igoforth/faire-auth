@@ -46,10 +46,12 @@ Use the client `signIn.social` with `provider: "line"`.
 
 ```ts title="auth-client.ts"
 import { createAuthClient } from "faire-auth/client";
-const authClient = createAuthClient();
+const authClient = createAuthClient()({});
 
 async function signInWithLINE() {
-  const res = await authClient.signIn.social({ provider: "line" });
+  const res = await authClient.signIn.social.$post({
+    json: { provider: "line" },
+  });
 }
 ```
 
@@ -58,11 +60,13 @@ async function signInWithLINE() {
 If you obtain the LINE ID token on the client, you can sign in directly without redirection.
 
 ```ts title="auth-client.ts"
-await authClient.signIn.social({
-  provider: "line",
-  idToken: {
-    token: "<LINE_ID_TOKEN>",
-    accessToken: "<LINE_ACCESS_TOKEN>",
+await authClient.signIn.social.$post({
+  json: {
+    provider: "line",
+    idToken: {
+      token: "<LINE_ID_TOKEN>",
+      accessToken: "<LINE_ACCESS_TOKEN>",
+    },
   },
 });
 ```

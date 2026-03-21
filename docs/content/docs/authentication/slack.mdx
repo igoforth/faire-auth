@@ -51,10 +51,12 @@ To sign in with Slack, you can use the `signIn.social` function provided by the 
 
 ```ts title="auth-client.ts"
 import { createAuthClient } from "faire-auth/client";
-const authClient = createAuthClient();
+const authClient = createAuthClient()({});
 
 const signIn = async () => {
-  const data = await authClient.signIn.social({ provider: "slack" });
+  const data = await authClient.signIn.social.$post({
+    json: { provider: "slack" },
+  });
 };
 ```
 
@@ -64,9 +66,11 @@ By default, Slack uses OpenID Connect scopes: `openid`, `profile`, and `email`. 
 
 ```ts title="auth-client.ts"
 const signInWithSlack = async () => {
-  await authClient.signIn.social({
-    provider: "slack",
-    scopes: ["channels:read", "chat:write"], // Additional Slack API scopes
+  await authClient.signIn.social.$post({
+    json: {
+      provider: "slack",
+      scopes: ["channels:read", "chat:write"],
+    },
   });
 };
 ```

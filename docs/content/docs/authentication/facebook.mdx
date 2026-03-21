@@ -46,12 +46,12 @@ description: Facebook provider setup and usage.
         - `provider`: The provider to use. It should be set to `facebook`.
 
         ```ts title="auth-client.ts"
-        import { createAuthClient } from "faire-auth/auth-client"
-        const authClient = createAuthClient()
+        import { createAuthClient } from "faire-auth/client"
+        const authClient = createAuthClient()({})
 
         const signIn = async () => {
-            const data = await authClient.signIn.social({
-                provider: "facebook"
+            const data = await authClient.signIn.social.$post({
+                json: { provider: "facebook" },
             })
         }
         ```
@@ -96,12 +96,14 @@ For limited login, you need to pass `idToken.token`, for only `accessToken` you 
 
 
 ```ts title="auth-client.ts"
-const data = await authClient.signIn.social({
-    provider: "facebook",
-    idToken: {  // [!code highlight]
-        ...(platform === 'ios' ?  // [!code highlight]
-            { token: idToken }  // [!code highlight]
-            : { token: accessToken, accessToken: accessToken }), // [!code highlight]
+const data = await authClient.signIn.social.$post({
+    json: {
+        provider: "facebook",
+        idToken: {  // [!code highlight]
+            ...(platform === 'ios' ?  // [!code highlight]
+                { token: idToken }  // [!code highlight]
+                : { token: accessToken, accessToken: accessToken }), // [!code highlight]
+        },
     },
 })
 ```

@@ -43,11 +43,11 @@ description: LinkedIn Provider
 
         ```ts title="auth-client.ts"
         import { createAuthClient } from "faire-auth/client"
-        const authClient =  createAuthClient()
+        const authClient = createAuthClient()({})
 
         const signIn = async () => {
-            const data = await authClient.signIn.social({
-                provider: "linkedin"
+            const data = await authClient.signIn.social.$post({
+                json: { provider: "linkedin" },
             })
         }
         ```
