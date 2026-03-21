@@ -32,7 +32,7 @@ Authentication in the TypeScript ecosystem is a half-solved problem. Other open-
 
 ## Contribution
 
-Faire Auth is free and open source project licensed under the [MIT License](./LICENSE.md). You are free to do whatever you want with it.
+Faire Auth is free and open source project licensed under the [GNU Affero General Public License v3.0](./LICENSE).
 
 You could help continuing its development by:
 
@@ -40,6 +40,6 @@ You could help continuing its development by:
 - [Suggest new features and report issues](https://github.com/igoforth/faire-auth/issues)
 
 ## Security
-If you discover a security vulnerability within Faire Auth, please send an e-mail to security@faire-auth.com.
+If you discover a security vulnerability within Faire Auth, please report it via a [GitHub security advisory](https://github.com/igoforth/faire-auth/security/advisories/new).
 
 All reports will be promptly addressed, and you'll be credited accordingly.
