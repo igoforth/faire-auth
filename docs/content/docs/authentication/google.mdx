@@ -41,11 +41,11 @@ To sign in with Google, you can use the `signIn.social` function provided by the
 
 ```ts title="auth-client.ts"  /
 import { createAuthClient } from "faire-auth/client";
-const authClient = createAuthClient();
+const authClient = createAuthClient()({});
 
 const signIn = async () => {
-  const data = await authClient.signIn.social({
-    provider: "google",
+  const data = await authClient.signIn.social.$post({
+    json: { provider: "google" },
   });
 };
 ```
@@ -62,12 +62,14 @@ This is useful when you have the ID Token from Google on the client-side and wan
 </Callout>
 
 ```ts title="auth-client.ts"
-const data = await authClient.signIn.social({
-    provider: "google",
-    idToken: {
-        token: // Google ID Token,
-        accessToken: // Google Access Token
-    }
+const data = await authClient.signIn.social.$post({
+    json: {
+        provider: "google",
+        idToken: {
+            token: // Google ID Token,
+            accessToken: // Google Access Token
+        },
+    },
 })
 ```
 
@@ -96,9 +98,11 @@ If your application needs additional Google scopes after the user has already si
 
 ```tsx title="auth-client.ts"
 const requestGoogleDriveAccess = async () => {
-  await authClient.linkSocial({
-    provider: "google",
-    scopes: ["https://www.googleapis.com/auth/drive.file"],
+  await authClient.linkSocial.$post({
+    json: {
+      provider: "google",
+      scopes: ["https://www.googleapis.com/auth/drive.file"],
+    },
   });
 };
 

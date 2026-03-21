@@ -35,8 +35,8 @@ To sign in with a social provider, you can use the `signIn.social` function with
 
 ```ts
 // client-side usage
-await authClient.signIn.social({
-  provider: "google", // or any other provider id
+await authClient.signIn.social.$post({
+  json: { provider: "google" }, // or any other provider id
 })
 ```
 
@@ -54,8 +54,8 @@ await auth.api.signInSocial({
 To link an account to a social provider, you can use the `linkAccount` function with the `authClient` or `auth.api` for server-side usage.
 
 ```ts
-await authClient.linkSocial({
-  provider: "google", // or any other provider id
+await authClient.linkSocial.$post({
+  json: { provider: "google" }, // or any other provider id
 })
 ```
 
@@ -75,10 +75,13 @@ await auth.api.linkSocialAccount({
 To get the access token for a social provider, you can use the `getAccessToken` function with the `authClient` or `auth.api` for server-side usage. When you use this endpoint, if the access token is expired, it will be refreshed.
 
 ```ts
-const { accessToken } = await authClient.getAccessToken({
-  providerId: "google", // or any other provider id
-  accountId: "accountId", // optional, if you want to get the access token for a specific account
+const { data } = await authClient.getAccessToken.$post({
+  json: {
+    providerId: "google", // or any other provider id
+    accountId: "accountId", // optional
+  },
 })
+const { accessToken } = data;
 ```
 
 server-side usage:
@@ -99,8 +102,8 @@ await auth.api.getAccessToken({
 To get provider specific account info you can use the `accountInfo` function with the `authClient` or `auth.api` for server-side usage.
 
 ```ts
-const info = await authClient.accountInfo({
-  accountId: "accountId", // here you pass in the provider given account id, the provider is automatically detected from the account id
+const { data: info } = await authClient.accountInfo.$post({
+  json: { accountId: "accountId" }, // the provider is automatically detected from the account id
 })
 ```
 
@@ -121,9 +124,11 @@ You can request additional scopes by using the `linkSocial` method with the same
 
 ```ts
 const requestAdditionalScopes = async () => {
-    await authClient.linkSocial({
-        provider: "google",
-        scopes: ["https://www.googleapis.com/auth/drive.file"],
+    await authClient.linkSocial.$post({
+        json: {
+            provider: "google",
+            scopes: ["https://www.googleapis.com/auth/drive.file"],
+        },
     });
 };
 ```

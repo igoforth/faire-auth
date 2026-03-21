@@ -16,9 +16,11 @@ The user table can be extended using [additional fields](/docs/concepts/database
 To update user information, you can use the `updateUser` function provided by the client. The `updateUser` function takes an object with the following properties:
 
 ```ts
-await authClient.updateUser({
-    image: "https://example.com/image.jpg",
-    name: "John Doe",
+await authClient.updateUser.$post({
+    json: {
+        image: "https://example.com/image.jpg",
+        name: "John Doe",
+    },
 })
 ```
 ### Change Email
@@ -57,9 +59,11 @@ export const auth = faireAuth({
 Once enabled, use the `changeEmail` function on the client to update a user’s email. The user must verify their current email before changing it.
 
 ```ts
-await authClient.changeEmail({
-    newEmail: "new-email@email.com",
-    callbackURL: "/dashboard", //to redirect after verification
+await authClient.changeEmail.$post({
+    json: {
+        newEmail: "new-email@email.com",
+        callbackURL: "/dashboard", //to redirect after verification
+    },
 });
 ```
 
@@ -153,8 +157,10 @@ export const auth = faireAuth({
 - **Callback URL**: The URL provided in `sendDeleteAccountVerification` is a pre-generated link that deletes the user data when accessed.
 
 ```ts title="delete-user.ts"
-await authClient.deleteUser({
-    callbackURL: "/goodbye" // you can provide a callback URL to redirect after deletion
+await authClient.deleteUser.$post({
+    json: {
+        callbackURL: "/goodbye" // you can provide a callback URL to redirect after deletion
+    },
 });
 ```
 
@@ -164,8 +170,8 @@ If they aren’t signed in, the deletion process will fail.
 If you have sent a custom URL, you can use the `deleteUser` method with the token to delete the user.
 
 ```ts title="delete-user.ts"
-await authClient.deleteUser({
-    token
+await authClient.deleteUser.$post({
+    json: { token },
 });
 ```
 
@@ -178,8 +184,8 @@ To delete a user, the user must meet one of the following requirements:
 if the user has a password, they can delete their account by providing the password.
 
 ```ts title="delete-user.ts"
-await authClient.deleteUser({
-    password: "password"
+await authClient.deleteUser.$post({
+    json: { password: "password" },
 });
 ```
 
@@ -192,7 +198,7 @@ By default `session.freshAge` is set to `60 * 60 * 24` (1 day). You can change t
 </Callout>
 
 ```ts title="delete-user.ts"
-await authClient.deleteUser();
+await authClient.deleteUser.$post({ json: {} });
 ```
 
 3. Enabled email verification (needed for OAuth users)
@@ -200,15 +206,15 @@ await authClient.deleteUser();
 As OAuth users don't have a password, we need to send a verification email to confirm the user's intent to delete their account. If you have already added the `sendDeleteAccountVerification` callback, you can just call the `deleteUser` method without providing any other information.
 
 ```ts title="delete-user.ts"
-await authClient.deleteUser();
+await authClient.deleteUser.$post({ json: {} });
 ```
 
 4. If you have a custom delete account page and sent that url via the `sendDeleteAccountVerification` callback.
 Then you need to call the `deleteUser` method with the token to complete the deletion.
 
 ```ts title="delete-user.ts"
-await authClient.deleteUser({
-    token
+await authClient.deleteUser.$post({
+    json: { token },
 });
 ```
 
@@ -232,7 +238,7 @@ you can also throw `APIError` to interrupt the deletion process.
 
 ```ts title="auth.ts"
 import { faireAuth } from "faire-auth";
-import { APIError } from "faire-auth/api";
+import { APIError } from "faire-auth";
 
 export const auth = faireAuth({
     user: {
@@ -279,7 +285,7 @@ The account table stores the authentication data of the user [Click here to view
 To list user accounts you can use `client.user.listAccounts` method. Which will return all accounts associated with a user.
 
 ```ts
-const accounts = await authClient.listAccounts();
+const accounts = await authClient.listAccounts.$get();
 ```
 
 ### Token Encryption
@@ -351,33 +357,39 @@ Users already signed in can manually link their account to additional social pro
 - **Linking Social Accounts:** Use the `linkSocial` method on the client to link a social provider to the user's account.
 
   ```ts
-  await authClient.linkSocial({
-      provider: "google", // Provider to link
-      callbackURL: "/callback" // Callback URL after linking completes
+  await authClient.linkSocial.$post({
+      json: {
+          provider: "google", // Provider to link
+          callbackURL: "/callback" // Callback URL after linking completes
+      },
   });
   ```
 
   You can also request specific scopes when linking a social account, which can be different from the scopes used during the initial authentication:
 
   ```ts
-  await authClient.linkSocial({
-      provider: "google",
-      callbackURL: "/callback",
-      scopes: ["https://www.googleapis.com/auth/drive.readonly"] // Request additional scopes
+  await authClient.linkSocial.$post({
+      json: {
+          provider: "google",
+          callbackURL: "/callback",
+          scopes: ["https://www.googleapis.com/auth/drive.readonly"] // Request additional scopes
+      },
   });
   ```
 
   You can also link accounts using ID tokens directly, without redirecting to the provider's OAuth flow:
 
   ```ts
-  await authClient.linkSocial({
-      provider: "google",
-      idToken: {
-          token: "id_token_from_provider",
-          nonce: "nonce_used_for_token", // Optional
-          accessToken: "access_token", // Optional, may be required by some providers
-          refreshToken: "refresh_token" // Optional
-      }
+  await authClient.linkSocial.$post({
+      json: {
+          provider: "google",
+          idToken: {
+              token: "id_token_from_provider",
+              nonce: "nonce_used_for_token", // Optional
+              accessToken: "access_token", // Optional, may be required by some providers
+              refreshToken: "refresh_token" // Optional
+          },
+      },
   });
   ```
 
@@ -414,10 +426,10 @@ Users already signed in can manually link their account to additional social pro
 - **Linking Credential-Based Accounts:** To link a credential-based account (e.g., email and password), users can initiate a "forgot password" flow, or you can call the `setPassword` method on the server.
 
   ```ts
-  await auth.api.setPassword({
-      headers: /* headers containing the user's session token */,
-      password: /* new password */
-  });
+  await auth.api.setPassword(
+      { json: { newPassword: "password" } },
+      { headers: /* headers containing the user's session token */ },
+  );
   ```
 
 <Callout>
@@ -429,14 +441,13 @@ Users already signed in can manually link their account to additional social pro
 You can unlink a user account by providing a `providerId`.
 
 ```ts
-await authClient.unlinkAccount({
-    providerId: "google"
+await authClient.unlinkAccount.$post({
+    json: { providerId: "google" },
 });
 
 // Unlink a specific account
-await authClient.unlinkAccount({
-    providerId: "google",
-    accountId: "123"
+await authClient.unlinkAccount.$post({
+    json: { providerId: "google", accountId: "123" },
 });
 ```
 

@@ -82,19 +82,24 @@ export const auth = faireAuth({
 if a user tries to sign in without verifying their email, you can handle the error and show a message to the user.
 
 ```ts title="auth-client.ts"
-await authClient.signIn.email({
-    email: "email@example.com",
-    password: "password"
-}, {
-    onError: (ctx) => {
-        // Handle the error
-        if(ctx.error.status === 403) {
-            alert("Please verify your email address")
-        }
-        //you can also show the original error message
-        alert(ctx.error.message)
-    }
-})
+await authClient.signIn.email.$post(
+    {
+        json: {
+            email: "email@example.com",
+            password: "password",
+        },
+    },
+    {
+        fetchOptions: {
+            onError: (ctx) => {
+                if(ctx.error.status === 403) {
+                    alert("Please verify your email address")
+                }
+                alert(ctx.error.message)
+            },
+        },
+    },
+)
 ```
 
 #### 3. Manually
@@ -102,9 +107,11 @@ await authClient.signIn.email({
 You can also manually trigger email verification by calling `sendVerificationEmail`.
 
 ```ts
-await authClient.sendVerificationEmail({
-    email: "user@email.com",
-    callbackURL: "/" // The redirect URL after verification
+await authClient.sendVerificationEmail.$post({
+    json: {
+        email: "user@email.com",
+        callbackURL: "/" // The redirect URL after verification
+    },
 })
 ```
 
@@ -115,10 +122,10 @@ If the user clicks the provided verification URL, their email is automatically v
 For manual verification, you can send the user a custom link with the `token` and call the `verifyEmail` function.
 
 ```ts
-await authClient.verifyEmail({
+await authClient.verifyEmail.$get({
     query: {
         token: "" // Pass the token here
-    }
+    },
 })
 ```
 

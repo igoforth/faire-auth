@@ -74,11 +74,13 @@ Once you've created your client instance, you can use the client to interact wit
 
 ```ts title="auth-client.ts"
 import { createAuthClient } from "faire-auth/client"
-const authClient = createAuthClient()
+const authClient = createAuthClient()({})
 
-await authClient.signIn.email({
-    email: "test@user.com",
-    password: "password1234"
+await authClient.signIn.email.$post({
+    json: {
+        email: "test@user.com",
+        password: "password1234"
+    },
 })
 ```
 
@@ -118,14 +120,14 @@ In addition to the standard methods, the client provides hooks to easily access 
         </script>
         <template>
             <div>
-                <button v-if="!session.data" @click="() => authClient.signIn.social({
-                    provider: 'github'
+                <button v-if="!session.data" @click="() => authClient.signIn.social.$post({
+                    json: { provider: 'github' }
                 })">
                     Continue with GitHub
                 </button>
                 <div>
                     <pre>{{ session.data }}</pre>
-                    <button v-if="session.data" @click="authClient.signOut()">
+                    <button v-if="session.data" @click="authClient.signOut.$post()">
                         Sign out
                     </button>
                 </div>
@@ -155,7 +157,7 @@ In addition to the standard methods, the client provides hooks to easily access 
                     </p>
                     <button
                         onclick={async () => {
-                        await authClient.signOut();
+                        await authClient.signOut.$post();
                         }}
                     >
                         Signout
@@ -164,8 +166,8 @@ In addition to the standard methods, the client provides hooks to easily access 
                 {:else}
                     <button
                     onclick={async () => {
-                        await authClient.signIn.social({
-                        provider: "github",
+                        await authClient.signIn.social.$post({
+                        json: { provider: "github" },
                         });
                     }}
                     >
@@ -208,36 +210,31 @@ You can pass any default fetch options to the client by passing `fetchOptions` o
 ```ts title="auth-client.ts"
 import { createAuthClient } from "faire-auth/client"
 
-const authClient = createAuthClient({
+const authClient = createAuthClient()({
     fetchOptions: {
         //any better-fetch options
     },
 })
 ```
 
-You can also pass fetch options to most of the client functions. Either as the second argument or as a property in the object.
+You can also pass fetch options to most of the client functions as the second argument:
 
 ```ts title="auth-client.ts"
-await authClient.signIn.email({
-    email: "email@email.com",
-    password: "password1234",
-}, {
-    onSuccess(ctx) {
-            //
-    }
-})
-
-//or
-
-await authClient.signIn.email({
-    email: "email@email.com",
-    password: "password1234",
-    fetchOptions: {
-        onSuccess(ctx) {
-            //
-        }
+await authClient.signIn.email.$post(
+    {
+        json: {
+            email: "email@email.com",
+            password: "password1234",
+        },
     },
-})
+    {
+        fetchOptions: {
+            onSuccess(ctx) {
+                //
+            },
+        },
+    },
+)
 ```
 
 
@@ -253,9 +250,11 @@ The error object contains the following properties:
 - `statusText`: The HTTP status text.
 
 ```ts title="auth-client.ts"
-const { data, error } = await authClient.signIn.email({
-    email: "email@email.com",
-    password: "password1234"
+const { data, error } = await authClient.signIn.email.$post({
+    json: {
+        email: "email@email.com",
+        password: "password1234",
+    },
 })
 if (error) {
     //handle error
@@ -265,26 +264,21 @@ if (error) {
 If the action accepts a `fetchOptions` option, you can pass an `onError` callback to handle errors.
 
 ```ts title="auth-client.ts"
-
-await authClient.signIn.email({
-    email: "email@email.com",
-    password: "password1234",
-}, {
-    onError(ctx) {
-        //handle error
-    }
-})
-
-//or
-await authClient.signIn.email({
-    email: "email@email.com",
-    password: "password1234",
-    fetchOptions: {
-        onError(ctx) {
-            //handle error
-        }
-    }
-})
+await authClient.signIn.email.$post(
+    {
+        json: {
+            email: "email@email.com",
+            password: "password1234",
+        },
+    },
+    {
+        fetchOptions: {
+            onError(ctx) {
+                //handle error
+            },
+        },
+    },
+)
 ```
 
 Hooks like `useSession` also return an error object if there was an error fetching the session. On top of that, they also return an `isPending` property to indicate if the request is still pending.
@@ -328,10 +322,12 @@ const getErrorMessage = (code: string, lang: "en" | "es") => {
 };
 
 
-const { error } = await authClient.signUp.email({
-	email: "user@email.com",
-	password: "password",
-	name: "User",
+const { error } = await authClient.signUp.email.$post({
+	json: {
+		email: "user@email.com",
+		password: "password",
+		name: "User",
+	},
 });
 if(error?.code){
     alert(getErrorMessage(error.code, "en"));

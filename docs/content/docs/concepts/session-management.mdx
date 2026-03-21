@@ -120,8 +120,8 @@ When a user signs out of a device, the session is automatically ended. However, 
 To end a session, use the `revokeSession` function. Just pass the session token as a parameter.
 
 ```ts title="auth-client.ts"
-await authClient.revokeSession({
-    token: "session-token"
+await authClient.revokeSession.$post({
+    json: { token: "session-token" },
 })
 ```
 
@@ -130,7 +130,7 @@ await authClient.revokeSession({
 To revoke all other sessions except the current session, you can use the `revokeOtherSessions` function.
 
 ```ts title="auth-client.ts"
-await authClient.revokeOtherSessions()
+await authClient.revokeOtherSessions.$post()
 ```
 
 ### Revoke All Sessions
@@ -138,7 +138,7 @@ await authClient.revokeOtherSessions()
 To revoke all sessions, you can use the `revokeSessions` function.
 
 ```ts title="auth-client.ts"
-await authClient.revokeSessions()
+await authClient.revokeSessions.$post()
 ```
 
 ### Revoking Sessions on Password Change
@@ -146,10 +146,12 @@ await authClient.revokeSessions()
 You can revoke all sessions when the user changes their password by passing `revokeOtherSessions` as true on `changePassword` function.
 
 ```ts title="auth.ts"
-await authClient.changePassword({
-    newPassword: newPassword,
-    currentPassword: currentPassword,
-    revokeOtherSessions: true,
+await authClient.changePassword.$post({
+    json: {
+        newPassword: newPassword,
+        currentPassword: currentPassword,
+        revokeOtherSessions: true,
+    },
 })
 ```
 
@@ -179,9 +181,9 @@ export const auth = faireAuth({
 If you want to disable returning from the cookie cache when fetching the session, you can pass `disableCookieCache:true` this will force the server to fetch the session from the database and also refresh the cookie cache.
 
 ```ts title="auth-client.ts"
-const session = await authClient.getSession({ query: {
-    disableCookieCache: true
-}})
+const session = await authClient.getSession.$get({
+    query: { disableCookieCache: true },
+})
 ```
 
 or on the server

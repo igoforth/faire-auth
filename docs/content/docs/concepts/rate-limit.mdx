@@ -217,17 +217,25 @@ export const authClient = createAuthClient({
 ```ts title="auth-client.ts"
 import { authClient } from "./auth-client";
 
-await authClient.signIn.email({
-    fetchOptions: {
-        onError: async (context) => {
-            const { response } = context;
-            if (response.status === 429) {
-                const retryAfter = response.headers.get("X-Retry-After");
-                console.log(`Rate limit exceeded. Retry after ${retryAfter} seconds`);
-            }
+await authClient.signIn.email.$post(
+    {
+        json: {
+            email: "email@example.com",
+            password: "password",
         },
-    }
-})
+    },
+    {
+        fetchOptions: {
+            onError: async (context) => {
+                const { response } = context;
+                if (response.status === 429) {
+                    const retryAfter = response.headers.get("X-Retry-After");
+                    console.log(`Rate limit exceeded. Retry after ${retryAfter} seconds`);
+                }
+            },
+        },
+    },
+)
 ```
 
 ### Schema
