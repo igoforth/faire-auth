@@ -131,18 +131,17 @@ type signInPasskey = {
 #### Example Usage
 ```ts
 // With post authentication redirect
-await authClient.signIn.passkey({
-    autoFill: true,
-    fetchOptions: {
-        onSuccess(context) {
-            // Redirect to dashboard after successful authentication
-            window.location.href = "/dashboard";
+await authClient.signIn.passkey.$post(
+    { json: { autoFill: true } },
+    {
+        fetchOptions: {
+            onSuccess(context) {
+                window.location.href = "/dashboard";
+            },
+            onError(context) {
+                console.error("Authentication failed:", context.error.message);
+            },
         },
-        onError(context) {
-            // Handle authentication errors
-            console.error("Authentication failed:", context.error.message);
-        }
-    }
 });
 ```
 
@@ -239,7 +238,7 @@ There are two requirements for conditional UI to work:
                  return;
                }
 
-              void authClient.signIn.passkey({ autoFill: true })
+              void authClient.signIn.passkey.$post({ json: { autoFill: true } })
             }, [])
             ```
             </Tab>

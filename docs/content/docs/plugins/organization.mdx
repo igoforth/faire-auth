@@ -1424,18 +1424,22 @@ await auth.api.hasPermission({
 If you want to check the permission of the user on the client from the server you can use the `hasPermission` function provided by the client.
 
 ```ts title="auth-client.ts"
-const canCreateProject = await authClient.organization.hasPermission({
-  permissions: {
-    project: ["create"],
+const canCreateProject = await authClient.organization.hasPermission.$post({
+  json: {
+    permissions: {
+      project: ["create"],
+    },
   },
 });
 
 // You can also check multiple resource permissions at the same time
 const canCreateProjectAndCreateSale =
-  await authClient.organization.hasPermission({
-    permissions: {
-      project: ["create"],
-      sale: ["create"],
+  await authClient.organization.hasPermission.$post({
+    json: {
+      permissions: {
+        project: ["create"],
+        sale: ["create"],
+      },
     },
   });
 ```
@@ -2069,10 +2073,12 @@ The teams feature supports several configuration options:
 When inviting members to an organization, you can specify a team:
 
 ```ts
-await authClient.organization.inviteMember({
-  email: "user@example.com",
-  role: "member",
-  teamId: "team-id",
+await authClient.organization.inviteMember.$post({
+  json: {
+    email: "user@example.com",
+    role: "member",
+    teamId: "team-id",
+  },
 });
 ```
 

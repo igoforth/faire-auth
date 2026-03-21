@@ -37,20 +37,17 @@ The Lynx client provides the same API as other Faire Auth clients, with optimize
 import { authClient } from "./lib/auth-client"
 
 // Sign in with email and password
-await authClient.signIn.email({
-    email: "test@user.com",
-    password: "password1234"
+await authClient.signIn.email.$post({
+    json: { email: "test@user.com", password: "password1234" },
 })
 
 // Sign up
-await authClient.signUp.email({
-    email: "test@user.com",
-    password: "password1234",
-    name: "John Doe"
+await authClient.signUp.email.$post({
+    json: { email: "test@user.com", password: "password1234", name: "John Doe" },
 })
 
 // Sign out
-await authClient.signOut()
+await authClient.signOut.$post()
 ```
 
 ### Hooks
@@ -82,8 +79,8 @@ export function User() {
                     </button>
                 </div>
             ) : (
-                <button onClick={() => authClient.signIn.social({
-                    provider: 'github'
+                <button onClick={() => authClient.signIn.social.$post({
+                    json: { provider: 'github' },
                 })}>
                     Sign In with GitHub
                 </button>
@@ -157,8 +154,8 @@ const authClient = createAuthClient({
 })
 
 // Use plugin methods
-await authClient.signIn.magicLink({
-    email: "test@email.com"
+await authClient.signIn.magicLink.$post({
+    json: { email: "test@email.com" },
 })
 ```
 
@@ -171,9 +168,8 @@ import { authClient } from "../lib/auth-client"
 
 export function LoginForm() {
     const signIn = async (email: string, password: string) => {
-        const { data, error } = await authClient.signIn.email({
-            email,
-            password
+        const { data, error } = await authClient.signIn.email.$post({
+            json: { email, password },
         })
 
         if (error) {

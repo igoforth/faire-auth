@@ -105,8 +105,8 @@ Some of the actions are reactive. The client use [nano-store](https://github.com
       {:else}
         <button
           on:click={async () => {
-            await authClient.signIn.social({
-              provider: "github",
+            await authClient.signIn.social.$post({
+              json: { provider: "github" },
             });
           }}
         >

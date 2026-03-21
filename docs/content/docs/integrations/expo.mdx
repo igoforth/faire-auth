@@ -245,9 +245,8 @@ With Faire Auth initialized, you can now use the `authClient` to authenticate us
             const [password, setPassword] = useState("");
 
             const handleLogin = async () => {
-                await authClient.signIn.email({
-                    email,
-                    password,
+                await authClient.signIn.email.$post({
+                    json: { email, password },
                 })
             };
 
@@ -281,10 +280,8 @@ With Faire Auth initialized, you can now use the `authClient` to authenticate us
             const [password, setPassword] = useState("");
 
             const handleLogin = async () => {
-                await authClient.signUp.email({
-                        email,
-                        password,
-                        name
+                await authClient.signUp.email.$post({
+                    json: { email, password, name },
                 })
             };
 
@@ -322,9 +319,11 @@ import { Button } from "react-native";
 
 export default function SocialSignIn() {
     const handleLogin = async () => {
-        await authClient.signIn.social({
-            provider: "google",
-            callbackURL: "/dashboard" // this will be converted to a deep link (eg. `myapp://dashboard`) on native
+        await authClient.signIn.social.$post({
+            json: {
+                provider: "google",
+                callbackURL: "/dashboard", // converted to a deep link (eg. `myapp://dashboard`) on native
+            },
         })
     };
     return <Button title="Login with Google" onPress={handleLogin} />;
@@ -340,13 +339,15 @@ import { Button } from "react-native";
 
 export default function SocialSignIn() {
     const handleLogin = async () => {
-        await authClient.signIn.social({
-            provider: "google", // only google, apple and facebook are supported for idToken signIn
-            idToken: {
-                token: "...", // ID token from provider
-                nonce: "...", // nonce from provider (optional)
-            }
-            callbackURL: "/dashboard" // this will be converted to a deep link (eg. `myapp://dashboard`) on native
+        await authClient.signIn.social.$post({
+            json: {
+                provider: "google", // only google, apple and facebook are supported for idToken signIn
+                idToken: {
+                    token: "...", // ID token from provider
+                    nonce: "...", // nonce from provider (optional)
+                },
+                callbackURL: "/dashboard",
+            },
         })
     };
     return <Button title="Login with Google" onPress={handleLogin} />;

@@ -353,7 +353,7 @@ const authClient = createAuthClient({
 once you've added the plugin, you can use the new functions provided by the plugin.
 
 ```ts title="auth-client.ts"
-await authClient.signIn.magicLink({
-    email: "test@email.com"
+await authClient.signIn.magicLink.$post({
+    json: { email: "test@email.com" },
 })
 ```

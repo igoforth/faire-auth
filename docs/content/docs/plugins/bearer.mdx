@@ -29,16 +29,22 @@ export const auth = faireAuth({
 After a successful sign-in, you'll receive a session token in the response headers. Store this token securely (e.g., in `localStorage`):
 
 ```ts title="auth-client.ts"
-const { data } = await authClient.signIn.email({
-    email: "user@example.com",
-    password: "securepassword"
-}, {
-  onSuccess: (ctx)=>{
-    const authToken = ctx.response.headers.get("set-auth-token") // get the token from the response headers
-    // Store the token securely (e.g., in localStorage)
-    localStorage.setItem("bearer_token", authToken);
-  }
-});
+const { data } = await authClient.signIn.email.$post(
+    {
+        json: {
+            email: "user@example.com",
+            password: "securepassword",
+        },
+    },
+    {
+        fetchOptions: {
+            onSuccess: (ctx) => {
+                const authToken = ctx.response.headers.get("set-auth-token")
+                localStorage.setItem("bearer_token", authToken);
+            },
+        },
+    },
+);
 ```
 
 You can also set this up globally in your auth client:
@@ -89,13 +95,16 @@ const { data } = await authClient.listSessions();
 You can also provide the token for individual requests:
 
 ```ts title="auth-client.ts"
-const { data } = await authClient.listSessions({
-    fetchOptions: {
-        headers: {
-            Authorization: `Bearer ${token}`
-        }
-    }
-});
+const { data } = await authClient.listSessions.$get(
+    {},
+    {
+        fetchOptions: {
+            headers: {
+                Authorization: `Bearer ${token}`
+            },
+        },
+    },
+);
 ```
 
 ### 5. Using Bearer Tokens Outside the Auth Client

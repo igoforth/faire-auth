@@ -41,11 +41,14 @@ if you need to use the auth client on the server for different purposes, you sti
 import { authClient } from "./auth-client";
 import { headers } from "next/headers";
 
-const session = await authClient.getSession({
-    fetchOptions:{
-      headers: await headers()
-    }
-})
+const session = await authClient.getSession.$get(
+    { query: {} },
+    {
+        fetchOptions: {
+            headers: await headers(),
+        },
+    },
+)
 ```
 </Accordion>
 

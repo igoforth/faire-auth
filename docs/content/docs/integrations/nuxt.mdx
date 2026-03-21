@@ -53,8 +53,8 @@ const session = authClient.useSession()
 
 <template>
     <div>
-        <button v-if="!session?.data" @click="() => authClient.signIn.social({
-            provider: 'github'
+        <button v-if="!session?.data" @click="() => authClient.signIn.social.$post({
+            json: { provider: 'github' }
         })">
             Continue with GitHub
         </button>

@@ -118,16 +118,20 @@ When a user with 2FA enabled tries to sign in via email, the response object wil
 You can handle this in the `onSuccess` callback or by providing a `onTwoFactorRedirect` callback in the plugin config.
 
 ```ts title="sign-in.tsx"
-await authClient.signIn.email({
-        email: "user@example.com",
-        password: "password123",
+await authClient.signIn.email.$post(
+    {
+        json: {
+            email: "user@example.com",
+            password: "password123",
+        },
     },
     {
-        async onSuccess(context) {
-            if (context.data.twoFactorRedirect) {
-                // Handle the 2FA verification in place
-            }
-        },
+        fetchOptions: {
+            async onSuccess(context) {
+                if (context.data.twoFactorRedirect) {
+                    // Handle the 2FA verification in place
+                }
+            },
     }
 )
 ```
@@ -228,7 +232,7 @@ export default function UserCard({ password }: { password: string }){
 	const { data: qr } = useQuery({
 		queryKey: ["two-factor-qr"],
 		queryFn: async () => {
-			const res = await authClient.twoFactor.getTotpUri({ password });
+			const res = await authClient.twoFactor.getTotpUri.$post({ json: { password } });
 			return res.data;
 		},
 		enabled: !!session?.user.twoFactorEnabled,
@@ -408,10 +412,12 @@ You can mark a device as trusted by passing `trustDevice` to `verifyTotp` or `ve
 
 ```ts
 const verify2FA = async (code: string) => {
-    const { data, error } = await authClient.twoFactor.verifyTotp({
-        code,
-        callbackURL: "/dashboard",
-        trustDevice: true // Mark this device as trusted
+    const { data, error } = await authClient.twoFactor.verifyTotp.$post({
+        json: {
+            code,
+            callbackURL: "/dashboard",
+            trustDevice: true, // Mark this device as trusted
+        },
     })
     if (data) {
         // 2FA verified and device trusted
