@@ -275,7 +275,7 @@ export const auth = faireAuth({
 3. Session caching, including secondary storage or cookie cache, does not include custom fields. Each time the session is fetched, your custom session function will be called.
 
 **Mutating the list-device-sessions endpoint**
-The `/multi-session/list-device-sessions` endpoint from the [multi-session](/docs/plugins/multi-session) plugin is used to list the devices that the user is signed into.
+The `/multi-session/list-device-sessions` endpoint is used to list the devices that the user is signed into.
 
 You can mutate the response of this endpoint by passing the `shouldMutateListDeviceSessionsEndpoint` option to the `customSession` plugin.
 
