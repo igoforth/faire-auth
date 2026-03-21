@@ -22,32 +22,29 @@ const cfg = defineOptions({
 const auth = faireAuth(cfg)
 
 // calling get session on the server
-await auth.api.getSession({
-    headers: await headers() // some endpoints might require headers
-})
+await auth.api.getSession(
+    { query: {} },
+    { headers: await headers() },
+)
 ```
 
-### Body, Headers, Query
+### Input and Options
 
-Unlike the client, the server needs the values to be passed as an object with the key `json` for the request body, `headers` for the headers, and `query` for query parameters.
+Server API calls take two arguments: the **input** (json, query, param) and **options** (headers, asResponse, returnHeaders).
 
 ```ts title="server.ts"
-await auth.api.getSession({
-    headers: await headers()
-})
+await auth.api.getSession(
+    { query: {} },
+    { headers: await headers() },
+)
 
-await auth.api.signInEmail({
-    json: {
-        email: "john@doe.com",
-        password: "password"
-    },
-    headers: await headers() // optional but would be useful to get the user IP, user agent, etc.
-})
+await auth.api.signInEmail(
+    { json: { email: "john@doe.com", password: "password" } },
+    { headers: await headers() }, // optional but useful for IP, user agent
+)
 
 await auth.api.verifyEmail({
-    query: {
-        token: "my_token"
-    }
+    query: { token: "my_token" },
 })
 ```
 
@@ -90,14 +87,16 @@ But there are times when you might want to get the `headers` or the `Response` o
 To get the `headers`, you can pass the `returnHeaders` option to the endpoint.
 
 ```ts
-const { headers, response } = await auth.api.signUpEmail({
-	returnHeaders: true,
-	body: {
-		email: "john@doe.com",
-		password: "password",
-		name: "John Doe",
+const { headers, response } = await auth.api.signUpEmail(
+	{
+		json: {
+			email: "john@doe.com",
+			password: "password",
+			name: "John Doe",
+		},
 	},
-});
+	{ returnHeaders: true },
+);
 ```
 
 The `headers` will be a `Headers` object, which you can use to get the cookies or the headers.
@@ -112,13 +111,10 @@ const customHeader = headers.get("x-custom-header");
 To get the `Response` object, you can pass the `asResponse` option to the endpoint.
 
 ```ts title="server.ts"
-const response = await auth.api.signInEmail({
-    json: {
-        email: "",
-        password: ""
-    },
-    asResponse: true
-})
+const response = await auth.api.signInEmail(
+    { json: { email: "", password: "" } },
+    { asResponse: true },
+)
 ```
 
 ### Error Handling

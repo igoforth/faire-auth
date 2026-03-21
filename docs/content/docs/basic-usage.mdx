@@ -112,13 +112,10 @@ To authenticate a user on the server, you can use the `auth.api` methods. The se
 ```ts title="server.ts"
 import { auth } from "./auth"; // path to your Faire Auth server instance
 
-const response = await auth.api.signInEmail({
-    json: {
-        email,
-        password
-    },
-    asResponse: true // returns a response object instead of data
-});
+const response = await auth.api.signInEmail(
+    { json: { email, password } },
+    { asResponse: true }, // returns a response object instead of data
+);
 ```
 
 <Callout>
@@ -300,9 +297,10 @@ The server provides a `getSession` endpoint that you can use to access the sessi
     import { auth } from "./auth"; // path to your Faire Auth server instance
     import { headers } from "next/headers";
 
-    const session = await auth.api.getSession({
-        headers: await headers() // you need to pass the headers object.
-    })
+    const session = await auth.api.getSession(
+        { query: {} },
+        { headers: await headers() },
+    )
     ```
     </Tab>
     <Tab value="Remix">
@@ -310,9 +308,10 @@ The server provides a `getSession` endpoint that you can use to access the sessi
     import { auth } from "lib/auth"; // path to your Faire Auth server instance
 
     export async function loader({ request }: LoaderFunctionArgs) {
-        const session = await auth.api.getSession({
-            headers: request.headers
-        })
+        const session = await auth.api.getSession(
+            { query: {} },
+            { headers: request.headers },
+        )
 
         return json({ session })
     }
@@ -323,9 +322,10 @@ The server provides a `getSession` endpoint that you can use to access the sessi
     ---
     import { auth } from "./auth";
 
-    const session = await auth.api.getSession({
-	    headers: Astro.request.headers,
-    });
+    const session = await auth.api.getSession(
+	    { query: {} },
+	    { headers: Astro.request.headers },
+    );
     ---
     <!-- Your Astro Template -->
     ```
@@ -335,9 +335,10 @@ The server provides a `getSession` endpoint that you can use to access the sessi
     import { auth } from "./auth";
 
     export async function load({ request }) {
-        const session = await auth.api.getSession({
-            headers: request.headers
-        })
+        const session = await auth.api.getSession(
+            { query: {} },
+            { headers: request.headers },
+        )
         return {
             props: {
                 session
@@ -353,9 +354,10 @@ The server provides a `getSession` endpoint that you can use to access the sessi
     const app = new Hono();
 
     app.get("/path", async (c) => {
-        const session = await auth.api.getSession({
-            headers: c.req.raw.headers
-        })
+        const session = await auth.api.getSession(
+            { query: {} },
+            { headers: c.req.raw.headers },
+        )
     });
     ```
     </Tab>
@@ -365,9 +367,10 @@ The server provides a `getSession` endpoint that you can use to access the sessi
     import { auth } from "~/utils/auth";
 
     export default defineEventHandler((event) => {
-        const session = await auth.api.getSession({
-            headers: event.headers,
-        })
+        const session = await auth.api.getSession(
+            { query: {} },
+            { headers: event.headers },
+        )
     });
     ```
     </Tab>

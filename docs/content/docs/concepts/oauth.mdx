@@ -62,12 +62,10 @@ await authClient.linkSocial.$post({
 server-side usage:
 
 ```ts
-await auth.api.linkSocialAccount({
-  json: {
-    provider: "google", // or any other provider id
-  },
-  headers: // pass headers with authenticated token
-});
+await auth.api.linkSocialAccount(
+  { json: { provider: "google" } },
+  { headers: /* pass headers with authenticated token */ },
+);
 ```
 
 ### Get Access Token
@@ -87,14 +85,16 @@ const { accessToken } = data;
 server-side usage:
 
 ```ts
-await auth.api.getAccessToken({
-  json: {
-    providerId: "google", // or any other provider id
-    accountId: "accountId", // optional, if you want to get the access token for a specific account
-    userId: "userId", // optional, if you don't provide headers with authenticated token
+await auth.api.getAccessToken(
+  {
+    json: {
+      providerId: "google",
+      accountId: "accountId", // optional
+      userId: "userId", // optional, if you don't provide headers
+    },
   },
-  headers: // pass headers with authenticated token
-});
+  { headers: /* pass headers with authenticated token */ },
+);
 ```
 
 ### Get Account Info Provided by the provider
@@ -110,10 +110,10 @@ const { data: info } = await authClient.accountInfo.$post({
 server-side usage:
 
 ```ts
-await auth.api.accountInfo({
-  json: { accountId: "accountId" },
-  headers: // pass headers with authenticated token
-});
+await auth.api.accountInfo(
+  { json: { accountId: "accountId" } },
+  { headers: /* pass headers with authenticated token */ },
+);
 ```
 
 ### Requesting Additional Scopes

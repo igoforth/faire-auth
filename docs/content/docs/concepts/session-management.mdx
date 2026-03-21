@@ -189,12 +189,10 @@ const session = await authClient.getSession.$get({
 or on the server
 
 ```ts title="server.ts"
-await auth.api.getSession({
-    query: {
-        disableCookieCache: true,
-    },
-    headers: req.headers, // pass the headers
-});
+await auth.api.getSession(
+    { query: { disableCookieCache: true } },
+    { headers: req.headers },
+);
 ```
 
 

@@ -427,8 +427,8 @@ Users already signed in can manually link their account to additional social pro
 
   ```ts
   await auth.api.setPassword(
-      { json: { newPassword: "password" } },
-      { headers: /* headers containing the user's session token */ },
+    { json: { newPassword: "password" } },
+    { headers: /* headers containing the user's session token */ },
   );
   ```
 
