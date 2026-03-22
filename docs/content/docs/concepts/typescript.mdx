@@ -122,7 +122,7 @@ import { inferAdditionalFields } from "faire-auth/client/plugins";
 import { createAuthClient } from "faire-auth/react";
 import type { auth } from "./auth";
 
-export const authClient = createAuthClient({
+export const authClient = createAuthClient()({
   plugins: [inferAdditionalFields<typeof auth>()],
 });
 ```
@@ -134,7 +134,7 @@ If your client and server are in separate projects, you'll need to manually spec
 ```ts
 import { inferAdditionalFields } from "faire-auth/client/plugins";
 
-export const authClient = createAuthClient({
+export const authClient = createAuthClient()({
   plugins: [inferAdditionalFields({
       user: {
         role: {

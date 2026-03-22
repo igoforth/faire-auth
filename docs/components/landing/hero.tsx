@@ -122,7 +122,7 @@ function CodePreview() {
 		<AnimatePresence initial={false}>
 			<MotionConfig transition={{ duration: 0.5, type: "spring", bounce: 0 }}>
 				<motion.div
-					animate={{ height: height > 0 ? height : undefined }}
+					animate={{ height: height > 0 ? height : "auto" }}
 					className="relative overflow-hidden rounded-lg border border-border/50 bg-card/50 backdrop-blur-sm"
 				>
 					<div ref={ref}>

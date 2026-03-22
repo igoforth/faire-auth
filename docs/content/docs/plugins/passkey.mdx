@@ -76,7 +76,7 @@ The passkey plugin implementation is powered by [SimpleWebAuthn](https://simplew
         import { createAuthClient } from "faire-auth/client"
         import { passkeyClient } from "faire-auth/client/plugins"
 
-        export const authClient = createAuthClient({
+        export const authClient = createAuthClient()({
             plugins: [ // [!code highlight]
                 passkeyClient() // [!code highlight]
             ] // [!code highlight]

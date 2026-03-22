@@ -67,7 +67,7 @@ This plugin offers two main methods to do a second factor verification:
         import { createAuthClient } from "faire-auth/client"
         import { twoFactorClient } from "faire-auth/client/plugins"
 
-        export const authClient = createAuthClient({
+        export const authClient = createAuthClient()({
             plugins: [
                 twoFactorClient()
             ]
@@ -142,7 +142,7 @@ Using the `onTwoFactorRedirect` config:
 import { createAuthClient } from "faire-auth/client";
 import { twoFactorClient } from "faire-auth/client/plugins";
 
-const authClient = createAuthClient({
+const authClient = createAuthClient()({
     plugins: [
         twoFactorClient({
             onTwoFactorRedirect(){
@@ -551,7 +551,7 @@ To use the two factor plugin in the client, you need to add it on your plugins l
 import { createAuthClient } from "faire-auth/client"
 import { twoFactorClient } from "faire-auth/client/plugins"
 
-const authClient =  createAuthClient({
+const authClient =  createAuthClient()({
     plugins: [
         twoFactorClient({ // [!code highlight]
             onTwoFactorRedirect(){ // [!code highlight]

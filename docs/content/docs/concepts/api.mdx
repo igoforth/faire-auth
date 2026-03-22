@@ -119,22 +119,30 @@ const response = await auth.api.signInEmail(
 
 ### Error Handling
 
-When you call an API endpoint on the server, it will throw an error if the request fails. You can catch the error and handle it as you see fit. The error instance is an instance of `APIError`.
+Server API calls do not throw on HTTP error status codes. Instead, they return an object with `success: false` and a `message`:
 
 ```ts title="server.ts"
-import { APIError } from "faire-auth";
-
-try {
-    await auth.api.signInEmail({
-        json: {
-            email: "",
-            password: ""
-        }
-    })
-} catch (error) {
-    if (error instanceof APIError) {
-        console.log(error.message, error.status)
+const res = await auth.api.signInEmail({
+    json: {
+        email: "wrong@email.com",
+        password: "wrong"
     }
+})
+
+if (res.success === false) {
+    console.log(res.message) // "Invalid email or password"
+}
+```
+
+On the client, errors are returned in the `error` field:
+
+```ts title="client.ts"
+const { data, error } = await client.signIn.email.$post({
+    json: { email, password },
+})
+
+if (error) {
+    console.log(error.message, error.status) // "Invalid email or password", 401
 }
 ```
 

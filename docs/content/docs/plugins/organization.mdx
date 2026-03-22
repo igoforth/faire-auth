@@ -50,7 +50,7 @@ export const auth = faireAuth({
     import { createAuthClient } from "faire-auth/client"
     import { organizationClient } from "faire-auth/client/plugins"
 
-    export const authClient = createAuthClient({
+    export const authClient = createAuthClient()({
         plugins: [ // [!code highlight]
             organizationClient() // [!code highlight]
         ] // [!code highlight]
@@ -1373,7 +1373,7 @@ The plugin provides an easy way to define your own set of permissions for each r
         import { organizationClient } from "faire-auth/client/plugins"
         import { ac, owner, admin, member, myCustomRole } from "@/auth/permissions"
 
-        export const authClient = createAuthClient({
+        export const authClient = createAuthClient()({
             plugins: [
                 organizationClient({
                     ac,
@@ -1507,7 +1507,7 @@ export const auth = faireAuth({
 import { createAuthClient } from "faire-auth/client";
 import { organizationClient } from "faire-auth/client/plugins";
 
-export const authClient = createAuthClient({
+export const authClient = createAuthClient()({
     plugins: [ // [!code highlight]
         organizationClient({ // [!code highlight]
             dynamicAccessControl: { // [!code highlight]
@@ -1768,7 +1768,7 @@ import { createAuthClient } from "faire-auth/client"
 import { organizationClient, inferOrgAdditionalFields } from "faire-auth/client/plugins"
 import type { auth } from "./auth"
 
-export const authClient = createAuthClient({
+export const authClient = createAuthClient()({
     plugins: [
         organizationClient({
             schema: inferOrgAdditionalFields<typeof auth>()
@@ -1782,7 +1782,7 @@ Otherwise, you can pass the schema values directly, the same way you do on the o
 import { createAuthClient } from "faire-auth/client"
 import { organizationClient } from "faire-auth/client/plugins"
 
-export const authClient = createAuthClient({
+export const authClient = createAuthClient()({
     plugins: [
         organizationClient({
             schema: {
@@ -1832,7 +1832,7 @@ export const auth = faireAuth({
 import { createAuthClient } from "faire-auth/client";
 import { organizationClient } from "faire-auth/client/plugins";
 
-export const authClient = createAuthClient({
+export const authClient = createAuthClient()({
   plugins: [
     organizationClient({
       teams: {
@@ -2470,7 +2470,7 @@ import {
 } from "faire-auth/client/plugins";
 import type { auth } from "@/auth"; // import the auth object type only
 
-const client = createAuthClient({
+const client = createAuthClient()({
   plugins: [
     organizationClient({
       schema: inferOrgAdditionalFields<typeof auth>(),
@@ -2482,7 +2482,7 @@ const client = createAuthClient({
 if you can't import the auth object type, you can use the `inferOrgAdditionalFields` function without the generic. This function will infer the additional fields from the schema object.
 
 ```ts title="auth-client.ts"
-const client = createAuthClient({
+const client = createAuthClient()({
   plugins: [
     organizationClient({
       schema: inferOrgAdditionalFields({

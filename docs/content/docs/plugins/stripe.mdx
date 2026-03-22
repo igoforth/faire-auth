@@ -76,7 +76,7 @@ The Stripe plugin integrates Stripe's payment and subscription functionality wit
         import { createAuthClient } from "faire-auth/client"
         import { stripeClient } from "@faire-auth/stripe/client"
 
-        export const client = createAuthClient({
+        export const client = createAuthClient()({
             // ... your existing config
             plugins: [
                 stripeClient({

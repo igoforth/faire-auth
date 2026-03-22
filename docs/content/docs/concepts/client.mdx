@@ -27,7 +27,7 @@ If you're using a different base path other than `/api/auth`, make sure to pass 
     <Tab value="vanilla">
             ```ts  title="lib/auth-client.ts"
             import { createAuthClient } from "faire-auth/client"
-            export const authClient = createAuthClient({
+            export const authClient = createAuthClient()({
                 baseURL: "http://localhost:3000" // The base URL of your auth server // [!code highlight]
             })
             ```
@@ -35,7 +35,7 @@ If you're using a different base path other than `/api/auth`, make sure to pass 
     <Tab value="react" title="lib/auth-client.ts">
             ```ts  title="lib/auth-client.ts"
             import { createAuthClient } from "faire-auth/react"
-            export const authClient = createAuthClient({
+            export const authClient = createAuthClient()({
                 baseURL: "http://localhost:3000" // The base URL of your auth server // [!code highlight]
             })
             ```
@@ -43,7 +43,7 @@ If you're using a different base path other than `/api/auth`, make sure to pass 
     <Tab value="vue" title="lib/auth-client.ts">
             ```ts  title="lib/auth-client.ts"
             import { createAuthClient } from "faire-auth/vue"
-            export const authClient = createAuthClient({
+            export const authClient = createAuthClient()({
                 baseURL: "http://localhost:3000" // The base URL of your auth server // [!code highlight]
             })
             ```
@@ -51,7 +51,7 @@ If you're using a different base path other than `/api/auth`, make sure to pass 
     <Tab value="svelte" title="lib/auth-client.ts">
             ```ts  title="lib/auth-client.ts"
             import { createAuthClient } from "faire-auth/svelte"
-            export const authClient = createAuthClient({
+            export const authClient = createAuthClient()({
                 baseURL: "http://localhost:3000" // The base URL of your auth server // [!code highlight]
             })
             ```
@@ -59,7 +59,7 @@ If you're using a different base path other than `/api/auth`, make sure to pass 
     <Tab value="solid" title="lib/auth-client.ts">
             ```ts title="lib/auth-client.ts"
             import { createAuthClient } from "faire-auth/solid"
-            export const authClient = createAuthClient({
+            export const authClient = createAuthClient()({
                 baseURL: "http://localhost:3000" // The base URL of your auth server // [!code highlight]
             })
             ```
@@ -343,7 +343,7 @@ You can extend the client with plugins to add more functionality. Plugins can ad
 import { createAuthClient } from "faire-auth/client"
 import { magicLinkClient } from "faire-auth/client/plugins"
 
-const authClient = createAuthClient({
+const authClient = createAuthClient()({
     plugins: [
         magicLinkClient()
     ]

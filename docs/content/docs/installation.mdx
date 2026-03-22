@@ -452,7 +452,7 @@ The client-side library helps you interact with the auth server. Faire Auth come
     <Tab value="vanilla">
             ```ts  title="lib/auth-client.ts"
             import { createAuthClient } from "faire-auth/client"
-            export const authClient = createAuthClient({
+            export const authClient = createAuthClient()({
                 /** The base URL of the server (optional if you're using the same domain) */ // [!code highlight]
                 baseURL: "http://localhost:3000" // [!code highlight]
             })
@@ -461,7 +461,7 @@ The client-side library helps you interact with the auth server. Faire Auth come
     <Tab value="react" title="lib/auth-client.ts">
             ```ts  title="lib/auth-client.ts"
             import { createAuthClient } from "faire-auth/react"
-            export const authClient = createAuthClient({
+            export const authClient = createAuthClient()({
                 /** The base URL of the server (optional if you're using the same domain) */ // [!code highlight]
                 baseURL: "http://localhost:3000" // [!code highlight]
             })
@@ -470,7 +470,7 @@ The client-side library helps you interact with the auth server. Faire Auth come
     <Tab value="vue" title="lib/auth-client.ts">
             ```ts  title="lib/auth-client.ts"
             import { createAuthClient } from "faire-auth/vue"
-            export const authClient = createAuthClient({
+            export const authClient = createAuthClient()({
                 /** The base URL of the server (optional if you're using the same domain) */ // [!code highlight]
                 baseURL: "http://localhost:3000" // [!code highlight]
             })
@@ -479,7 +479,7 @@ The client-side library helps you interact with the auth server. Faire Auth come
     <Tab value="svelte" title="lib/auth-client.ts">
             ```ts  title="lib/auth-client.ts"
             import { createAuthClient } from "faire-auth/svelte"
-            export const authClient = createAuthClient({
+            export const authClient = createAuthClient()({
                 /** The base URL of the server (optional if you're using the same domain) */ // [!code highlight]
                 baseURL: "http://localhost:3000" // [!code highlight]
             })
@@ -488,7 +488,7 @@ The client-side library helps you interact with the auth server. Faire Auth come
     <Tab value="solid" title="lib/auth-client.ts">
             ```ts title="lib/auth-client.ts"
             import { createAuthClient } from "faire-auth/solid"
-            export const authClient = createAuthClient({
+            export const authClient = createAuthClient()({
                 /** The base URL of the server (optional if you're using the same domain) */ // [!code highlight]
                 baseURL: "http://localhost:3000" // [!code highlight]
             })

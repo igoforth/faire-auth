@@ -203,7 +203,7 @@ export const auth = faireAuth({
 import { createAuthClient } from "faire-auth/client";
 import { birthdayClientPlugin } from "./birthday-plugin/client";// [!code highlight]
 
-const authClient = createAuthClient({
+const authClient = createAuthClient()({
     plugins: [
       birthdayClientPlugin()// [!code highlight]
     ]

@@ -50,7 +50,7 @@ const { data } = await authClient.signIn.email.$post(
 You can also set this up globally in your auth client:
 
 ```ts title="auth-client.ts"
-export const authClient = createAuthClient({
+export const authClient = createAuthClient()({
     fetchOptions: {
         onSuccess: (ctx) => {
             const authToken = ctx.response.headers.get("set-auth-token") // get the token from the response headers
@@ -71,7 +71,7 @@ You may want to clear the token based on the response status code or other condi
 Set up your auth client to include the Bearer token in all requests:
 
 ```ts title="auth-client.ts"
-export const authClient = createAuthClient({
+export const authClient = createAuthClient()({
     fetchOptions: {
         auth: {
            type:"Bearer",

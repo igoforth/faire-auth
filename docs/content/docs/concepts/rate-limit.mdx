@@ -198,7 +198,7 @@ To handle rate limit errors on the client side, you can manage them either globa
 ```ts title="auth-client.ts"
 import { createAuthClient } from "faire-auth/client";
 
-export const authClient = createAuthClient({
+export const authClient = createAuthClient()({
     fetchOptions: {
         onError: async (context) => {
             const { response } = context;

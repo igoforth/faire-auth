@@ -48,7 +48,7 @@ The username plugin is a lightweight plugin that adds username support to the em
         import { createAuthClient } from "faire-auth/client"
         import { usernameClient } from "faire-auth/client/plugins"
 
-        export const authClient = createAuthClient({
+        export const authClient = createAuthClient()({
             plugins: [ // [!code highlight]
                 usernameClient() // [!code highlight]
             ] // [!code highlight]

@@ -92,7 +92,7 @@ Expo is a popular framework for building cross-platform apps with React Native. 
         import { expoClient } from "@faire-auth/expo/client";
         import * as SecureStore from "expo-secure-store";
 
-        export const authClient = createAuthClient({
+        export const authClient = createAuthClient()({
             baseURL: "http://localhost:8081", // Base URL of your Faire Auth backend.
             plugins: [
                 expoClient({
@@ -443,7 +443,7 @@ export function TRPCProvider(props: { children: React.ReactNode }) {
 import { createAuthClient } from "faire-auth/react";
 import SecureStorage from "expo-secure-store";
 
-const authClient = createAuthClient({
+const authClient = createAuthClient()({
     baseURL: "http://localhost:8081",
     storage: SecureStorage
 });
@@ -454,7 +454,7 @@ const authClient = createAuthClient({
 ```ts title="lib/auth-client.ts"
 import { createAuthClient } from "faire-auth/react";
 
-const authClient = createAuthClient({
+const authClient = createAuthClient()({
     baseURL: "http://localhost:8081",
     scheme: "myapp"
 });
@@ -465,7 +465,7 @@ const authClient = createAuthClient({
 ```ts title="lib/auth-client.ts"
 import { createAuthClient } from "faire-auth/react";
 
-const authClient = createAuthClient({
+const authClient = createAuthClient()({
     baseURL: "http://localhost:8081",
     disableCache: true
 });
