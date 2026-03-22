@@ -430,64 +430,123 @@ export const auth = faireAuth({
 
 ## Step 8: New Options
 
-Faire Auth adds top-level options that don't exist in Better Auth. These are optional — your existing config will work without them:
+Faire Auth adds three new top-level options — `middleware`, `routeHooks`, and `dto` — that don't exist in Better Auth. These are optional and your existing config will work without them, but they're the primary way to customize behavior in Faire Auth.
 
-### `routeHooks`
+### Execution Order
 
-Per-route post-validation hooks, keyed by operationId:
+Understanding when each one runs matters. Here's the order for a single request:
 
-```ts
-const cfg = defineOptions({
-  routeHooks: {
-    signUpEmail: (result, ctx) => {
-      if (!result.success) return;
-      // transform or reject after validation
-    },
-  },
-});
+```
+Request
+  → Global middleware (origin check, rate limit, hooks.before)
+  → Per-route middleware (options.middleware + plugin.middleware)
+  → Zod validation (request body, query, params validated against schema)
+  → Route hook (options.routeHooks + plugin.routeHooks — receives validation result)
+  → Route handler (the actual endpoint logic)
+  → DTO transform (options.dto — transforms response schemas before serialization)
+  → Global hooks.after
+Response
 ```
 
-### `middleware`
+Each layer has a distinct role:
 
-Per-route typed Hono middleware, keyed by operationId:
+### `middleware` — Gate the request
+
+Per-route Hono middleware, keyed by `operationId`. Runs **before validation** in the Hono middleware chain. Use this for access control, logging, rate limiting, or injecting context variables. Middleware from `options.middleware`, plugin `middleware`, and the route's own `config.middleware` are concatenated in that order.
 
 ```ts
+import { createMiddleware } from "faire-auth/plugins";
+
 const cfg = defineOptions({
   middleware: {
+    // Runs before the getSession handler — can reject, log, or set context vars
     getSession: createMiddleware()(async (ctx, next) => {
+      console.log("getSession called by", ctx.req.header("User-Agent"));
+      await next();
+    }),
+    // Require a custom header on sign-up
+    signUpEmail: createMiddleware()(async (ctx, next) => {
+      if (!ctx.req.header("X-Signup-Token")) {
+        return ctx.json({ error: "Missing signup token" }, 403);
+      }
       await next();
     }),
   },
 });
 ```
 
-### `dto`
+Middleware can short-circuit by returning a response without calling `next()`. It has access to the raw request but **not** the validated input (that hasn't been parsed yet).
 
-Response transforms keyed by schema name. Type-threaded through client inference:
+### `routeHooks` — Intercept after validation
+
+Per-route hooks, keyed by `operationId`. Runs **after Zod validation** but **before the route handler**. The hook receives the validation result — either `{ success: true, data }` with the parsed input, or `{ success: false, error: ZodError }`.
+
+```ts
+const cfg = defineOptions({
+  routeHooks: {
+    // Runs after the request body is validated, before the handler
+    signUpEmail: (result, ctx) => {
+      if (!result.success) return; // let default Zod error handling take over
+
+      const { email } = result.data.json;
+      if (!email.endsWith("@company.com")) {
+        return ctx.json({ error: "Only company emails allowed" }, 403);
+      }
+      // Can also mutate result.data to transform input before the handler sees it
+    },
+    // Reject password changes outside business hours
+    changePassword: (result, ctx) => {
+      const hour = new Date().getHours();
+      if (hour < 9 || hour > 17) {
+        return ctx.json({ error: "Password changes only during business hours" }, 403);
+      }
+    },
+  },
+});
+```
+
+Route hooks can return a response to short-circuit, or return nothing to let the handler proceed. They're the right place for business logic validation that depends on the parsed request data.
+
+### `dto` — Shape the response
+
+Response transforms keyed by schema name (`user`, `session`, `account`, etc.). Runs **after the handler** returns data, transforming it before serialization. DTOs are implemented as Zod `.transform()` calls on the response schemas, so they apply to both HTTP responses and server-side `auth.api.*()` calls.
 
 ```ts
 const cfg = defineOptions({
   dto: {
+    // Transform every user object in every response
     user: (user) => ({
       id: user.id,
       name: user.name,
       email: user.email,
-      // internal fields omitted from client responses
+      // createdAt, updatedAt, and any internal fields are stripped
+    }),
+    // Transform session objects
+    session: (session) => ({
+      id: session.id,
+      userId: session.userId,
+      expiresAt: session.expiresAt,
+      // ipAddress, userAgent stripped from client responses
     }),
   },
 });
 ```
 
+DTOs are **type-threaded** — the client's inferred response types reflect the transformed shape, not the raw database model. If your DTO omits `createdAt`, the client's TypeScript types won't include it either. This is implemented at the Zod schema level via `buildSchemas()`, which appends `.transform()` to each schema that has a matching DTO key.
+
 ### `rateLimit.customRules`
 
-Typed per-route rate limit rules:
+Typed per-route rate limit rules. Each rule receives a typed `HonoRequest` for the specific route path:
 
 ```ts
 const cfg = defineOptions({
   rateLimit: {
     enabled: true,
     customRules: {
-      "/sign-in/email": (req) => true, // return false to skip
+      "/sign-in/email": (req) => {
+        // return false to skip rate limiting for this request
+        return true;
+      },
     },
   },
 });
