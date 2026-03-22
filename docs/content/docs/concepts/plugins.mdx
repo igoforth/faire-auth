@@ -25,13 +25,13 @@ const cfg = defineOptions({
 export const auth = faireAuth(cfg)
 ```
 
-Client plugins are added when creating the client. Most plugins require both server and client plugins to work correctly:
+Client plugins are added when creating the client. Most plugins require both server and client plugins to work correctly. You must pass the inferred `App` type so the client knows about plugin routes:
 
 ```ts title="auth-client.ts"
 import { createAuthClient } from "faire-auth/client";
-import type { App } from "./server";
+import type { App } from "./server"; // [!code highlight]
 
-const authClient = createAuthClient<typeof App>()({
+const authClient = createAuthClient<typeof App>()({ // [!code highlight]
     plugins: [
         // Add your client plugins here
     ]

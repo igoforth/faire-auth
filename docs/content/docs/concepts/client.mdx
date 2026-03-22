@@ -338,19 +338,25 @@ if(error?.code){
 
 You can extend the client with plugins to add more functionality. Plugins can add new functions to the client or modify existing ones.
 
-**Example: Magic Link Plugin**
+If you use plugins that add routes (most plugins do), you **must** pass the inferred `App` type to `createAuthClient` so the client knows about the plugin's routes:
+
 ```ts title="auth-client.ts"
 import { createAuthClient } from "faire-auth/client"
 import { magicLinkClient } from "faire-auth/client/plugins"
+import type { App } from "./auth" // [!code highlight]
 
-const authClient = createAuthClient()({
+const authClient = createAuthClient<typeof App>()({ // [!code highlight]
     plugins: [
         magicLinkClient()
     ]
 })
 ```
 
-once you've added the plugin, you can use the new functions provided by the plugin.
+<Callout type="warn">
+Without the `<typeof App>` generic, the client won't have type information for plugin routes. You'll be able to call core routes like `signIn.email.$post()`, but plugin-specific routes won't be typed or may not work at all.
+</Callout>
+
+Once you've added the plugin, you can use the new functions provided by the plugin.
 
 ```ts title="auth-client.ts"
 await authClient.signIn.magicLink.$post({
