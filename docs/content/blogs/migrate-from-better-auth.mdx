@@ -98,7 +98,7 @@ const auth = faireAuth(cfg);
 
 ### Type Inference with `$Infer`
 
-Faire Auth introduces `$Infer` for full type inference across server and client:
+Faire Auth expands `$Infer` (which Better Auth used for `Session`) with `App()` and `Api()` for full type inference across server and client:
 
 ```ts
 const { $Infer } = faireAuth(cfg);
@@ -131,7 +131,7 @@ export default {
 
 ## Step 4: Update Server-Side API Calls
 
-Server-side API calls now use `json:` instead of `body:`:
+Server-side API calls now use `json:` instead of `body:`, and options like `headers` move to the second argument:
 
 ```ts
 // Before
@@ -232,69 +232,167 @@ client.$store.listen("$sessionSignal", () => { /* ... */ });
 
 ## Step 6: Update Plugins
 
-### Plugin Definition
+The plugin interface has changed in several ways. Here are real before/after comparisons from built-in plugins.
 
-The plugin interface has changed:
+### Hooks-only plugins (e.g. Bearer)
+
+The bearer plugin uses only hooks — no endpoints. The key difference is `createAuthMiddleware` becomes `createHook()()` (curried), and hooks handlers are now factory functions that receive options:
 
 ```ts
-// Before — Better Auth
-const myPlugin = {
-  id: "my-plugin",
-  endpoints: {
-    myRoute: createAuthEndpoint("/my-route", { method: "GET" }, async (ctx) => {
-      return ctx.json({ ok: true });
-    }),
-  },
+// Before — Better Auth bearer plugin
+import { createAuthMiddleware } from "@better-auth/core/api";
+
+export const bearer = (options?) => ({
+  id: "bearer",
   hooks: {
-    before: [{ matcher: (ctx) => true, handler: createAuthMiddleware(async (ctx) => { }) }],
-  },
-};
-
-// After — Faire Auth
-import { createEndpoint, createRoute, createHook } from "faire-auth/plugins";
-import { res } from "@faire-auth/core/factory";
-import * as z from "zod";
-
-const myPlugin = {
-  id: "my-plugin",
-  routes: {  // "endpoints" → "routes"
-    myRoute: createEndpoint(
-      createRoute({
-        operationId: "myRoute",
-        method: "get",
-        path: "/my-route",
-        responses: res(z.object({ ok: z.boolean() })).bld(),
+    before: [{
+      matcher(context) {
+        return Boolean(context.request?.headers.get("authorization"));
+      },
+      handler: createAuthMiddleware(async (c) => {
+        const token = c.request?.headers.get("authorization");
+        // ... convert bearer token to session cookie
+        const existingHeaders = c.request?.headers as Headers;
+        return {
+          context: { headers: newHeaders },
+        };
       }),
-      (options) => async (ctx) => ctx.json({ ok: true }, 200),
-    ),
+    }],
   },
+}) satisfies BetterAuthPlugin;
+
+// After — Faire Auth bearer plugin
+import { createHook } from "../../api/factory/middleware";
+
+export const bearer = (options?) => ({
+  id: "bearer",
   hooks: {
-    before: [{ matcher: (ctx) => true, handler: createHook()(async (ctx) => { }) }],
+    before: [{
+      matcher: (ctx) => Boolean(ctx.req.header("Authorization")),
+      handler: (_opts) =>              // factory function receives options
+        createHook()(async (ctx) => {   // curried: createHook()()
+          const token = ctx.req.header("Authorization")?.replace("Bearer ", "");
+          // ... convert bearer token to session cookie
+          ctx.req.raw.headers.append("cookie", `${cookieName}=${signedToken}`);
+        }),
+    }],
   },
-} satisfies FaireAuthPlugin;
+}) satisfies FaireAuthPlugin;
 ```
 
-Key changes:
+Key differences in hooks:
+- `createAuthMiddleware(handler)` → `(_opts) => createHook()(handler)` — handler wrapped in factory
+- `c.request?.headers` → `ctx.req.header("Authorization")` — Hono request API
+- `return { context: { headers } }` → `ctx.req.raw.headers.append(...)` — mutate directly
+- `c.context.secret` → `ctx.get("context").secret` — context via Hono `get()`
+
+### Plugins with routes (e.g. Username)
+
+Plugins with endpoints see the biggest change. `endpoints` becomes `routes`, and `createAuthEndpoint` is replaced by `createEndpoint` + `createRoute` with explicit OpenAPI schemas:
+
+```ts
+// Before — Better Auth username plugin
+import { createAuthEndpoint, createAuthMiddleware } from "@better-auth/core/api";
+
+export const username = (options?) => ({
+  id: "username",
+  endpoints: {
+    signInUsername: createAuthEndpoint(
+      "/sign-in/username",
+      {
+        method: "POST",
+        body: z.object({
+          username: z.string(),
+          password: z.string(),
+          rememberMe: z.boolean().optional(),
+        }),
+      },
+      async (ctx) => {
+        const { username, password } = ctx.body;
+        // ... validate and sign in
+        return ctx.json({ token: session.token, user });
+      },
+    ),
+  },
+  // validation ran as a global hook matching by path
+  hooks: {
+    before: [{
+      matcher(context) {
+        return context.path === "/sign-up/email" || context.path === "/update-user";
+      },
+      handler: createAuthMiddleware(async (ctx) => {
+        // validate username from ctx.body
+      }),
+    }],
+  },
+}) satisfies BetterAuthPlugin;
+
+// After — Faire Auth username plugin
+import { createEndpoint } from "../../api/factory/endpoint";
+import { createRoute, req, res } from "@faire-auth/core/factory";
+import { SCHEMAS, Definitions } from "@faire-auth/core/static";
+
+export const username = (options?) => ({
+  id: "username",
+  routes: {  // "endpoints" → "routes"
+    signInUsername: createEndpoint(
+      createRoute({
+        operationId: "signInUsername",     // explicit operationId
+        method: "post",
+        path: "/sign-in/username",
+        request: req().bdy(z.object({     // request schema via builder
+          username: z.string(),
+          password: z.string(),
+          rememberMe: z.boolean().optional(),
+        })).bld(),
+        responses: res(SCHEMAS[Definitions.TOKEN_USER].default)  // response schema
+          .err(401, "Invalid username or password")
+          .bld(),
+      }),
+      (authOptions) => async (ctx) => {    // handler factory receives options
+        const { username, password } = ctx.req.valid("json");  // Hono validation
+        // ... validate and sign in
+        return ctx.render({ success: true, token, user }, 200);
+      },
+    ),
+  },
+  // validation now uses routeHooks keyed by operationId
+  routeHooks: {
+    signUpEmail: shimUsername,   // runs after Zod validation, before handler
+    updateUser: shimUsername,    // no path matching needed — keyed by route name
+  },
+}) satisfies FaireAuthPlugin;
+```
+
+Key differences in routes:
 - `endpoints` → `routes`
-- `createAuthEndpoint(path, opts, handler)` → `createEndpoint(createRoute({...}), (options) => handler)`
-- `createAuthMiddleware(handler)` → `createHook()(handler)` or `createMiddleware()(handler)`
-- Both `createHook` and `createMiddleware` are curried — first call for type params, second for the handler
+- `createAuthEndpoint(path, opts, handler)` → `createEndpoint(createRoute({...}), (opts) => handler)`
+- `ctx.body` → `ctx.req.valid("json")` — Hono validated input
+- `ctx.json(data)` → `ctx.render(data, status)` — Faire Auth render helper
+- OpenAPI response schemas are explicit via `res().err().bld()` builder
+- Each route gets an `operationId` that types propagate through to the client
 
-### New Plugin Capabilities
+Key differences in validation:
+- Global hooks with path matching → `routeHooks` keyed by operationId
+- `createAuthMiddleware(async (ctx) => {...})` → plain function `(result, ctx) => {...}`
+- Route hooks receive the Zod validation result, not the raw request — validation is done for you
+- No need for `matcher` — the key IS the route
 
-Plugins can now declare typed per-route middleware and hooks:
+### New plugin fields
+
+Faire Auth plugins can declare `middleware` and `routeHooks` alongside the existing `hooks`:
 
 ```ts
 const myPlugin = {
   id: "my-plugin",
-  // Per-route middleware (runs in Hono middleware chain)
+  // Per-route typed Hono middleware (runs in middleware chain)
   middleware: {
     getSession: createMiddleware()(async (ctx, next) => {
       console.log("before getSession");
       await next();
     }),
   },
-  // Per-route hooks (run after Zod validation, before handler)
+  // Per-route post-validation hooks (keyed by operationId)
   routeHooks: {
     signUpEmail: (result, ctx) => {
       if (result.success) {
