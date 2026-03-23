@@ -2,16 +2,14 @@
   <picture>
     <source srcset="./assets/combo-dark.png" media="(prefers-color-scheme: dark)">
     <source srcset="./assets/combo.png" media="(prefers-color-scheme: light)">
-    <img src="./assets/combo.png" alt="Faire Auth Logo">
+    <img src="./assets/combo.png" alt="Better Auth + Hono = Faire Auth">
   </picture>
   <p align="center">
-    The most comprehensive authentication library for TypeScript
+    Better Auth + Hono = Faire Auth
     <br />
     <a href="https://faire-auth.com"><strong>Learn more »</strong></a>
     <br />
     <br />
-    <a href="https://discord.gg/faire-auth">Discord</a>
-    ·
     <a href="https://faire-auth.com">Website</a>
     ·
     <a href="https://github.com/igoforth/faire-auth/issues">Issues</a>
@@ -24,11 +22,7 @@
 
 ## About the Project
 
-Faire Auth is framework-agnostic authentication (and authorization) library for TypeScript. It provides a comprehensive set of features out of the box and includes a plugin ecosystem that simplifies adding advanced functionalities with minimal code in short amount of time. Whether you need 2FA, multi-tenant support, or other complex features. It lets you focus on building your actual application instead of reinventing the wheel.
-
-### Why Faire Auth
-
-Authentication in the TypeScript ecosystem is a half-solved problem. Other open-source libraries often require a lot of additional code for anything beyond basic authentication. Rather than just pushing third-party services as the solution, I believe we can do better as a community—hence, Faire Auth.
+Faire Auth is a ground-up rebuild of [Better Auth](https://github.com/better-auth/better-auth) on [Hono](https://hono.dev). It provides comprehensive authentication and authorization for TypeScript with typed middleware, route hooks, DTO transforms, and a plugin architecture designed for composability. It runs on any Hono-compatible runtime — Node.js, Bun, Deno, Cloudflare Workers, and edge runtimes.
 
 ## Contribution
 
