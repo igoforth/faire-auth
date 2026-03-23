@@ -1040,7 +1040,7 @@ type listInvitations = {
 To list all invitations for a given user you can use the `listUserInvitations` function provided by the client.
 
 ```ts title="auth-client.ts"
-const invitations = await authClient.organization.listUserInvitations();
+const invitations = await authClient.organization.listUserInvitations.$get();
 ```
 
 On the server, you can pass the user ID as a query parameter.

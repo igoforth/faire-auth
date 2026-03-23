@@ -60,7 +60,7 @@ const session = authClient.useSession()
         </button>
         <div>
             <pre>{{ session.data }}</pre>
-            <button v-if="session.data" @click="authClient.signOut()">
+            <button v-if="session.data" @click="authClient.signOut.$post()">
                 Sign out
             </button>
         </div>

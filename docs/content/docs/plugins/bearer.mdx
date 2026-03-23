@@ -87,7 +87,7 @@ Now you can make authenticated API calls:
 
 ```ts title="auth-client.ts"
 // This request is automatically authenticated
-const { data } = await authClient.listSessions();
+const { data } = await authClient.listSessions.$get();
 ```
 
 ### 4. Per-Request Token (Optional)

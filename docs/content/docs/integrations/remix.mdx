@@ -86,21 +86,19 @@ export default function SignUp() {
   const [password, setPassword] = useState("")
 
   const signUp = async () => {
-    await authClient.signUp.email(
+    await authClient.signUp.email.$post(
+      { json: { email, password, name } },
       {
-        email,
-        password,
-        name,
-      },
-      {
-        onRequest: (ctx) => {
-          // show loading state
-        },
-        onSuccess: (ctx) => {
-          // redirect to home
-        },
-        onError: (ctx) => {
-          alert(ctx.error)
+        fetchOptions: {
+          onRequest: (ctx) => {
+            // show loading state
+          },
+          onSuccess: (ctx) => {
+            // redirect to home
+          },
+          onError: (ctx) => {
+            alert(ctx.error)
+          },
         },
       },
     )
@@ -156,20 +154,19 @@ export default function SignIn() {
   const [password, setPassword] = useState("")
 
   const signIn = async () => {
-    await authClient.signIn.email(
+    await authClient.signIn.email.$post(
+      { json: { email, password } },
       {
-        email,
-        password,
-      },
-      {
-        onRequest: (ctx) => {
-          // show loading state
-        },
-        onSuccess: (ctx) => {
-          // redirect to home
-        },
-        onError: (ctx) => {
-          alert(ctx.error)
+        fetchOptions: {
+          onRequest: (ctx) => {
+            // show loading state
+          },
+          onSuccess: (ctx) => {
+            // redirect to home
+          },
+          onError: (ctx) => {
+            alert(ctx.error)
+          },
         },
       },
     )

@@ -94,7 +94,7 @@ socialProviders: {
 After successful authentication, you can access the user's Slack information through the session. The access token can be used to make requests to the Slack API:
 
 ```ts
-const session = await authClient.getSession();
+const { data: session } = await authClient.getSession.$get({ query: {} });
 if (session?.user) {
   // Access Slack-specific data
   const slackUserId = session.user.id; // This is the Slack user ID
