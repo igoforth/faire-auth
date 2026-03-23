@@ -88,7 +88,7 @@ The `getSession` function retrieves the current active session.
 ```ts client="client.ts"
 import { authClient } from "@/lib/client"
 
-const { data: session } = await authClient.getSession()
+const { data: session } = await authClient.getSession.$get({ query: {} })
 ```
 
 To learn how to customize the session response check the [Customizing Session Response](#customizing-session-response) section.
@@ -110,7 +110,7 @@ The `listSessions` function returns a list of sessions that are active for the u
 ```ts title="auth-client.ts"
 import { authClient } from "@/lib/client"
 
-const sessions = await authClient.listSessions()
+const sessions = await authClient.listSessions.$get()
 ```
 
 ### Revoke Session
@@ -233,7 +233,7 @@ const authClient = createAuthClient()({
 });
 
 const { data } = authClient.useSession();
-const { data: sessionData } = await authClient.getSession();
+const { data: sessionData } = await authClient.getSession.$get({ query: {} });
 // data.roles
 // data.user.newField
 ```
