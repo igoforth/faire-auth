@@ -5,7 +5,7 @@ description: How to limit the number of requests a user can make to the server i
 
 Faire Auth includes a built-in rate limiter to help manage traffic and prevent abuse. By default, in production mode, the rate limiter is set to:
 
-- Window: 60 seconds
+- Window: 10 seconds
 - Max Requests: 100 requests
 
 <Callout type="warning">
@@ -36,13 +36,16 @@ export const auth = faireAuth({
 })
 ```
 
-In addition to the default settings, Faire Auth provides custom rules for specific paths. For example:
-- `/sign-in/email`: Is limited to 3 requests within 10 seconds.
+In addition to the default settings, Faire Auth enforces stricter built-in rules for sensitive paths:
 
-In addition, plugins also define custom rules for specific paths. For example, `twoFactor` plugin has custom rules:
-- `/two-factor/verify`: Is limited to 3 requests within 10 seconds.
+- `/sign-in/*`: 3 requests per 10 seconds
+- `/sign-up/*`: 3 requests per 10 seconds
+- `/change-password/*`: 3 requests per 10 seconds
+- `/change-email/*`: 3 requests per 10 seconds
 
-These custom rules ensure that sensitive operations are protected with stricter limits.
+Plugins can also define their own rate limit rules that are checked before user-defined custom rules.
+
+These built-in rules ensure sensitive operations are protected with stricter limits regardless of your global settings.
 
 ## Configuring Rate Limit
 
@@ -82,7 +85,15 @@ export const auth = faireAuth({
 })
 ```
 
-You can also pass custom rules for specific paths.
+### Custom Rules
+
+Custom rules override the default and built-in limits for specific paths. Each rule can be one of three forms:
+
+1. **Static object** — fixed `window` and `max`
+2. **`false`** — disable rate limiting for this path entirely
+3. **Function** — receives the `HonoRequest` and returns `{ window, max }`, `false`, or a promise of either
+
+Paths support **wildcard matching** with `*` (e.g. `/two-factor/*` matches `/two-factor/verify`, `/two-factor/enable`, etc.).
 
 ```ts title="auth.ts"
 import { faireAuth } from "faire-auth";
@@ -90,39 +101,33 @@ import { faireAuth } from "faire-auth";
 export const auth = faireAuth({
     //...other options
     rateLimit: {
-        window: 60, // time window in seconds
-        max: 100, // max requests in the window
+        window: 10,
+        max: 100,
         customRules: {
+            // Static: fixed limits
             "/sign-in/email": {
                 window: 10,
                 max: 3,
             },
-            "/two-factor/*": async (request)=> {
-                // custom function to return rate limit window and max
-                return {
-                    window: 10,
-                    max: 3,
-                }
-            }
-        },
-    },
-})
-```
-
-If you like to disable rate limiting for a specific path, you can set it to `false` or return `false` from the custom rule function.
-
-```ts title="auth.ts"
-import { faireAuth } from "faire-auth";
-
-export const auth = faireAuth({
-    //...other options
-    rateLimit: {
-        customRules: {
+            // Wildcard: matches any path under /two-factor/
+            "/two-factor/*": {
+                window: 10,
+                max: 3,
+            },
+            // Disable: skip rate limiting entirely
             "/get-session": false,
+            // Dynamic: function receives HonoRequest, can be async
+            "/sign-up/email": async (request) => {
+                const ip = request.header("x-forwarded-for");
+                if (isAllowlisted(ip)) return false; // skip for allowlisted IPs
+                return { window: 30, max: 5 };
+            },
         },
     },
 })
 ```
+
+Custom rules are checked **after** built-in special rules and plugin rules. If a custom rule matches, it overrides any previous match. The middleware matches paths using exact match first, then wildcard matching.
 
 ### Storage
 
@@ -260,11 +265,11 @@ Table Name: `rateLimit`
         {
         name: "count",
         type: "integer",
-        description: "Time window in seconds"
+        description: "Number of requests made in the current window"
         },
         {
         name: "lastRequest",
         type: "bigint",
-        description: "Max requests in the window"
+        description: "Timestamp of the last request (milliseconds)"
         }]}
     />
