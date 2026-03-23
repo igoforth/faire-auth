@@ -3,7 +3,7 @@ title: TypeScript
 description: Faire Auth TypeScript integration.
 ---
 
-Faire Auth is designed to be type-safe. Both the client and server are built with TypeScript, allowing you to easily infer types.
+Faire Auth is designed to be type-safe. Both the client and server are built with TypeScript, with end-to-end type inference from your server configuration through to client method calls.
 
 
 ## TypeScript Config
@@ -35,44 +35,122 @@ If you're running into issues with TypeScript inference exceeding maximum length
 then please make sure you're following the instructions above, as well as ensuring that both `declaration` and `composite` are not enabled.
 </Callout>
 
-## Inferring Types
+## `$Infer` — The Type Inference Namespace
 
-Both the client SDK and the server offer types that can be inferred using the `$Infer` property. Plugins can extend base types like `User` and `Session`, and you can use `$Infer` to infer these types. Additionally, plugins can provide extra types that can also be inferred through `$Infer`.
+Faire Auth provides a `$Infer` namespace on the server auth instance for deriving types. Better Auth had `$Infer.Session` — Faire Auth expands this with `$Infer.App()` and `$Infer.Api()`.
 
-```ts title="auth-client.ts"
-import { createAuthClient } from "faire-auth/client"
+### `$Infer.Session`
 
-const authClient = createAuthClient()
-
-export type Session = typeof authClient.$Infer.Session
-```
-
-The `Session` type includes both `session` and `user` properties. The user property represents the user object type, and the `session` property represents the `session` object type.
-
-You can also infer types on the server side.
+Infers the session type including plugin-extended fields:
 
 ```ts title="auth.ts"
-import { faireAuth } from "faire-auth"
-import Database from "better-sqlite3"
+import { faireAuth, defineOptions } from "faire-auth"
 
-export const auth = faireAuth({
-    database: new Database("database.db")
+const cfg = defineOptions({
+    baseURL: "http://localhost:3000",
+    user: {
+        additionalFields: {
+            role: { type: "string", input: false },
+        },
+    },
 })
 
+const auth = faireAuth(cfg)
+
+// Includes user.role from additionalFields + any plugin fields
 type Session = typeof auth.$Infer.Session
 ```
 
+### `$Infer.App()`
+
+Returns the full typed Hono app type with all route schemas inlined. This is the primary type you pass to `createAuthClient` to get typed client routes:
+
+```ts title="auth.ts"
+const { $Infer } = faireAuth(cfg)
+
+// The typed Hono app — pass this to createAuthClient
+export const App = $Infer.App(cfg)
+```
+
+`App` encodes every route's path, method, input schema, and response schema. When you pass `<typeof App>` to `createAuthClient`, the client automatically knows every available route and its types.
+
+### `$Infer.Api()`
+
+Returns the server-side API object keyed by `operationId`:
+
+```ts title="auth.ts"
+export const Api = $Infer.Api(App)
+
+// Api.signInEmail, Api.getSession, etc. — all typed
+```
+
+This is useful when you want to reference the API type without importing the auth instance itself.
+
+## Client Type Inference
+
+The client derives its types entirely from the `App` type. This is how plugin routes, additional fields, and DTO transforms flow through to the client:
+
+```ts title="auth-client.ts"
+import { createAuthClient } from "faire-auth/client"
+import type { App } from "./auth" // [!code highlight]
+
+const authClient = createAuthClient<typeof App>()({}) // [!code highlight]
+
+// All routes are typed — including plugin routes
+await authClient.signIn.email.$post({ json: { email: "", password: "" } })
+
+// Session type reflects additional fields and DTO transforms
+type Session = typeof authClient.$Infer.Session
+```
+
+<Callout type="warn">
+`inferAdditionalFields` from `faire-auth/client/plugins` is deprecated and no longer exported. Use the `App` type generic on `createAuthClient` instead — it automatically infers all additional fields, plugin routes, and DTO transforms.
+</Callout>
+
+### `InferClient`
+
+If you need the full client type (routes + actions + hooks + `$store`) as a standalone type, use `InferClient`:
+
+```ts
+import type { InferClient } from "faire-auth/api"
+import type { App } from "./auth"
+
+type MyClient = InferClient<typeof App, { fetchOptions: { throw: true } }>
+```
+
+## Route Visibility
+
+Not all routes are exposed to the client. Faire Auth uses three route-level flags to control visibility:
+
+| Flag | Effect |
+|---|---|
+| `SERVER_ONLY: true` | Route is excluded from the Hono app entirely. Only available via `auth.api.*()` on the server. Not in OpenAPI spec. |
+| `isAction: false` | Route is registered but hidden from the client API and OpenAPI spec. Used for utility routes like `/ok` and `/error`. |
+| `client: false` | Route is registered and in OpenAPI spec, but excluded from the client type. Used for callback routes (OAuth redirects). |
+
+When you create a plugin route, these flags are set on the route config:
+
+```ts
+createRoute({
+    operationId: "myInternalRoute",
+    method: "post",
+    path: "/my-plugin/internal",
+    SERVER_ONLY: true, // only callable via auth.api.myInternalRoute()
+    // ...
+})
+```
+
+Routes without these flags are fully public — registered in the Hono app, included in OpenAPI spec, and typed on the client.
 
 ## Additional Fields
 
 Faire Auth allows you to add additional fields to the user and session objects. All additional fields are properly inferred and available on the server and client side.
 
 ```ts
-import { faireAuth } from "faire-auth"
-import Database from "better-sqlite3"
+import { faireAuth, defineOptions } from "faire-auth"
 
-export const auth = faireAuth({
-    database: new Database("database.db"),
+const cfg = defineOptions({
+    baseURL: "http://localhost:3000",
     user: {
        additionalFields: {
           role: {
@@ -81,14 +159,14 @@ export const auth = faireAuth({
             }
         }
     }
-
 })
 
+const auth = faireAuth(cfg)
+export const App = auth.$Infer.App(cfg)
+
 type Session = typeof auth.$Infer.Session
+// Session.user.role is typed as string
 ```
-
-In the example above, we added a `role` field to the user object. This field is now available on the `Session` type.
-
 
 ### The `input` property
 
@@ -109,38 +187,36 @@ When `input` is set to `false`, the field will be excluded from user input, prev
 
 By default, additional fields are included in the user input, which can lead to security vulnerabilities if not handled carefully. For fields that should not be set by the user, like a `role`, it is crucial to set `input: false` in the configuration.
 
-### Inferring Additional Fields on Client
+## DTO Type Threading
 
-To make sure proper type inference for additional fields on the client side, you need to inform the client about these fields. There are two approaches to achieve this, depending on your project structure:
-
-1. For Monorepo or Single-Project Setups
-
-If your server and client code reside in the same project, you can use the `inferAdditionalFields` plugin to automatically infer the additional fields from your server configuration.
+When you define [DTO transforms](/docs/concepts/hooks#dto--shape-the-response), the transformed types flow through to the client automatically:
 
 ```ts
-import { inferAdditionalFields } from "faire-auth/client/plugins";
-import { createAuthClient } from "faire-auth/react";
-import type { auth } from "./auth";
+const cfg = defineOptions({
+    baseURL: "http://localhost:3000",
+    dto: {
+        user: (user) => ({
+            id: user.id,
+            name: user.name,
+            // email, createdAt, updatedAt are stripped
+        }),
+    },
+})
 
-export const authClient = createAuthClient()({
-  plugins: [inferAdditionalFields<typeof auth>()],
-});
+const auth = faireAuth(cfg)
+export const App = auth.$Infer.App(cfg)
 ```
 
-2. For Separate Client-Server Projects
+```ts title="auth-client.ts"
+import type { App } from "./auth"
 
-If your client and server are in separate projects, you'll need to manually specify the additional fields when creating the auth client.
+const authClient = createAuthClient<typeof App>()({})
 
-```ts
-import { inferAdditionalFields } from "faire-auth/client/plugins";
-
-export const authClient = createAuthClient()({
-  plugins: [inferAdditionalFields({
-      user: {
-        role: {
-          type: "string"
-        }
-      }
-  })],
-});
+// The session user type only has id and name — not email, createdAt, etc.
+const { data } = await authClient.getSession.$get({ query: {} })
+// data.user.id ✓
+// data.user.name ✓
+// data.user.email ✗ — stripped by DTO
 ```
+
+This is implemented at the Zod schema level — `buildSchemas()` appends `.transform()` to response schemas that have a matching DTO key, and `ProcessRouteConfig` threads the transformed output type through the OpenAPI schema used by the client.
