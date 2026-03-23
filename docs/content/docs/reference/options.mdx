@@ -207,6 +207,7 @@ export const auth = faireAuth({
 - `autoSignIn`: Automatically sign in the user after sign up
 - `sendResetPassword`: Function to send reset password email
 - `resetPasswordTokenExpiresIn`: Number of seconds the reset password token is valid for (default: `3600` seconds)
+- `revokeSessionsOnPasswordReset`: Revoke all sessions when password is reset (default: `false`)
 - `password`: Custom password hashing and verification functions
 
 ## `socialProviders`
@@ -237,15 +238,12 @@ List of Faire Auth plugins.
 
 ```ts
 import { faireAuth } from "faire-auth";
-import { emailOTP } from "faire-auth/plugins";
+import { organization, twoFactor } from "faire-auth/plugins";
 
 export const auth = faireAuth({
 	plugins: [
-		emailOTP({
-			sendVerificationOTP: async ({ email, otp, type }) => {
-				// Send OTP to user's email
-			}
-		})
+		organization(),
+		twoFactor(),
 	],
 })
 ```
@@ -320,8 +318,12 @@ export const auth = faireAuth({
 		preserveSessionInDatabase: false, // Preserve session records in database when deleted from secondary storage (default: `false`)
 		cookieCache: {
 			enabled: true, // Enable caching session in cookie (default: `false`)
-			maxAge: 300 // 5 minutes
-		}
+			maxAge: 300, // 5 minutes
+			strategy: "compact", // "compact" | "jwt" | "jwe" (default: "compact")
+			refreshCache: true, // Auto-refresh before expiry without DB query (default: false)
+			version: "1", // Bump to invalidate all existing caches
+		},
+		freshAge: 86400, // 1 day — how fresh a session must be for sensitive operations
 	},
 })
 ```
@@ -333,7 +335,11 @@ export const auth = faireAuth({
 - `additionalFields`: Additional fields for the session table
 - `storeSessionInDatabase`: Store session in database when secondary storage is provided (default: `false`)
 - `preserveSessionInDatabase`: Preserve session records in database when deleted from secondary storage (default: `false`)
+- `freshAge`: How old a session can be and still be considered "fresh" for sensitive operations like account deletion (default: `86400` - 1 day, set `0` to disable)
 - `cookieCache`: Enable caching session in cookie
+  - `strategy`: Encoding strategy — `"compact"` (base64url + HMAC), `"jwt"` (JWT spec), or `"jwe"` (encrypted) (default: `"compact"`)
+  - `refreshCache`: Auto-refresh the cache before expiry without hitting the DB. Set `true` for default (80% of maxAge) or `{ updateAge: seconds }` for custom (default: `false`)
+  - `version`: Bump this string to invalidate all existing cookie caches (default: `"1"`)
 
 ## `account`
 
@@ -551,32 +557,42 @@ export const auth = faireAuth({
 	databaseHooks: {
 		user: {
 			create: {
-				before: async (user) => {
+				before: async (user, ctx) => {
 					// Modify user data before creation
+					// ctx is the Hono Context (optional)
 					return { data: { ...user, customField: "value" } };
 				},
-				after: async (user) => {
+				after: async (user, ctx) => {
 					// Perform actions after user creation
 				}
 			},
 			update: {
-				before: async (userData) => {
+				before: async (userData, ctx) => {
 					// Modify user data before update
+					// Return false to prevent the update
 					return { data: { ...userData, updatedAt: new Date() } };
 				},
-				after: async (user) => {
+				after: async (user, ctx) => {
 					// Perform actions after user update
+				}
+			},
+			delete: {
+				before: async (user, ctx) => {
+					// Return false to prevent deletion
+				},
+				after: async (user, ctx) => {
+					// Cleanup after user deletion
 				}
 			}
 		},
 		session: {
-			// Session hooks
+			// Same create/update/delete hooks as user
 		},
 		account: {
-			// Account hooks
+			// Same create/update/delete hooks as user
 		},
 		verification: {
-			// Verification hooks
+			// Same create/update/delete hooks as user
 		}
 	},
 })
@@ -601,8 +617,9 @@ export const auth = faireAuth({
 ```
 
 - `throw`: Throw an error on API error (default: `false`)
-- `onError`: Custom error handler
+- `onError`: Custom error handler — receives `(error, ctx)` where `ctx` is the Hono Context
 - `errorURL`: URL to redirect to on error (default: `/api/auth/error`)
+- `exposeMessage`: Expose unhandled error messages to client (default: `false`, use only for debugging)
 
 ## `hooks`
 
@@ -626,6 +643,106 @@ export const auth = faireAuth({
 ```
 
 For more details and examples, see the [Hooks documentation](/docs/concepts/hooks).
+
+## `middleware`
+
+Per-route typed Hono middleware, keyed by `operationId`. Runs before Zod validation in the middleware chain.
+
+```ts
+import { faireAuth, defineOptions } from "faire-auth";
+import { createMiddleware } from "faire-auth/plugins";
+
+const cfg = defineOptions({
+	baseURL: "http://localhost:3000",
+	middleware: {
+		getSession: createMiddleware()(async (ctx, next) => {
+			console.log("getSession called");
+			await next();
+		}),
+	},
+})
+```
+
+For more details, see the [Hooks & Middleware documentation](/docs/concepts/hooks#middleware--gate-the-request).
+
+## `routeHooks`
+
+Per-route post-validation hooks, keyed by `operationId`. Runs after Zod validation but before the route handler. Receives the validation result.
+
+```ts
+import { defineOptions } from "faire-auth";
+
+const cfg = defineOptions({
+	baseURL: "http://localhost:3000",
+	routeHooks: {
+		signUpEmail: (result, ctx) => {
+			if (!result.success) return;
+			const { email } = result.data.json;
+			if (!email.endsWith("@company.com")) {
+				return ctx.json({ error: "Only company emails" }, 403);
+			}
+		},
+	},
+})
+```
+
+For more details, see the [Hooks & Middleware documentation](/docs/concepts/hooks#routehooks--intercept-after-validation).
+
+## `dto`
+
+Response transforms keyed by schema name (`user`, `session`, etc.). Applied after the handler, before serialization. Type-threaded through to client inference.
+
+```ts
+import { defineOptions } from "faire-auth";
+
+const cfg = defineOptions({
+	baseURL: "http://localhost:3000",
+	dto: {
+		user: (user) => ({
+			id: user.id,
+			name: user.name,
+			email: user.email,
+		}),
+	},
+})
+```
+
+For more details, see the [Hooks & Middleware documentation](/docs/concepts/hooks#dto--shape-the-response).
+
+## `hono`
+
+Hono-specific configuration. Since Faire Auth is built on Hono, this option controls the underlying Hono instance.
+
+```ts
+import { faireAuth, defineOptions } from "faire-auth";
+
+const cfg = defineOptions({
+	baseURL: "http://localhost:3000",
+	hono: {
+		init: {
+			// Hono constructor options (e.g. custom getPath, strict mode)
+		},
+		openapi: {
+			enabled: true,
+			path: "/openapi.json",
+			version: "3.1",
+			config: {
+				openapi: "3.1.1",
+				info: {
+					title: "My Auth API",
+					version: "1.0.0",
+				},
+			},
+		},
+	},
+})
+```
+
+- `init`: Hono constructor options passed to the internal Hono instance
+- `openapi.enabled`: Enable the OpenAPI JSON endpoint (default: `false`)
+- `openapi.path`: Path for the OpenAPI endpoint, relative to base path (default: `"/openapi.json"`)
+- `openapi.version`: OpenAPI spec version — `"3"` or `"3.1"` (default: `"3.1"`)
+- `openapi.config`: Full OpenAPI spec configuration object (info, servers, security, tags)
 
 ## `disabledPaths`
 
