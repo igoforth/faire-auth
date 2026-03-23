@@ -5,120 +5,25 @@ description: A curated collection of resources to help you learn and master Fair
 
 import { Resource } from "@/components/resource-section";
 
-A curated collection of resources to help you learn and master Faire Auth. From blog posts to video tutorials, find everything you need to get started.
+A curated collection of resources to help you learn and master Faire Auth.
 
-## Video tutorials
-
-<Resource resources={
-    [
-		{
-			title: "The State of Authentication",
-			description:
-				"<strong>Theo(t3.gg)</strong> explores the current landscape of authentication, discussing trends, challenges, and where the industry is heading.",
-			href: "https://www.youtube.com/watch?v=lxslnp-ZEMw",
-			tags: ["trends", "showcase", "review"],
-		},
-		{
-			title: "Last Authentication You Will Ever Need",
-			description:
-				"A comprehensive tutorial demonstrating why Faire Auth could be the final authentication solution you'll need for your projects.",
-			href: "https://www.youtube.com/watch?v=hFtufpaMcLM",
-			tags: ["implementation", "showcase"],
-		},
-		{
-			title: "This Might Be My New Favourite Auth Library",
-			description:
-				"<strong>developedbyed</strong> explores the features and capabilities of Faire Auth, explaining why it stands out among authentication libraries.",
-			href: "https://www.youtube.com/watch?v=Hjs3zM7o7NE",
-			tags: ["review", "showcase"],
-		},
-	 	{
-			title: "8 Reasons To Try Faire Auth",
-			description:
-				"<strong>CJ</strong> presents 8 compelling reasons why Faire Auth is the BEST auth framework he's ever used, demonstrating its superior features and ease of implementation.",
-			href: "https://www.youtube.com/watch?v=_OApmLmex14",
-			tags: ["review", "showcase", "implementation"],
-		},
-		{
-			title: "Faire Auth is so good that I almost switched programming languages",
-			description:
-				"<strong>Dreams of Code</strong> reviews Faire Auth's features that nearly made them switch languages.",
-			href: "https://www.youtube.com/watch?v=dNY4FKXwTsM",
-			tags: ["review", "showcase", "implementation"],
-		},
-		{
-			title: "Best authentication framework for next.js",
-			description:
-				"A detailed comparison of authentication frameworks for Next.js, highlighting why Faire Auth might be your best choice.",
-			href: "https://www.youtube.com/watch?v=V--T0q9FrEw",
-			tags: ["nextjs", "comparison"],
-		},
-		{
-			title: "Faire Auth: A First Look",
-			description:
-				"An introductory overview and demonstration of Faire Auth's core features and capabilities.",
-			href: "https://www.youtube.com/watch?v=2cQTV6NYxis",
-			tags: ["implementation", "showcase"],
-		},
-		{
-			title: "Stripe was never so easy (with Faire Auth)",
-			description: "A tutorial on how to integrate Stripe with Faire Auth.",
-			href: "https://www.youtube.com/watch?v=g-RIrzBEX6M",
-			tags: ["implementation"],
-		},
-		{
-			title: "Nextjs 15 Authentication Made EASY with Faire Auth",
-			description:
-				"A practical guide showing how to seamlessly integrate Faire Auth with Next.js 15 for robust authentication.",
-			href: "https://www.youtube.com/watch?v=lxslnp-ZEMw",
-			tags: ["nextjs", "implementation", "tutorial"],
-		},
-		{
-			title: "Faire Auth: Headless Authentication for Your TanStack Start App",
-			description: "<strong>Jack</strong> demonstrates how to implement headless authentication in your TanStack Start application using Faire Auth, providing a modern approach to auth.",
-			href: "https://www.youtube.com/watch?v=Atev8Nxpw7c",
-			tags: ["tanstack", "implementation"],
-		},
-		{
-			title: "Goodbye Clerk, Hello Faire Auth – Full Migration Guide!",
-			description: "A comprehensive guide showing how to migrate your authentication from Clerk to Faire Auth, with step-by-step instructions and best practices.",
-			href: "https://www.youtube.com/watch?v=Za_QihbDSuk",
-			tags: ["migration", "clerk", "tutorial"],
-		},
-    ]
-} />
-
-## Blog posts
+## Guides
 
 <Resource resources={
     [
-        {
-			title: "Faire Auth with Hono, Bun, TypeScript, React and Vite",
+		{
+			title: "Migrate from Better Auth to Faire Auth",
 			description:
-				"You'll learn how to implement authentication with Faire Auth in a client - server architecture, where the frontend is separate from the backend.",
-			href: "https://catalins.tech/faire-auth-with-hono-bun-typescript-react-vite",
-			tags: ["typescript", "react", "bun", "vite"],
+				"A comprehensive step-by-step guide covering every API change, plugin migration, client patterns, and new options.",
+			href: "/docs/guides/migrate-from-better-auth",
+			tags: ["migration", "guide"],
 		},
 		{
-			title: "Polar.sh + FaireAuth for Organizations",
+			title: "Create Your First Plugin",
 			description:
-				"Polar.sh is a platform for building payment integrations. This article will show you how to use Faire Auth to authenticate your users.",
-			href: "https://dev.to/phumudzosly/polarsh-betterauth-for-organizations-1j1b",
-			tags: ["organizations", "integration", "payments"],
-		},
-		{
-			title: "Authenticating users in Astro with Faire Auth",
-			description:
-				"Step by step guide on how to authenticate users in Astro with Faire Auth.",
-			href: "https://www.launchfa.st/blog/astro-faire-auth",
-			tags: ["astro", "integration", "tutorial"],
-		},
-		{
-			title: "Building Multi-Tenant Apps With Faire Auth and ZenStack",
-			description:
-				"Learn how to build multi-tenant apps with Faire Auth and ZenStack.",
-			href: "https://zenstack.dev/blog/faire-auth",
-			tags: ["multi-tenant", "zenstack", "architecture"],
+				"Walk through creating a birthday plugin from scratch — server plugin, schema, hooks, and client setup.",
+			href: "/docs/guides/your-first-plugin",
+			tags: ["plugin", "tutorial"],
 		},
     ]
 } />
