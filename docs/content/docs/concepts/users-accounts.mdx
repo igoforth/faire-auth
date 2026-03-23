@@ -44,7 +44,7 @@ export const auth = faireAuth({
     user: {
         changeEmail: {
             enabled: true,
-            sendChangeEmailVerification: async ({ user, newEmail, url, token }, request) => {
+            sendChangeEmailVerification: async ({ user, newEmail, url, token }, ctx) => {
                 await sendEmail({
                     to: user.email, // verification email must be sent to the current user email to approve the change
                     subject: 'Approve email change',
@@ -142,7 +142,7 @@ export const auth = faireAuth({
                     url, // The auto-generated URL for deletion
                     token  // The verification token  (can be used to generate custom URL)
                 },
-                request  // The original request object (optional)
+                ctx  // The Hono context (access request via ctx.req.raw)
             ) => {
                 // Your email sending logic here
                 // Example: sendEmail(data.user.email, "Verify Deletion", data.url);

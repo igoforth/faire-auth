@@ -810,10 +810,10 @@ const auth = faireAuth({
     organization({
       disableOrganizationDeletion: true, //to disable it altogether
       organizationHooks: {
-        beforeDeleteOrganization: async (data, request) => {
+        beforeDeleteOrganization: async (data) => {
           // a callback to run before deleting org
         },
-        afterDeleteOrganization: async (data, request) => {
+        afterDeleteOrganization: async (data) => {
           // a callback to run after deleting org
         },
       },
@@ -2052,7 +2052,7 @@ The teams feature supports several configuration options:
     },
     maximumMembersPerTeam: 10 // Fixed number
     // OR
-    maximumMembersPerTeam: async ({ teamId, session, organizationId }, request) => {
+    maximumMembersPerTeam: async ({ teamId, session, organizationId }) => {
       // Dynamic limit based on team plan
       const plan = await getPlan(organizationId, teamId)
       return plan === 'pro' ? 50 : 10

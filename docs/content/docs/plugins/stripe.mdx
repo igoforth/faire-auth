@@ -137,11 +137,11 @@ You can customize the customer creation process:
 stripe({
     // ... other options
     createCustomerOnSignUp: true,
-    onCustomerCreate: async ({ customer, stripeCustomer, user }, request) => {
+    onCustomerCreate: async ({ customer, stripeCustomer, user }, ctx) => {
         // Do something with the newly created customer
         console.log(`Customer ${customer.id} created for user ${user.id}`);
     },
-    getCustomerCreateParams: async ({ user, session }, request) => {
+    getCustomerCreateParams: async ({ user, session }, ctx) => {
         // Customize the Stripe customer creation parameters
         return {
             metadata: {
@@ -570,7 +570,7 @@ You can configure trial periods for your plans:
             // Called when a trial starts
             await sendTrialStartEmail(subscription.referenceId);
         },
-        onTrialEnd: async ({ subscription, user }, request) => {
+        onTrialEnd: async ({ subscription, user }, ctx) => {
             // Called when a trial ends
             await sendTrialEndEmail(user.email);
         },
@@ -795,7 +795,7 @@ subscription: {
 You can customize the Stripe Checkout session with additional parameters:
 
 ```ts title="auth.ts"
-getCheckoutSessionParams: async ({ user, session, plan, subscription }, request) => {
+getCheckoutSessionParams: async ({ user, session, plan, subscription }, ctx) => {
     return {
         params: {
             allow_promotion_codes: true,
@@ -827,7 +827,7 @@ To collect tax IDs from the customer, set `tax_id_collection` to true:
 ```ts title="auth.ts"
 subscription: {
     // ... other options
-    getCheckoutSessionParams: async ({ user, session, plan, subscription }, request) => {
+    getCheckoutSessionParams: async ({ user, session, plan, subscription }, ctx) => {
         return {
             params: {
                 tax_id_collection: {
@@ -846,7 +846,7 @@ To enable automatic tax calculation using the customer's location, set `automati
 ```ts title="auth.ts"
 subscription: {
     // ... other options
-    getCheckoutSessionParams: async ({ user, session, plan, subscription }, request) => {
+    getCheckoutSessionParams: async ({ user, session, plan, subscription }, ctx) => {
         return {
             params: {
                 automatic_tax: {
