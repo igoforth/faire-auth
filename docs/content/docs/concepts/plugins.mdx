@@ -399,7 +399,47 @@ const myPlugin = () => {
 
 ## Creating a Client Plugin
 
-If your routes need to be called from the client, you'll need to also create a client plugin. Faire Auth clients can infer the routes from the server plugins. You can also add additional client-side logic.
+If your plugin adds routes that need to be called from the client, you have two options:
+
+1. **Pass the `App` type to `createAuthClient`** (recommended) — plugin routes are automatically inferred from the server app type. No client plugin needed for route inference.
+2. **Create a client plugin** — only needed if your plugin adds client-side logic like custom actions, atoms, or path method overrides.
+
+### Route Inference via App Type (Recommended)
+
+Plugin routes are automatically available on the client when you pass the `App` type:
+
+```ts title="auth.ts"
+import { faireAuth, defineOptions } from "faire-auth";
+import { myPlugin } from "./my-plugin";
+
+const cfg = defineOptions({
+    baseURL: "http://localhost:3000",
+    plugins: [myPlugin()],
+});
+
+const auth = faireAuth(cfg);
+export const App = auth.$Infer.App(cfg); // [!code highlight]
+```
+
+```ts title="auth-client.ts"
+import { createAuthClient } from "faire-auth/client";
+import type { App } from "./auth"; // [!code highlight]
+
+const authClient = createAuthClient<typeof App>()({}) // [!code highlight]
+
+// Plugin routes are automatically typed and available
+await authClient.myPlugin.helloWorld.$get();
+```
+
+The client infers the `path` as an object and converts kebab-case to camelCase. For example, `/my-plugin/hello-world` becomes `myPlugin.helloWorld`.
+
+<Callout type="warn">
+`$InferServerPlugin` on client plugins is deprecated and no longer works for route inference. Use the `App` type generic on `createAuthClient` instead.
+</Callout>
+
+### Client Plugin for Custom Logic
+
+If your plugin needs client-side actions, atoms, or other non-route functionality, create a client plugin:
 
 ```ts title="client-plugin.ts"
 import type { FaireAuthClientPlugin } from "faire-auth/client";
@@ -407,24 +447,6 @@ import type { FaireAuthClientPlugin } from "faire-auth/client";
 export const myPluginClient = () => {
     return {
         id: "my-plugin",
-    } satisfies FaireAuthClientPlugin
-}
-```
-
-### Endpoint Interface
-
-Routes are inferred from the server plugin by adding a `$InferServerPlugin` key to the client plugin.
-
-The client infers the `path` as an object and converts kebab-case to camelCase. For example, `/my-plugin/hello-world` becomes `myPlugin.helloWorld`.
-
-```ts title="client-plugin.ts"
-import type { FaireAuthClientPlugin } from "faire-auth/client";
-import type { myPlugin } from "./plugin";
-
-const myPluginClient = () => {
-    return  {
-        id: "my-plugin",
-        $InferServerPlugin: {} as ReturnType<typeof myPlugin>,
     } satisfies FaireAuthClientPlugin
 }
 ```
@@ -437,12 +459,10 @@ Faire Auth uses <Link href="https://better-fetch.vercel.app">Better Fetch</Link>
 
 ```ts title="client-plugin.ts"
 import type { FaireAuthClientPlugin } from "faire-auth/client";
-import type { myPlugin } from "./plugin";
 import type { BetterFetchOption } from "@better-fetch/fetch";
 
 const myPluginClient = {
     id: "my-plugin",
-    $InferServerPlugin: {} as ReturnType<typeof myPlugin>,
     getActions: ($fetch) => {
         return {
             myCustomAction: async (data: {
@@ -480,7 +500,6 @@ import type { FaireAuthClientPlugin } from "faire-auth/client";
 
 const myPluginClient = {
     id: "my-plugin",
-    $InferServerPlugin: {} as ReturnType<typeof myPlugin>,
     getAtoms: ($fetch) => {
         const myAtom = atom<null>()
         return {
@@ -498,11 +517,9 @@ By default, inferred paths use `GET` method if they don't require a body and `PO
 
 ```ts title="client-plugin.ts"
 import type { FaireAuthClientPlugin } from "faire-auth/client";
-import type { myPlugin } from "./plugin";
 
 const myPluginClient = {
     id: "my-plugin",
-    $InferServerPlugin: {} as ReturnType<typeof myPlugin>,
     pathMethods: {
         "/my-plugin/hello-world": "POST"
     }
