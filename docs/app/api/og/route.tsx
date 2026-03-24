@@ -9,11 +9,11 @@ const ogSchema = z.object({
 });
 export async function GET(req: Request) {
 	try {
-		const geist = await fetch(
-			new URL("../../../assets/Geist.ttf", import.meta.url),
+		const inter = await fetch(
+			new URL("../../../assets/Inter.ttf", import.meta.url),
 		).then((res) => res.arrayBuffer());
-		const geistMono = await fetch(
-			new URL("../../../assets/GeistMono.ttf", import.meta.url),
+		const interSemiBold = await fetch(
+			new URL("../../../assets/InterSemiBold.ttf", import.meta.url),
 		).then((res) => res.arrayBuffer());
 		const url = new URL(req.url);
 		const urlParamsValues = Object.fromEntries(url.searchParams);
@@ -22,7 +22,7 @@ export async function GET(req: Request) {
 		const trueHeading =
 			heading.length > 140 ? `${heading.substring(0, 140)}...` : heading;
 
-		const paint = "#fff";
+		const paint = "#ece8e5";
 
 		const fontSize = trueHeading.length > 100 ? "30px" : "60px";
 		return new ImageResponse(
@@ -30,96 +30,30 @@ export async function GET(req: Request) {
 				tw="flex w-full relative flex-col p-12"
 				style={{
 					color: paint,
-					backgroundColor: "transparent",
-					border: "1px solid rgba(255, 255, 255, 0.1)",
-					boxShadow: "0 -20px 80px -20px rgba(28, 12, 12, 0.1) inset",
-					background: "#0a0505",
+					background: "#040504",
 				}}
 			>
 				<div
-					tw={`relative flex flex-col w-full h-full border-2 border-[${paint}]/20 p-10}`}
+					tw={`relative flex flex-col w-full h-full border border-[${paint}]/20 p-10 rounded-lg`}
 				>
-					<svg
-						style={{
-							position: "absolute",
-							top: "-9px",
-							right: "-9px",
-						}}
-						width="17"
-						height="17"
-						fill="none"
-					>
-						<path
-							d="M7 1a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v2a1 1 0 0 1-1 1H1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1h2a1 1 0 0 1 1 1v2a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1V8a1 1 0 0 1 1-1h2a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1H8a1 1 0 0 1-1-1V1z"
-							fill="#d0cfd1d3"
-						/>
-					</svg>
-
-					<svg
-						style={{
-							position: "absolute",
-							top: "-9px",
-							left: "-9px",
-						}}
-						width="17"
-						height="17"
-						fill="none"
-					>
-						<path
-							d="M7 1a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v2a1 1 0 0 1-1 1H1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1h2a1 1 0 0 1 1 1v2a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1V8a1 1 0 0 1 1-1h2a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1H8a1 1 0 0 1-1-1V1z"
-							fill="#cacaca"
-						/>
-					</svg>
-					<svg
-						style={{
-							position: "absolute",
-							bottom: "-9px",
-							left: "-9px",
-						}}
-						width="17"
-						height="17"
-						fill="none"
-					>
-						<path
-							d="M7 1a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v2a1 1 0 0 1-1 1H1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1h2a1 1 0 0 1 1 1v2a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1V8a1 1 0 0 1 1-1h2a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1H8a1 1 0 0 1-1-1V1z"
-							fill="#cacaca"
-						/>
-					</svg>
-					<svg
-						style={{
-							position: "absolute",
-							bottom: "-9px",
-							right: "-9px",
-						}}
-						width="17"
-						height="17"
-						fill="none"
-					>
-						<path
-							d="M7 1a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v2a1 1 0 0 1-1 1H1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1h2a1 1 0 0 1 1 1v2a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1V8a1 1 0 0 1 1-1h2a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1H8a1 1 0 0 1-1-1V1z"
-							fill="#cacaca"
-						/>
-					</svg>
 					<div tw="flex flex-col flex-1 py-10">
-						<svg
-							width="100"
-							height="95"
-							viewBox="0 0 60 45"
-							fill="none"
-							className="mb-10"
-							xmlns="http://www.w3.org/2000/svg"
-						>
-							<path
-								fillRule="evenodd"
-								stroke={paint}
-								clipRule="evenodd"
-								d="M0 0H15V15H30V30H15V45H0V30V15V0ZM45 30V15H30V0H45H60V15V30V45H45H30V30H45Z"
-								fill="white"
+						<div tw="flex items-center gap-3 mb-6">
+							<div
+								tw="flex rounded-full w-3 h-3"
+								style={{ backgroundColor: "#e33a31" }}
 							/>
-						</svg>
+							<div
+								tw="flex rounded-full w-3 h-3"
+								style={{ backgroundColor: "#ffdf16" }}
+							/>
+							<div
+								tw="flex rounded-full w-3 h-3"
+								style={{ backgroundColor: "#0067a7" }}
+							/>
+						</div>
 						<div
-							style={{ fontFamily: "GeistMono", fontWeight: "normal" }}
-							tw="relative flex mt-10 text-xl uppercase font-bold gap-2 items-center"
+							style={{ fontFamily: "Inter", fontWeight: 400 }}
+							tw="relative flex mt-6 text-xl uppercase gap-2 items-center"
 						>
 							{type === "documentation" ? (
 								<svg
@@ -139,13 +73,12 @@ export async function GET(req: Request) {
 							{type}
 						</div>
 						<div
-							tw="flex max-w-[70%] mt-5 tracking-tighter leading-[1.1] text-[30px] font-bold"
+							tw="flex max-w-[70%] mt-5 tracking-tighter leading-[1.1] text-[30px]"
 							style={{
-								fontWeight: "bold",
+								fontWeight: 600,
 								marginLeft: "-3px",
 								fontSize,
-
-								fontFamily: "GeistMono",
+								fontFamily: "InterSemiBold",
 							}}
 						>
 							{trueHeading}
@@ -154,9 +87,9 @@ export async function GET(req: Request) {
 					<div tw="flex items-center w-full justify-between">
 						<div
 							tw="flex text-xl"
-							style={{ fontFamily: "GeistSans", fontWeight: "semibold" }}
+							style={{ fontFamily: "InterSemiBold", fontWeight: 600 }}
 						>
-							Faire Auth.
+							Faire Auth
 						</div>
 						<div tw="flex gap-2 items-center text-xl">
 							<svg
@@ -171,9 +104,7 @@ export async function GET(req: Request) {
 								></path>
 							</svg>
 							<span
-								style={{
-									fontFamily: "GeistSans",
-								}}
+								style={{ fontFamily: "Inter" }}
 								tw="flex ml-2"
 							>
 								github.com/igoforth/faire-auth
@@ -187,15 +118,15 @@ export async function GET(req: Request) {
 				height: 630,
 				fonts: [
 					{
-						name: "Geist",
-						data: geist,
+						name: "Inter",
+						data: inter,
 						weight: 400,
 						style: "normal",
 					},
 					{
-						name: "GeistMono",
-						data: geistMono,
-						weight: 700,
+						name: "InterSemiBold",
+						data: interSemiBold,
+						weight: 600,
 						style: "normal",
 					},
 				],

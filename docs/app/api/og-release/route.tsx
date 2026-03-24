@@ -10,8 +10,8 @@ const ogSchema = z.object({
 
 export async function GET(req: Request) {
 	try {
-		const geist = await fetch(
-			new URL("../../../assets/Geist.ttf", import.meta.url),
+		const inter = await fetch(
+			new URL("../../../assets/Inter.ttf", import.meta.url),
 		).then((res) => res.arrayBuffer());
 
 		const url = new URL(req.url);
@@ -28,7 +28,7 @@ export async function GET(req: Request) {
 				style={{
 					background:
 						"radial-gradient(circle 230px at 0% 0%, #000000, #000000)",
-					fontFamily: "Geist",
+					fontFamily: "Inter",
 					color: "white",
 				}}
 			>
@@ -156,8 +156,8 @@ export async function GET(req: Request) {
 				height: 630,
 				fonts: [
 					{
-						name: "Geist",
-						data: geist,
+						name: "Inter",
+						data: inter,
 						weight: 400,
 						style: "normal",
 					},
