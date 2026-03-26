@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useTheme } from "next-themes";
+import { useTheme } from "@/lib/use-theme";
 import { useEffect, useState } from "react";
 import BannerLight from "../../assets/banner.png";
 import BannerDark from "../../assets/banner-dark.png";

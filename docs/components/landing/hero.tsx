@@ -6,7 +6,7 @@ import Link from "next/link";
 import clsx from "clsx";
 import { Button } from "@/components/ui/button";
 import { Check, Copy } from "lucide-react";
-import { useTheme } from "next-themes";
+import { useTheme } from "@/lib/use-theme";
 import { Highlight, themes } from "prism-react-renderer";
 import { AnimatePresence, motion, MotionConfig } from "framer-motion";
 import { Builder } from "../builder";
@@ -225,26 +225,6 @@ function CodePreview() {
 											</pre>
 										)}
 									</Highlight>
-								</motion.div>
-								<motion.div layout className="self-end">
-									<Link
-										href="https://demo.faire-auth.com"
-										target="_blank"
-										className="border border-border/50 rounded-md mb-4 ml-auto mr-4 mt-auto flex cursor-pointer items-center gap-2 px-3 py-1 text-sm text-muted-foreground transition-all hover:text-foreground hover:border-border"
-									>
-										<svg
-											xmlns="http://www.w3.org/2000/svg"
-											width="1em"
-											height="1em"
-											viewBox="0 0 24 24"
-										>
-											<path
-												fill="currentColor"
-												d="M10 20H8V4h2v2h2v3h2v2h2v2h-2v2h-2v3h-2z"
-											></path>
-										</svg>
-										Demo
-									</Link>
 								</motion.div>
 							</div>
 						</div>

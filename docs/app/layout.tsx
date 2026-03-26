@@ -5,8 +5,6 @@ import type { ReactNode } from "react";
 import { NavbarProvider } from "@/components/nav-mobile";
 import { Inter, Cormorant_Garamond, JetBrains_Mono } from "next/font/google";
 import { baseUrl, createMetadata } from "@/lib/metadata";
-import { Analytics } from "@vercel/analytics/react";
-import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { CustomSearchDialog } from "@/components/search-dialog";
 import { AnchorScroll } from "@/components/anchor-scroll-fix";
@@ -42,73 +40,58 @@ export const metadata = createMetadata({
 
 export default function Layout({ children }: { children: ReactNode }) {
 	return (
-		<html lang="en" suppressHydrationWarning>
+		<html lang="en" data-scroll-behavior="smooth" suppressHydrationWarning>
 			<head>
 				<link rel="icon" href="/favicon/favicon.ico" sizes="any" />
 				<script
 					dangerouslySetInnerHTML={{
-						__html: `
-                    try {
-                      if (localStorage.theme === 'dark' || ((!('theme' in localStorage) || localStorage.theme === 'system') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-                        document.querySelector('meta[name="theme-color"]').setAttribute('content')
-                      }
-                    } catch (_) {}
-                  `,
+						__html: `(function(){try{var t=localStorage.getItem("theme"),d=document.documentElement,m=t==="dark"||t==="light"?t:window.matchMedia("(prefers-color-scheme:dark)").matches?"dark":"light";d.classList.add(m);d.style.colorScheme=m}catch(e){}})()`,
 					}}
 				/>
 			</head>
 			<body
 				className={`${inter.variable} ${cormorant.variable} ${jetbrainsMono.variable} bg-background font-sans relative `}
 			>
-				<ThemeProvider
-					attribute="class"
-					defaultTheme="dark"
-					enableSystem
-					disableTransitionOnChange
+				<RootProvider
+					theme={{
+						enabled: false,
+					}}
+					search={{
+						enabled: true,
+						SearchDialog: process.env.ORAMA_PRIVATE_API_KEY
+							? CustomSearchDialog
+							: undefined,
+					}}
 				>
-					<RootProvider
-						theme={{
-							enableSystem: true,
-							defaultTheme: "dark",
-						}}
-						search={{
-							enabled: true,
-							SearchDialog: process.env.ORAMA_PRIVATE_API_KEY
-								? CustomSearchDialog
-								: undefined,
-						}}
-					>
-						<AnchorScroll />
-						<NavbarProvider>
-							<Navbar />
-							{children}
-							<footer className="border-t border-border py-8 px-4">
-								<div className="max-w-7xl mx-auto flex flex-col items-center gap-3 text-sm text-muted-foreground">
-									<div className="flex items-center gap-1.5">
-										<span className="inline-block w-1.5 h-1.5 rounded-full bg-brand-red" />
-										<span className="inline-block w-1.5 h-1.5 rounded-full bg-brand-yellow" />
-										<span className="inline-block w-1.5 h-1.5 rounded-full bg-brand-blue" />
-									</div>
-									<p>
-										<span className="font-display italic font-semibold text-foreground text-base">
-											Faire
-										</span>{" "}
-										<span className="font-medium text-foreground">Auth</span>
-									</p>
+					<AnchorScroll />
+					<NavbarProvider>
+						<Navbar />
+						{children}
+						<footer className="border-t border-border py-8 px-4">
+							<div className="max-w-7xl mx-auto flex flex-col items-center gap-3 text-sm text-muted-foreground">
+								<div className="flex items-center gap-1.5">
+									<span className="inline-block w-1.5 h-1.5 rounded-full bg-brand-red" />
+									<span className="inline-block w-1.5 h-1.5 rounded-full bg-brand-yellow" />
+									<span className="inline-block w-1.5 h-1.5 rounded-full bg-brand-blue" />
 								</div>
-							</footer>
-							<Toaster
-								toastOptions={{
-									style: {
-										borderRadius: "8px",
-										fontSize: "11px",
-									},
-								}}
-							/>
-						</NavbarProvider>
-					</RootProvider>
-					<Analytics />
-				</ThemeProvider>
+								<p>
+									<span className="font-display italic font-semibold text-foreground text-base">
+										Faire
+									</span>{" "}
+									<span className="font-medium text-foreground">Auth</span>
+								</p>
+							</div>
+						</footer>
+						<Toaster
+							toastOptions={{
+								style: {
+									borderRadius: "8px",
+									fontSize: "11px",
+								},
+							}}
+						/>
+					</NavbarProvider>
+				</RootProvider>
 			</body>
 		</html>
 	);

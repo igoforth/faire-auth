@@ -4,7 +4,7 @@ import type React from "react";
 import { useState, useRef, useEffect } from "react";
 import { Image } from "lucide-react";
 import { toast } from "sonner";
-import { useTheme } from "next-themes";
+import { useTheme } from "@/lib/use-theme";
 import type { StaticImageData } from "next/image";
 
 interface LogoAssets {

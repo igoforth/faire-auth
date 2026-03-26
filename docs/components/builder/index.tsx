@@ -26,7 +26,7 @@ import { cn } from "@/lib/utils";
 import { socialProviders } from "./social-provider";
 import { useAtom } from "jotai";
 import { optionsAtom } from "./store";
-import { useTheme } from "next-themes";
+import { useTheme } from "@/lib/use-theme";
 import { ScrollArea } from "../ui/scroll-area";
 const frameworks = [
 	{
@@ -247,15 +247,15 @@ export function Builder() {
 	return (
 		<Dialog>
 			<DialogTrigger asChild>
-				<button className="bg-stone-950 no-underline group cursor-pointer relative  p-px text-xs font-semibold leading-6  text-white md:inline-block hidden">
-					<span className="absolute inset-0 overflow-hidden rounded-sm">
-						<span className="absolute inset-0 rounded-sm bg-[image:radial-gradient(75%_100%_at_50%_0%,rgba(56,189,248,0.6)_0%,rgba(56,189,248,0)_75%)] opacity-0 transition-opacity duration-500 group-hover:opacity-100"></span>
+				<button className="bg-brand-blue/30 no-underline group cursor-pointer relative p-px rounded-md text-xs font-semibold leading-6 text-white md:inline-block hidden transition-[background-color] duration-500 hover:bg-brand-blue/60">
+					<span className="absolute inset-0 overflow-hidden rounded-md">
+						<span className="absolute inset-0 rounded-md bg-[image:radial-gradient(75%_100%_at_50%_0%,oklch(0.65_0.2_250/0.7)_0%,oklch(0.65_0.2_250/0)_75%)] opacity-0 transition-opacity duration-500 group-hover:opacity-100"></span>
 					</span>
-					<div className="relative flex space-x-2 items-center z-10 rounded-none bg-zinc-950 py-2 px-4 ring-1 ring-white/10 ">
+					<div className="relative flex space-x-2 items-center z-10 rounded-[calc(0.375rem-1px)] bg-zinc-950 py-2 px-4 ring-1 ring-white/10">
 						<PlusIcon size={14} />
 						<span>Create Sign in Box</span>
 					</div>
-					<span className="absolute -bottom-0 left-[1.125rem] h-px w-[calc(100%-2.25rem)] bg-gradient-to-r from-emerald-400/0 via-stone-800/90 to-emerald-400/0 transition-opacity duration-500 group-hover:opacity-40"></span>
+					<span className="absolute -bottom-0 left-[1.125rem] h-px w-[calc(100%-2.25rem)] bg-gradient-to-r from-brand-red/0 via-brand-red/40 to-brand-red/0 transition-opacity duration-500 group-hover:opacity-100"></span>
 				</button>
 			</DialogTrigger>
 			<DialogContent className="max-w-7xl h-5/6 overflow-clip !rounded-none">
