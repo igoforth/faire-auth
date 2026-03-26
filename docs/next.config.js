@@ -4,6 +4,13 @@ const withMDX = createMDX();
 
 /** @type {import('next').NextConfig} */
 const config = {
+	allowedDevOrigins: process.env.ALLOWED_DEV_ORIGINS?.split(",") ?? [],
+	reactStrictMode: true,
+	poweredByHeader: false,
+	cleanDistDir: true,
+	typescript: {
+		ignoreBuildErrors: true,
+	},
 	async rewrites() {
 		return [
 			{
@@ -31,30 +38,44 @@ const config = {
 		"typescript",
 		"oxc-transform",
 		"@shikijs/twoslash",
+		"@vercel/og",
+		"@resvg/resvg-wasm",
 	],
 	images: {
-		remotePatterns: [
-			{
-				hostname: "images.unsplash.com",
-			},
-			{
-				hostname: "assets.aceternity.com",
-			},
-			{
-				hostname: "pbs.twimg.com",
-			},
-			{
-				hostname: "github.com",
-			},
-			{
-				hostname: "hebbkx1anhila5yf.public.blob.vercel-storage.com",
-			},
-		],
+		unoptimized: true,
 	},
-	reactStrictMode: true,
-	typescript: {
-		ignoreBuildErrors: true,
+	reactCompiler: true,
+	experimental: {
+		optimizeServerReact: true,
+		optimizePackageImports: [
+			"next",
+			"framer-motion",
+			"lucide-react",
+			"recharts",
+			"@opennextjs/cloudflare",
+			"radix-ui",
+			"zod",
+		],
+		parallelServerCompiles: true,
+		webpackBuildWorker: true,
+		viewTransition: true,
+		useSkewCookie: true,
+		useCache: true,
+	},
+	/**
+	 * @param {import('webpack').Configuration} config
+	 * @returns {import('webpack').Configuration}
+	 */
+	webpack(config) {
+		if (config.output)
+			config.output.trustedTypes = {
+				policyName: "nextjs#bundler",
+			};
+		return config;
 	},
 };
 
 export default withMDX(config);
+
+import { initOpenNextCloudflareForDev } from "@opennextjs/cloudflare";
+if (process.env.NODE_ENV === "development") initOpenNextCloudflareForDev();

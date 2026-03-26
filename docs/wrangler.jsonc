@@ -1,0 +1,63 @@
+{
+	"$schema": "./node_modules/wrangler/config-schema.json",
+	"name": "faire-auth-docs",
+	"account_id": "1567cee96e0143ffaf7a19c70cd792fc",
+	"main": "./worker.ts",
+	"tsconfig": "./tsconfig.json",
+	"compatibility_date": "2026-03-25",
+	"compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+	"minify": true,
+	"upload_source_maps": false,
+	"placement": {
+		"mode": "smart"
+	},
+	"dev": {
+		"port": 8787
+	},
+	"assets": {
+		"directory": ".open-next/assets",
+		"binding": "ASSETS"
+	},
+	"services": [
+		{
+			"binding": "WORKER_SELF_REFERENCE",
+			"service": "faire-auth-docs"
+		}
+	],
+	"kv_namespaces": [
+		{
+			"binding": "NEXT_INC_CACHE_KV",
+			"id": "c0ea0b62b3f94f12a907642d52fb1da6"
+		}
+	],
+	"durable_objects": {
+		"bindings": [
+			{
+				"name": "NEXT_CACHE_DO_QUEUE",
+				"class_name": "DOQueueHandler"
+			}
+		]
+	},
+	"migrations": [
+		{
+			"tag": "v1",
+			"new_sqlite_classes": ["DOQueueHandler"]
+		}
+	],
+	"observability": {
+		"enabled": true,
+		"head_sampling_rate": 1,
+		"logs": {
+			"invocation_logs": false
+		}
+	},
+	"routes": [
+		{
+			"pattern": "faire-auth.com",
+			"custom_domain": true
+		}
+	],
+	"vars": {
+		"NEXT_PUBLIC_URL": "https://faire-auth.com"
+	}
+}

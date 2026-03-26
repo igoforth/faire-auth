@@ -4,9 +4,13 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "next build && pnpm run scripts:sync-orama",
-    "dev": "next dev",
+    "build": "next build --webpack",
+    "build:worker": "opennextjs-cloudflare build",
+    "postbuild:worker": "node scripts/add-integrity.mjs",
+    "deploy:worker": "opennextjs-cloudflare deploy",
+    "dev": "NODE_TLS_REJECT_UNAUTHORIZED=0 next dev --webpack --experimental-https",
     "start": "next start",
+    "typegen": "wrangler types --env-interface CloudflareEnv",
     "postinstall": "fumadocs-mdx"
   },
   "dependencies": {
@@ -45,7 +49,6 @@
     "@radix-ui/react-toggle-group": "catalog:radix",
     "@radix-ui/react-tooltip": "catalog:radix",
     "@scalar/nextjs-api-reference": "^0.8.17",
-    "@vercel/analytics": "^1.5.0",
     "@vercel/og": "^0.8.5",
     "ai": "^5.0.64",
     "class-variance-authority": "catalog:",
@@ -61,7 +64,6 @@
     "fumadocs-mdx": "catalog:fumadocs",
     "fumadocs-typescript": "catalog:fumadocs",
     "fumadocs-ui": "catalog:fumadocs",
-    "geist": "catalog:",
     "gray-matter": "^4.0.3",
     "hast-util-to-jsx-runtime": "^2.3.6",
     "highlight.js": "^11.11.1",
@@ -72,7 +74,6 @@
     "lucide-react": "catalog:",
     "motion": "^12.23.12",
     "next": "catalog:",
-    "next-themes": "catalog:",
     "prism-react-renderer": "^2.4.1",
     "react": "catalog:",
     "react-day-picker": "9.9.0",
@@ -98,6 +99,7 @@
     "zod": "catalog:"
   },
   "devDependencies": {
+    "@opennextjs/cloudflare": "^1.14.9",
     "@tailwindcss/postcss": "^4.1.13",
     "@types/jsrsasign": "^10.5.15",
     "@types/mdx": "^2.0.13",
@@ -105,7 +107,12 @@
     "@types/react-dom": "catalog:",
     "mini-svg-data-uri": "^1.4.4",
     "postcss": "^8.5.6",
+    "cheerio": "^1.1.2",
+    "glob": "^13.0.0",
+    "server-only": "^0.0.1",
     "tailwindcss": "^4.1.13",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "webpack": "^5.103.0",
+    "wrangler": "^4.14.0"
   }
 }
