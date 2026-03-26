@@ -37,6 +37,7 @@
     "typegen": "wrangler types"
   },
   "dependencies": {
+    "@faire-auth/core": "latest",
     "drizzle-orm": "^0.44.7",
     "faire-auth": "latest",
     "hono": "^4.12.7"
@@ -44,7 +45,6 @@
   "devDependencies": {
     "@better-fetch/fetch": "^1.1.18",
     "@faire-auth/cli": "latest",
-    "@faire-auth/core": "latest",
     "drizzle-kit": "^0.31.4",
     "nanostores": "^1.0.1",
     "tsdown": "^0.16.0",
