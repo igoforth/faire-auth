@@ -1,7 +1,7 @@
 {
   "name": "@faire-auth/stripe",
   "author": "Bereket Engida",
-  "version": "1.4.0-beta.11",
+  "version": "1.0.0",
   "type": "module",
   "license": "MIT",
   "keywords": [

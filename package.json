@@ -2,7 +2,7 @@
   "name": "@faire-auth/root",
   "private": true,
   "type": "module",
-  "version": "0.0.2-beta.8",
+  "version": "1.0.0",
   "workspaces": [
     "packages/**",
     "docs",
