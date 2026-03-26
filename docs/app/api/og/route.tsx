@@ -1,6 +1,7 @@
-import { ImageResponse } from "@vercel/og";
+import { ImageResponse } from "next/og";
+import { readFile } from "node:fs/promises";
+import { join } from "node:path";
 import { z } from "zod";
-export const runtime = "edge";
 
 const ogSchema = z.object({
 	heading: z.string(),
@@ -9,12 +10,12 @@ const ogSchema = z.object({
 });
 export async function GET(req: Request) {
 	try {
-		const inter = await fetch(
-			new URL("../../../assets/Inter.ttf", import.meta.url),
-		).then((res) => res.arrayBuffer());
-		const interSemiBold = await fetch(
-			new URL("../../../assets/InterSemiBold.ttf", import.meta.url),
-		).then((res) => res.arrayBuffer());
+		const fontDir = join(process.cwd(), "assets");
+		const inter = await readFile(join(fontDir, "Inter.ttf"));
+		const interSemiBold = await readFile(join(fontDir, "InterSemiBold.ttf"));
+		const cormorant = await readFile(
+			join(fontDir, "CormorantGaramond-SemiBoldItalic.ttf"),
+		);
 		const url = new URL(req.url);
 		const urlParamsValues = Object.fromEntries(url.searchParams);
 		const validParams = ogSchema.parse(urlParamsValues);
@@ -73,23 +74,69 @@ export async function GET(req: Request) {
 							{type}
 						</div>
 						<div
-							tw="flex max-w-[70%] mt-5 tracking-tighter leading-[1.1] text-[30px]"
+							tw="flex max-w-[70%] mt-5 tracking-tighter text-[30px]"
 							style={{
 								fontWeight: 600,
 								marginLeft: "-3px",
 								fontSize,
 								fontFamily: "InterSemiBold",
+								alignItems: "flex-end",
+								lineHeight: 1,
 							}}
 						>
-							{trueHeading}
+							{trueHeading.split(/(Faire)/g).map((part, i) =>
+								part === "Faire" ? (
+									<span
+										key={i}
+										style={{
+											fontFamily: "CormorantGaramond",
+											fontStyle: "italic",
+											fontSize: "1.2em",
+											lineHeight: "0.75",
+											marginRight: "0.1em",
+											marginBottom: "0.065em",
+										}}
+									>
+										Faire
+									</span>
+								) : (
+									<span key={i} style={{ lineHeight: 1 }}>
+										{part}
+									</span>
+								),
+							)}
 						</div>
 					</div>
 					<div tw="flex items-center w-full justify-between">
 						<div
 							tw="flex text-xl"
-							style={{ fontFamily: "InterSemiBold", fontWeight: 600 }}
+							style={{
+								alignItems: "flex-end",
+								lineHeight: 1,
+							}}
 						>
-							Faire Auth
+							<span
+								style={{
+									fontFamily: "CormorantGaramond",
+									fontWeight: 600,
+									fontStyle: "italic",
+									fontSize: "1.2em",
+									lineHeight: "0.75",
+									marginRight: "8px",
+									marginBottom: "0.065em",
+								}}
+							>
+								Faire
+							</span>
+							<span
+								style={{
+									fontFamily: "InterSemiBold",
+									fontWeight: 600,
+									lineHeight: 1,
+								}}
+							>
+								Auth
+							</span>
 						</div>
 						<div tw="flex gap-2 items-center text-xl">
 							<svg
@@ -128,6 +175,12 @@ export async function GET(req: Request) {
 						data: interSemiBold,
 						weight: 600,
 						style: "normal",
+					},
+					{
+						name: "CormorantGaramond",
+						data: cormorant,
+						weight: 600,
+						style: "italic",
 					},
 				],
 			},

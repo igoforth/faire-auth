@@ -22,7 +22,7 @@ import { Callout } from "@/components/ui/callout";
 
 const metaTitle = "Changelogs";
 const metaDescription = "Latest changes , fixes and updates.";
-const ogImage = "https://faire-auth.com/release-og/changelog-og.png";
+const ogImage = "https://faire-auth.com/og.png";
 
 export default async function Page({
 	params,
@@ -148,7 +148,7 @@ export async function generateMetadata({
 	const page = changelogs.getPage(slug);
 	if (page == null) notFound();
 	const baseUrl = process.env.NEXT_PUBLIC_URL || process.env.VERCEL_URL;
-	const url = new URL(`${baseUrl}/release-og/${slug.join("")}.png`);
+	const url = new URL(`${baseUrl}/api/og?title=${encodeURIComponent(page.data.title)}`);
 	const { title, description } = page.data;
 
 	return {

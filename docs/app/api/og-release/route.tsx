@@ -1,6 +1,7 @@
-import { ImageResponse } from "@vercel/og";
+import { ImageResponse } from "next/og";
+import { readFile } from "node:fs/promises";
+import { join } from "node:path";
 import { z } from "zod";
-export const runtime = "edge";
 
 const ogSchema = z.object({
 	heading: z.string(),
@@ -10,9 +11,7 @@ const ogSchema = z.object({
 
 export async function GET(req: Request) {
 	try {
-		const inter = await fetch(
-			new URL("../../../assets/Inter.ttf", import.meta.url),
-		).then((res) => res.arrayBuffer());
+		const inter = await readFile(join(process.cwd(), "assets", "Inter.ttf"));
 
 		const url = new URL(req.url);
 		const urlParamsValues = Object.fromEntries(url.searchParams);

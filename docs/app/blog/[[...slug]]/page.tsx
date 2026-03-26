@@ -26,7 +26,7 @@ import { Support } from "../_components/support";
 
 const metaTitle = "Blogs";
 const metaDescription = "Latest changes , fixes and updates.";
-const ogImage = "https://faire-auth.com/release-og/changelog-og.png";
+const ogImage = "https://faire-auth.com/og.png";
 
 export default async function Page({
 	params,
