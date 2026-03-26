@@ -137,10 +137,7 @@ class CSPBuilder {
 			this.addToDirective(requestDirectives, "script-src", `'nonce-${nonce}'`);
 		}
 
-		if (
-			isTrustedTypes &&
-			!requestDirectives.has("require-trusted-types-for")
-		) {
+		if (isTrustedTypes && !requestDirectives.has("require-trusted-types-for")) {
 			this.addToDirective(
 				requestDirectives,
 				"require-trusted-types-for",
@@ -177,10 +174,7 @@ class CSPBuilder {
 
 		let bld = new CSPBuilder(options)
 			.defaultSrc("'none'")
-			.connectSrc(
-				"'self'",
-				"https://cloudflareinsights.com",
-			)
+			.connectSrc("'self'", "https://cloudflareinsights.com")
 			.scriptSrc(
 				"'strict-dynamic'",
 				nonceString,

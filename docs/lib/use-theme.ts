@@ -78,7 +78,11 @@ function getServerSnapshot(): string {
 }
 
 export function useTheme() {
-	const snapshot = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+	const snapshot = useSyncExternalStore(
+		subscribe,
+		getSnapshot,
+		getServerSnapshot,
+	);
 	const [theme, resolvedTheme] = snapshot.split(":") as [Theme, ResolvedTheme];
 
 	const setTheme = useCallback((value: Theme | ((prev: Theme) => Theme)) => {

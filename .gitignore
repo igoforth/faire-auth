@@ -200,5 +200,9 @@ test-results/
 
 state.txt
 
+# Cloudflare
+.wrangler/
+.open-next/
+
 # direnv
 .envrc

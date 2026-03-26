@@ -12,19 +12,9 @@ const {
 	addHeaderToResponse,
 } = createStateMiddleware();
 
-export default chainMiddleware([
-	withState,
-	withNonce,
-	withCSP,
-]);
+export default chainMiddleware([withState, withNonce, withCSP]);
 
-export {
-	getState,
-	setState,
-	slipRequest,
-	slipResponse,
-	addHeaderToResponse,
-};
+export { getState, setState, slipRequest, slipResponse, addHeaderToResponse };
 
 export const config = {
 	matcher: [

@@ -21,17 +21,9 @@ const withCSP: MiddlewareFactory =
 		});
 
 		addHeaderToResponse(request, "Content-Security-Policy", cspHeader);
-		addHeaderToResponse(
-			request,
-			"Cross-Origin-Opener-Policy",
-			"same-origin",
-		);
+		addHeaderToResponse(request, "Cross-Origin-Opener-Policy", "same-origin");
 		addHeaderToResponse(request, "Cross-Origin-Resource-Policy", "same-site");
-		addHeaderToResponse(
-			request,
-			"Cross-Origin-Embedder-Policy",
-			"unsafe-none",
-		);
+		addHeaderToResponse(request, "Cross-Origin-Embedder-Policy", "unsafe-none");
 
 		return next(request, evt);
 	};
