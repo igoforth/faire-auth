@@ -143,10 +143,12 @@ function Constellation({
 			return;
 		}
 
+		ref.current.style.visibility = "visible";
+
 		let sequence: Array<Segment> = [
 			[
 				ref.current,
-				{ strokeDashoffset: 0, visibility: "visible" },
+				{ strokeDashoffset: 0 },
 				{ duration: 5, delay: Math.random() * 3 + 2 },
 			],
 		];
@@ -177,7 +179,7 @@ function Constellation({
 				pathLength={1}
 				fill="transparent"
 				d={`M ${points.join("L")}`}
-				className="invisible"
+				style={{ visibility: "hidden" }}
 			/>
 			{uniquePoints.map((point, pointIndex) => (
 				<Star key={pointIndex} point={point} blurId={blurId} />

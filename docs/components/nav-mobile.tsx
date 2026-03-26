@@ -212,7 +212,7 @@ export const navMenu: {
 	}[];
 }[] = [
 	{
-		name: "_helo",
+		name: "salut_",
 		path: "/",
 	},
 
