@@ -1,6 +1,6 @@
 {
   "name": "@faire-auth/expo",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "type": "module",
   "description": "Faire Auth integration for Expo and React Native applications.",
   "main": "dist/index.cjs",
