@@ -21,6 +21,7 @@ export default defineConfig({
 		"./src/oauth2/index.ts",
 		"./src/social-providers/index.ts",
 	],
+	external: ["cbor-x"],
 	clean: true,
 	nodeProtocol: true,
 	publint: true,
