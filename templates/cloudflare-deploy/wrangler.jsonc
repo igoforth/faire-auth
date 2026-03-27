@@ -9,7 +9,7 @@
 		"enabled": true
 	},
 	"vars": {
-		"FAIRE_AUTH_URL": "your-public-url-here"
+		"FAIRE_AUTH_URL": "https://faire-auth-cloudflare.example.workers.dev"
 	},
 	// D1 Database binding
 	"d1_databases": [

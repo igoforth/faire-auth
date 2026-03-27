@@ -8,8 +8,20 @@
       "FAIRE_AUTH_SECRET": {
         "description": "Generate with `npx @faire-auth/cli secret`."
       },
+      "GITHUB_CLIENT_ID": {
+        "description": "(Optional) GitHub OAuth app client ID."
+      },
+      "GITHUB_CLIENT_SECRET": {
+        "description": "(Optional) GitHub OAuth app client secret."
+      },
+      "GOOGLE_CLIENT_ID": {
+        "description": "(Optional) Google OAuth app client ID."
+      },
+      "GOOGLE_CLIENT_SECRET": {
+        "description": "(Optional) Google OAuth app client secret."
+      },
       "FAIRE_AUTH_URL": {
-        "description": "Your public worker URL. Can be a workers dev URL."
+        "description": "Your public worker URL, e.g. https://<worker-name>.<account-subdomain>.workers.dev"
       }
     }
   },
@@ -37,7 +49,6 @@
     "typegen": "wrangler types"
   },
   "dependencies": {
-    "@faire-auth/core": "latest",
     "drizzle-orm": "^0.44.7",
     "faire-auth": "latest",
     "hono": "^4.12.7"
@@ -45,6 +56,7 @@
   "devDependencies": {
     "@better-fetch/fetch": "^1.1.18",
     "@faire-auth/cli": "latest",
+    "@faire-auth/core": "latest",
     "drizzle-kit": "^0.31.4",
     "nanostores": "^1.0.1",
     "tsdown": "^0.16.0",

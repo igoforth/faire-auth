@@ -1,11 +1,10 @@
 # Copy this file to .dev.vars for local development
 
 # Required: Generate with: openssl rand -base64 32
-FAIRE_AUTH_SECRET=your-secret-key-here
+FAIRE_AUTH_SECRET=
 
-# Optional: OAuth Providers
-GITHUB_CLIENT_ID=
-GITHUB_CLIENT_SECRET=
-
-GOOGLE_CLIENT_ID=
-GOOGLE_CLIENT_SECRET=
+# Optional: OAuth Providers (add in Cloudflare dashboard or uncomment below)
+# GITHUB_CLIENT_ID=
+# GITHUB_CLIENT_SECRET=
+# GOOGLE_CLIENT_ID=
+# GOOGLE_CLIENT_SECRET=
