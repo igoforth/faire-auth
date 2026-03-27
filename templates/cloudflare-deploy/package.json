@@ -21,7 +21,7 @@
         "description": "(Optional) Google OAuth app client secret."
       },
       "FAIRE_AUTH_URL": {
-        "description": "Your public worker URL, e.g. https://<worker-name>.<account-subdomain>.workers.dev"
+        "description": "Your public worker URL, e.g. `https://faire-auth-cloudflare.your-subdomain.workers.dev`"
       }
     }
   },
@@ -44,7 +44,7 @@
     "db:migrate": "wrangler d1 migrations apply FAIRE_AUTH_DB --local",
     "db:migrate:remote": "wrangler d1 migrations apply FAIRE_AUTH_DB --remote",
     "dev": "wrangler dev",
-    "predeploy": "npm run cli:generate -y && npm run drizzle:generate",
+    "predeploy": "npm run cli:generate -- -y && npm run drizzle:generate",
     "deploy": "npm run db:migrate:remote && wrangler deploy",
     "typegen": "wrangler types"
   },
