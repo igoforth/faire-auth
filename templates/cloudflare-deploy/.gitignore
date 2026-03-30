@@ -4,5 +4,4 @@ dist
 .dev.vars
 .env
 *.log
-migrations
 worker-configuration.d.ts

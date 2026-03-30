@@ -2,7 +2,7 @@
 
 Deploy a complete authentication system to Cloudflare Workers with D1 database and KV cache in one click.
 
-[![Deploy to Cloudflare Workers](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/igoforth/faire-auth/tree/canary/templates/cloudflare-deploy)
+[![Deploy to Cloudflare Workers](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/igoforth/faire-auth/tree/main/templates/cloudflare-deploy)
 
 ## Features
 
