@@ -18,6 +18,7 @@
 [![npm](https://img.shields.io/npm/dm/faire-auth?style=flat&colorA=000000&colorB=000000)](https://npm.chart.dev/faire-auth?primary=neutral&gray=neutral&theme=dark)
 [![npm version](https://img.shields.io/npm/v/faire-auth.svg?style=flat&colorA=000000&colorB=000000)](https://www.npmjs.com/package/faire-auth)
 [![GitHub stars](https://img.shields.io/github/stars/igoforth/faire-auth?style=flat&colorA=000000&colorB=000000)](https://github.com/igoforth/faire-auth/stargazers)
+[![Deploy to Cloudflare Workers](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/igoforth/faire-auth/tree/main/templates/cloudflare-deploy)
 </p>
 
 ## About the Project

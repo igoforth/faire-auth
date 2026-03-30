@@ -12,6 +12,6 @@
     "isolatedModules": true,
     "noEmit": true
   },
-  "include": ["src/**/*", "global.d.ts"],
+  "include": ["src/**/*", "api/**/*", "global.d.ts"],
   "exclude": ["node_modules"]
 }

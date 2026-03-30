@@ -1,8 +1,7 @@
 node_modules
 dist
-.wrangler
-.dev.vars
+.vercel
 .env
+.env.local
 *.log
-migrations
-worker-configuration.d.ts
+local.db
