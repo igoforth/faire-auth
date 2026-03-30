@@ -1,6 +1,6 @@
 {
   "name": "@faire-auth/core",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "The most comprehensive authentication library for TypeScript.",
   "type": "module",
   "exports": {
