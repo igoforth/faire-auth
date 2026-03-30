@@ -2,10 +2,5 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": null,
   "outputDirectory": ".",
-  "functions": {
-    "api/index.ts": {
-      "includeFiles": "src/**"
-    }
-  },
   "rewrites": [{ "source": "/(.*)", "destination": "/api" }]
 }
