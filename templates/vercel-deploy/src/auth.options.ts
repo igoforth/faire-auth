@@ -24,7 +24,7 @@ const db = isCLI
 	? drizzle({ schema, connection: { url: "file:local.db" } })
 	: drizzle(
 			createClient({
-				url: process.env.TURSO_CONNECTION_URL!,
+				url: process.env.TURSO_DATABASE_URL!,
 				authToken: process.env.TURSO_AUTH_TOKEN!,
 			}),
 			{ schema },
