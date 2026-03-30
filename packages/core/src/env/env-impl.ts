@@ -99,7 +99,7 @@ export function getBooleanEnvVar(key: string, fallback = true): boolean {
 /**
  * Common environment variables used in Faire Auth
  */
-export const ENV = Object.freeze({
+export const ENV = {
 	get FAIRE_AUTH_SECRET() {
 		return getEnvVar("FAIRE_AUTH_SECRET");
 	},
@@ -124,4 +124,4 @@ export const ENV = Object.freeze({
 			"https://telemetry.faire-auth.com/v1/track",
 		);
 	},
-});
+};
