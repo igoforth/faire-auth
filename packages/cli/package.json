@@ -1,6 +1,6 @@
 {
   "name": "@faire-auth/cli",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "type": "module",
   "description": "The CLI for Faire Auth",
   "repository": {
