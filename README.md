@@ -19,7 +19,7 @@
 [![npm version](https://img.shields.io/npm/v/faire-auth.svg?style=flat&colorA=000000&colorB=000000)](https://www.npmjs.com/package/faire-auth)
 [![GitHub stars](https://img.shields.io/github/stars/igoforth/faire-auth?style=flat&colorA=000000&colorB=000000)](https://github.com/igoforth/faire-auth/stargazers)
 [![Deploy to Cloudflare Workers](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/igoforth/faire-auth/tree/main/templates/cloudflare-deploy)
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Figoforth%2Ffaire-auth%2Ftree%2Fmain%2Ftemplates%2Fvercel-deploy&env=FAIRE_AUTH_SECRET,FAIRE_AUTH_URL&envDescription=Auth%20secret%20and%20deployment%20URL&envLink=https%3A%2F%2Ffaire-auth.com&products=%5B%7B%22type%22%3A%22integration%22%2C%22protocol%22%3A%22storage%22%2C%22productSlug%22%3A%22database%22%2C%22integrationSlug%22%3A%22tursocloud%22%7D%5D)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Figoforth%2Ffaire-auth%2Ftree%2Fmain%2Ftemplates%2Fvercel-deploy&env=FAIRE_AUTH_SECRET,FAIRE_AUTH_URL&envDescription=FAIRE_AUTH_SECRET%3A%20Generate%20with%20%60npx%20%40faire-auth%2Fcli%20secret%60.%20FAIRE_AUTH_URL%3A%20Your%20Vercel%20deployment%20URL%20(e.g.%20https%3A%2F%2Fyour-project.vercel.app).&envLink=https%3A%2F%2Ffaire-auth.com&products=%5B%7B%22type%22%3A%22integration%22%2C%22protocol%22%3A%22storage%22%2C%22productSlug%22%3A%22database%22%2C%22integrationSlug%22%3A%22tursocloud%22%7D%5D)
 </p>
 
 ## About the Project
