@@ -1,2 +1,3 @@
-// Client library entry point - built by tsdown for consumer use
-export { createClient } from "./client";
+import { auth } from "./auth";
+
+export default auth.app;
