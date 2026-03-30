@@ -50,7 +50,7 @@ export const faireAuth = <Options extends FaireAuthOptions>(
 			const cfCtx = getCloudflareContext();
 			return app.fetch(
 				request,
-				Object.assign(ENV, cfCtx?.env, Env),
+				Env ?? cfCtx?.env ?? ENV,
 				executionCtx ?? cfCtx?.ctx,
 			);
 		},
