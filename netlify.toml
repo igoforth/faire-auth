@@ -1,3 +1,6 @@
+[build]
+  base = "templates/netlify-deploy"
+
 [template]
   required-extensions = ["turso"]
 
