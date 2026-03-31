@@ -16,8 +16,8 @@
     }
   },
   "scripts": {
-    "build": "tsdown && mkdir -p public",
-    "postbuild": "npm run cli:generate -- -y && npm run drizzle:generate && npm run db:migrate && echo '{}' > public/index.json",
+    "prebuild": "npm run cli:generate -- -y && npm run drizzle:generate && npm run db:migrate",
+    "build": "tsdown",
     "cli:generate": "cli generate --output src/schema.ts",
     "drizzle:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate"
