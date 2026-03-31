@@ -1,0 +1,13 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1774970666527,
+      "tag": "0000_cute_gambit",
+      "breakpoints": true
+    }
+  ]
+}

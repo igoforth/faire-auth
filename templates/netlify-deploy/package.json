@@ -16,8 +16,8 @@
     }
   },
   "scripts": {
+    "prebuild": "npm run cli:generate -- -y && npm run drizzle:generate && npm run db:migrate",
     "build": "tsdown",
-    "postbuild": "npm run cli:generate -- -y && npm run drizzle:generate && npm run db:migrate",
     "cli:generate": "cli generate --output src/schema.ts",
     "drizzle:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate"
@@ -30,6 +30,7 @@
   },
   "devDependencies": {
     "@better-fetch/fetch": "^1.1.18",
+    "@netlify/functions": "^5.0.0",
     "@faire-auth/cli": "latest",
     "@faire-auth/core": "latest",
     "drizzle-kit": "^0.31.4",

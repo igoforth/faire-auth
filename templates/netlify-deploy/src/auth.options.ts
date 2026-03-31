@@ -1,38 +1,43 @@
+import { createClient } from "@libsql/client";
 import { drizzle } from "drizzle-orm/libsql";
 import { defineOptions } from "faire-auth";
 import { drizzleAdapter } from "faire-auth/adapters/drizzle";
 import * as schema from "./schema";
 
+const isCLI = process.env.IS_FAIRE_AUTH_CLI_ACCESS === "true";
+
 let baseURL: string;
-if (process.env.IS_FAIRE_AUTH_CLI_ACCESS === "true") {
+if (isCLI) {
 	// this is for @faire-auth/cli drizzle schema generation to work
 	// but baseURL CANNOT be set to this in production
 	baseURL = "https://localhost:3000";
 } else {
 	if (!process.env.FAIRE_AUTH_URL)
 		throw new Error(
-			"Failed to get FAIRE_AUTH_URL from process environment. Make sure you have the variable present in vars in your wrangler config file.",
+			"Failed to get FAIRE_AUTH_URL from process environment. Set FAIRE_AUTH_URL in your Netlify site environment variables.",
 		);
 	baseURL = process.env.FAIRE_AUTH_URL;
 }
+
+// Lazy-init: libsql eagerly validates the URL, so skip during CLI schema generation
+const db = isCLI
+	? drizzle({ schema, connection: { url: "file:local.db" } })
+	: drizzle(
+			createClient({
+				url: process.env.TURSO_DATABASE_URL!,
+				authToken: process.env.TURSO_AUTH_TOKEN!,
+			}),
+			{ schema },
+		);
 
 // This config is used by @faire-auth/cli to generate the database schema
 export const options = defineOptions({
 	baseURL,
 	secret: process.env.FAIRE_AUTH_SECRET!,
-	database: drizzleAdapter(
-		drizzle({
-			schema,
-			connection: {
-				url: process.env.TURSO_CONNECTION_URL!,
-				authToken: process.env.TUROS_AUTH_TOKEN!,
-			},
-		}),
-		{
-			provider: "sqlite",
-			usePlural: false,
-		},
-	),
+	database: drizzleAdapter(db, {
+		provider: "sqlite",
+		usePlural: false,
+	}),
 	emailAndPassword: {
 		enabled: true,
 		requireEmailVerification: false,

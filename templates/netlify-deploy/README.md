@@ -1,8 +1,8 @@
 # Faire Auth on Netlify
 
-Deploy a complete authentication system to Netlify with Turso SQLite database in one click.
+Deploy a complete authentication system to Netlify with Turso database in one click.
 
-[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/igoforth/faire-auth&create_from_path=templates/netlify-deploy&fullConfiguration=true#FAIRE_AUTH_URL=https://your-app.netlify.app&FAIRE_AUTH_SECRET=)
+[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/igoforth/faire-auth&create_from_path=templates/netlify-deploy&fullConfiguration=true#FAIRE_AUTH_URL=https://your-site.netlify.app&FAIRE_AUTH_SECRET=)
 
 ## Features
 
@@ -10,28 +10,35 @@ Deploy a complete authentication system to Netlify with Turso SQLite database in
 - GitHub and Google OAuth
 - Turso SQLite database
 - Session management
-- Zero configuration required
+- Secure cookie-based sessions
+- Netlify Functions (Node.js)
 
 ## Quick Start
 
 1. Click the deploy button above
-2. Follow the Netlify deployment flow
-3. Your authentication system is ready!
+2. Install the Turso extension when prompted
+3. Set the required environment variables
+4. Your authentication system is ready!
 
 ## Configuration
 
 The template includes:
 
-- Turso database for user data
+- Turso database for user data via drizzle-orm
 - Pre-configured OAuth providers (GitHub, Google)
+- Hono router on Netlify Functions
 - Secure cookie-based sessions
 
 ## Environment Variables
 
-Set these in your Netlify project:
-- `FAIRE_AUTH_URL` - Public URL of your project (can be netlify.app domain)
-- `FAIRE_AUTH_SECRET` - Secret key for signing tokens
-- `GITHUB_CLIENT_ID` - GitHub OAuth client ID (optional)
-- `GITHUB_CLIENT_SECRET` - GitHub OAuth client secret (optional)
-- `GOOGLE_CLIENT_ID` - Google OAuth client ID (optional)
-- `GOOGLE_CLIENT_SECRET` - Google OAuth client secret (optional)
+Required:
+- `FAIRE_AUTH_SECRET` - Secret key for signing tokens (generate with `npx @faire-auth/cli secret`)
+- `FAIRE_AUTH_URL` - Public URL of your Netlify site (e.g. `https://your-site.netlify.app`)
+- `TURSO_DATABASE_URL` - Turso database URL — auto-set by Turso extension
+- `TURSO_AUTH_TOKEN` - Turso database auth token — auto-set by Turso extension
+
+Optional:
+- `GITHUB_CLIENT_ID` - GitHub OAuth client ID
+- `GITHUB_CLIENT_SECRET` - GitHub OAuth client secret
+- `GOOGLE_CLIENT_ID` - Google OAuth client ID
+- `GOOGLE_CLIENT_SECRET` - Google OAuth client secret
