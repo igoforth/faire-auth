@@ -1,6 +1,0 @@
-[template]
-  required-extensions = ["turso"]
-
-[template.environment]
-  FAIRE_AUTH_SECRET = "Generate with: npx @faire-auth/cli secret"
-  FAIRE_AUTH_URL = "Your Netlify site URL, e.g. https://your-site.netlify.app"
