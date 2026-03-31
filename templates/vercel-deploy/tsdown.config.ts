@@ -5,7 +5,7 @@ export default defineConfig([
 		entry: ["./src/index.ts"],
 		outDir: ".output",
 		noExternal: [/.*/],
-		external: ["node:*"],
+		external: ["node:*", "@libsql/*", "@libsql/client"],
 		shims: true,
 		clean: true,
 	},
