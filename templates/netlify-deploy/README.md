@@ -2,7 +2,7 @@
 
 Deploy a complete authentication system to Netlify with Turso database in one click.
 
-[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/igoforth/faire-auth/&create_from_path=templates/netlify-deploy/&fullConfiguration=true#FAIRE_AUTH_URL=https://your-site.netlify.app&FAIRE_AUTH_SECRET=)
+[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/igoforth/faire-auth/&create_from_path=templates/netlify-deploy/&branch=main&fullConfiguration=true#FAIRE_AUTH_URL=https://your-site.netlify.app&FAIRE_AUTH_SECRET=)
 
 ## Features
 
