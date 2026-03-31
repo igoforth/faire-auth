@@ -22,7 +22,7 @@
 <p align="center">
   <a href="https://deploy.workers.cloudflare.com/?url=https://github.com/igoforth/faire-auth/tree/main/templates/cloudflare-deploy"><img src="https://deploy.workers.cloudflare.com/button" alt="Deploy to Cloudflare Workers" /></a>&nbsp;&nbsp;
   <a href="https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Figoforth%2Ffaire-auth%2Ftree%2Fmain%2Ftemplates%2Fvercel-deploy&env=FAIRE_AUTH_SECRET,FAIRE_AUTH_URL&envDescription=FAIRE_AUTH_SECRET%3A%20Generate%20with%20%60npx%20%40faire-auth%2Fcli%20secret%60.%20FAIRE_AUTH_URL%3A%20Your%20Vercel%20deployment%20URL%20(e.g.%20https%3A%2F%2Fyour-project.vercel.app).&envLink=https%3A%2F%2Ffaire-auth.com&products=%5B%7B%22type%22%3A%22integration%22%2C%22protocol%22%3A%22storage%22%2C%22productSlug%22%3A%22database%22%2C%22integrationSlug%22%3A%22tursocloud%22%7D%5D"><img src="https://vercel.com/button" alt="Deploy with Vercel" /></a>&nbsp;&nbsp;
-  <a href="https://app.netlify.com/start/deploy?repository=https://github.com/igoforth/faire-auth&branch=main&create_from_path=templates/netlify-deploy/&fullConfiguration=true#FAIRE_AUTH_URL=https://your-site.netlify.app&FAIRE_AUTH_SECRET="><img src="https://www.netlify.com/img/deploy/button.svg" alt="Deploy to Netlify" /></a>
+  <a href="https://app.netlify.com/start/deploy?repository=https://github.com/igoforth/faire-auth&branch=main&base=templates/netlify-deploy&create_from_path=templates/netlify-deploy/&fullConfiguration=true#FAIRE_AUTH_URL=https://your-site.netlify.app&FAIRE_AUTH_SECRET="><img src="https://www.netlify.com/img/deploy/button.svg" alt="Deploy to Netlify" /></a>
 </p>
 
 ## About the Project

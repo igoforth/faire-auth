@@ -1,11 +1,3 @@
-[build]
-  command = "npm run build"
-  publish = ".output"
-
-[functions]
-  directory = ".netlify/functions"
-  node_bundler = "none"
-
 [template]
   required-extensions = ["turso"]
 
