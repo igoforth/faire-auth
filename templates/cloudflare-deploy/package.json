@@ -49,9 +49,9 @@
     "typegen": "wrangler types"
   },
   "dependencies": {
-    "drizzle-orm": "^0.44.7",
+    "drizzle-orm": "^0.45.2",
     "faire-auth": "latest",
-    "hono": "^4.12.7"
+    "hono": "^4.12.16"
   },
   "devDependencies": {
     "@better-fetch/fetch": "^1.1.18",
