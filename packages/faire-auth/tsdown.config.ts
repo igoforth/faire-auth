@@ -65,10 +65,64 @@ const shared: Pick<
 	publint: true,
 };
 
+// Modules whose types are statically imported by 2+ entry subpaths and would
+// otherwise be auto-extracted by rolldown into an un-exported, hash-named
+// `.d.ts` chunk. Capturing them into ONE stable-named `shared` chunk makes the
+// shared contract/client types nameable by consumers via `faire-auth/shared`.
+const SHARED_MODULES =
+	/[\\/]src[\\/](client[\\/]types|client[\\/]hono|types[\\/]options|types[\\/]plugin|types[\\/]hono|api[\\/]factory[\\/]endpoint|api[\\/]types)(\.d)?\.ts$/;
+
 export default defineConfig([
 	{
 		...shared,
 		dts: { build: true, incremental: true },
+		outputOptions(options) {
+			options.advancedChunks ??= {};
+			options.advancedChunks.groups = [
+				{
+					// rolldown-plugin-dts bundles the JS (`.ts`) and declaration
+					// (`.d.ts`) variants of a module in the same rolldown graph and
+					// splits them by chunk name suffix at emit time. A static group
+					// name would collapse both into one chunk; a name FUNCTION that
+					// returns distinct names for `.ts` vs `.d.ts` creates two groups
+					// -> two chunks (`shared` JS, `shared.d` declarations), letting
+					// the dts pass produce a real `shared.d.*ts` file.
+					name: (id) =>
+						SHARED_MODULES.test(id)
+							? id.endsWith(".d.ts")
+								? "shared.d"
+								: "shared"
+							: null,
+					// capture regardless of how many entries reference it
+					minShareCount: 1,
+					minSize: 0,
+				},
+				...(options.advancedChunks.groups ?? []),
+			];
+			// Give the `shared` group a stable (un-hashed) filename while keeping
+			// hashes for every other chunk. tsdown's default chunkFileNames is a
+			// function whose returned template still contains `[name]`/`[hash]`
+			// placeholders for rolldown to substitute; for the shared chunk we
+			// strip `-[hash]` so the path is stable and referenceable from the
+			// package `exports`.
+			const base = options.chunkFileNames;
+			options.chunkFileNames = (chunk) => {
+				const template =
+					typeof base === "function"
+						? base(chunk)
+						: (base ?? "[name]-[hash].mjs");
+				// Strip the hash for the shared group so its path is stable and
+				// addressable from `exports`. The declaration chunk is named
+				// `shared.d` (rolldown-plugin-dts's fake-js pass converts the
+				// returned JS-style template into the matching `.d.*ts` name);
+				// the JS chunk is named `shared`.
+				if (chunk.name === "shared" || chunk.name === "shared.d") {
+					return template.replace("-[hash]", "");
+				}
+				return template;
+			};
+			return options;
+		},
 		entry: [
 			"./src/index.ts",
 			"./src/social-providers/index.ts",

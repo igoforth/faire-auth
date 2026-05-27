@@ -44,6 +44,16 @@
         "default": "./dist/index.cjs"
       }
     },
+    "./shared": {
+      "import": {
+        "types": "./dist/shared.d.mts",
+        "default": "./dist/shared.mjs"
+      },
+      "require": {
+        "types": "./dist/shared.d.cts",
+        "default": "./dist/shared.cjs"
+      }
+    },
     "./test": {
       "dev-source": "./src/test-utils/index.ts",
       "import": {
