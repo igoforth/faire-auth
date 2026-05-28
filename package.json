@@ -38,7 +38,7 @@
     "@types/node": "catalog:",
     "bumpp": "^10.2.3",
     "tinyglobby": "^0.2.15",
-    "turbo": "^2.5.6",
+    "turbo": "^2.9.14",
     "typescript": "catalog:",
     "vitest": "catalog:"
   },
