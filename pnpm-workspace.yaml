@@ -29,21 +29,21 @@ catalog:
   clsx: ^2.1.1
   cmdk: 1.1.1
   date-fns: ^4.1.0
-  defu: ^6.1.4
+  defu: ^6.1.5
   drizzle-kit: ^0.31.6
-  drizzle-orm: ^0.44.7
+  drizzle-orm: ^0.45.2
   expect-type: ^1.2.2
-  fast-xml-parser: ^5.2.5
+  fast-xml-parser: ^5.7.0
   framer-motion: ^12.23.12
-  hono: ^4.12.7
+  hono: ^4.12.18
   input-otp: ^1.4.2
   jose: ^6.1.0
   json-stable-stringify: 1.3.0
-  kysely: ^0.28.14
+  kysely: ^0.28.17
   lru-cache: ^11.1.0
   lucide-react: ^0.542.0
   nanostores: ^1.0.1
-  next: 16.1.7
+  next: 16.2.6
   oauth2-mock-server: ^7.2.1
   openapi3-ts: ^4.5.0
   prisma: ^5.22.0
