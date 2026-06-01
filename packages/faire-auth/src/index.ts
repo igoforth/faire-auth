@@ -1,4 +1,3 @@
-/// <reference path="../overrides.d.ts" />
 
 export { getCurrentAdapter } from "./context/transaction";
 export * from "./auth";

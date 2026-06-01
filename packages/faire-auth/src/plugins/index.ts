@@ -1,4 +1,3 @@
-/// <reference path="../../overrides.d.ts" />
 
 export * from "./access";
 export * from "./bearer";
