@@ -64,7 +64,7 @@ export function createTelemetry(
 	const enabled = isEnabled();
 
 	async function ensureInitialized() {
-		if (initDone) return initDone;
+		if (initDone !== undefined) return initDone;
 
 		initDone = (async () => {
 			anonymousId = await getProjectId(options.baseURL);

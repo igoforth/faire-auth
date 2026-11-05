@@ -4,6 +4,7 @@ import {
 	MssqlDialect,
 	MysqlDialect,
 	PostgresDialect,
+	type SqliteDatabase,
 	SqliteDialect,
 } from "kysely";
 import type { FaireAuthOptions } from "../../types";
@@ -88,7 +89,7 @@ export const createKyselyAdapter = (config: FaireAuthOptions) => {
 
 	if ("aggregate" in db && !("createSession" in db)) {
 		dialect = new SqliteDialect({
-			database: db,
+			database: db as SqliteDatabase,
 		});
 	}
 

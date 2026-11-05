@@ -152,17 +152,16 @@ export interface ClientOptions<S extends Schema = Schema> {
 // 	O
 // >;
 
-export type InferActions<O extends ClientOptions> = O["plugins"] extends Array<
-	infer Plugin
->
-	? UnionToIntersection<
-			Plugin extends FaireAuthClientPlugin
-				? Plugin["getActions"] extends (...args: any) => infer Actions
-					? Actions
+export type InferActions<O extends ClientOptions> =
+	O["plugins"] extends Array<infer Plugin>
+		? UnionToIntersection<
+				Plugin extends FaireAuthClientPlugin
+					? Plugin["getActions"] extends (...args: any) => infer Actions
+						? Actions
+						: {}
 					: {}
-				: {}
-		>
-	: {};
+			>
+		: {};
 // &
 // 	//infer routes from auth config
 // 	InferRoutes<
@@ -208,17 +207,18 @@ export type InferAdditionalFromClient<
 	Options extends ClientOptions,
 	Key extends string,
 	Format extends "input" | "output" = "output",
-> = Options["plugins"] extends Array<infer T>
-	? T extends FaireAuthClientPlugin
-		? T["$InferServerPlugin"] extends {
-				schema: { [key in Key]: { fields: infer Field } };
-			}
-			? Format extends "input"
-				? InferFieldsInputClient<Field>
-				: InferFieldsOutput<Field>
+> =
+	Options["plugins"] extends Array<infer T>
+		? T extends FaireAuthClientPlugin
+			? T["$InferServerPlugin"] extends {
+					schema: { [key in Key]: { fields: infer Field } };
+				}
+				? Format extends "input"
+					? InferFieldsInputClient<Field>
+					: InferFieldsOutput<Field>
+				: {}
 			: {}
-		: {}
-	: {};
+		: {};
 
 export type SessionQueryParams = {
 	disableCookieCache?: boolean;
@@ -286,11 +286,8 @@ type TransformToSchema<T> = {
 	: never;
 
 // Helper type to flatten the union of all route objects into a single object
-type FlattenRoutes<T> = T extends Record<string, any>
-	? T extends any
-		? T
-		: never
-	: never;
+type FlattenRoutes<T> =
+	T extends Record<string, any> ? (T extends any ? T : never) : never;
 
 // Final type that creates the Schema structure
 export type CreateSchemaType<T> = {
@@ -322,18 +319,16 @@ export type CamelCase<S extends string> =
 		? `${Lowercase<P1>}${Uppercase<P2>}${CamelCase<P3>}`
 		: Lowercase<S>;
 
-type ExcludeServerPaths<T, P extends string> = T extends Record<
-	string,
-	infer EP
->
-	? EP extends any
-		? EP extends { SERVER_ONLY: true }
-			? never
-			: EP extends { isAction: false }
+type ExcludeServerPaths<T, P extends string> =
+	T extends Record<string, infer EP>
+		? EP extends any
+			? EP extends { SERVER_ONLY: true }
 				? never
-				: P
-		: never
-	: never;
+				: EP extends { isAction: false }
+					? never
+					: P
+			: never
+		: never;
 
 type Segments<
 	P extends string,

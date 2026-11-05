@@ -28,25 +28,24 @@ function getAtomKey(str: string) {
 	return `use${capitalizeFirstLetter(str)}`;
 }
 
-type InferResolvedHooks<O extends ClientOptions> = O["plugins"] extends Array<
-	infer Plugin
->
-	? Plugin extends FaireAuthClientPlugin
-		? Plugin["getAtoms"] extends (fetch: any) => infer Atoms
-			? Atoms extends Record<string, any>
-				? {
-						[key in keyof Atoms as IsSignal<key> extends true
-							? never
-							: key extends string
-								? `use${Capitalize<key>}`
-								: never]: () => DeepReadonly<
-							Ref<ReturnType<Atoms[key]["get"]>>
-						>;
-					}
+type InferResolvedHooks<O extends ClientOptions> =
+	O["plugins"] extends Array<infer Plugin>
+		? Plugin extends FaireAuthClientPlugin
+			? Plugin["getAtoms"] extends (fetch: any) => infer Atoms
+				? Atoms extends Record<string, any>
+					? {
+							[key in keyof Atoms as IsSignal<key> extends true
+								? never
+								: key extends string
+									? `use${Capitalize<key>}`
+									: never]: () => DeepReadonly<
+								Ref<ReturnType<Atoms[key]["get"]>>
+							>;
+						}
+					: {}
 				: {}
 			: {}
-		: {}
-	: {};
+		: {};
 
 export const createAuthClient =
 	<App extends AnyHono = DefaultApp>() =>
@@ -59,12 +58,12 @@ export const createAuthClient =
 			resolvedHooks[getAtomKey(key)] = () => useStore(value);
 		}
 
-		type ClientAPI = App extends Hono<any, infer S, infer P>
-			? Client<S, P, Option>
-			: never;
-		type Session = App extends Hono<any, infer S, infer P>
-			? (S[`${P}/get-session`]["$get"]["output"] & { success: true })["data"]
-			: never;
+		type ClientAPI =
+			App extends Hono<any, infer S, infer P> ? Client<S, P, Option> : never;
+		type Session =
+			App extends Hono<any, infer S, infer P>
+				? (S[`${P}/get-session`]["$get"]["output"] & { success: true })["data"]
+				: never;
 		function useSession(): DeepReadonly<
 			Ref<{
 				data: Session;

@@ -278,7 +278,7 @@ describe("Logger API", (test) => {
 			expect(consumedLogs).toHaveLength(0);
 
 			// Add a log
-			calc.fetchData("test-123");
+			void calc.fetchData("test-123");
 
 			// Advance timers to allow the watcher to pick up the new log
 			await vi.advanceTimersByTimeAsync(10);

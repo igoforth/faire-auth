@@ -319,7 +319,7 @@ const { execute } = await testAdapter({
 		performanceTestSuite({ dialect: "mssql" }),
 	],
 	async onFinish() {
-		kyselyDB.destroy();
+		void kyselyDB.destroy();
 	},
 });
 execute();

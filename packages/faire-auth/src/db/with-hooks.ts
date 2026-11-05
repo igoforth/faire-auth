@@ -23,30 +23,28 @@ type ModelShape = {
 					: unknown;
 };
 
-type ModelFn<
-	M extends BaseModels,
-	Op extends "create" | "update" | "delete",
-> = Exclude<
+type ModelFn<M extends BaseModels, Op extends "create" | "update" | "delete"> =
 	Exclude<
 		Exclude<
-			Exclude<FaireAuthOptions["databaseHooks"], undefined>[M],
+			Exclude<
+				Exclude<FaireAuthOptions["databaseHooks"], undefined>[M],
+				undefined
+			>[Op],
 			undefined
-		>[Op],
+		>["before"],
 		undefined
-	>["before"],
-	undefined
-> extends (
-	...args: [infer Model extends Partial<ModelShape[M]>, ...any[]]
-) => Promise<infer Return>
-	? {
-			arg: Model;
-			ret: Return extends any
-				? Return extends { data: infer D }
-					? D
-					: never
-				: never;
-		}
-	: never;
+	> extends (
+		...args: [infer Model extends Partial<ModelShape[M]>, ...any[]]
+	) => Promise<infer Return>
+		? {
+				arg: Model;
+				ret: Return extends any
+					? Return extends { data: infer D }
+						? D
+						: never
+					: never;
+			}
+		: never;
 
 export const getWithHooks = (
 	adapter: DBAdapter<FaireAuthOptions>,

@@ -78,4 +78,4 @@ const config = {
 export default withMDX(config);
 
 import { initOpenNextCloudflareForDev } from "@opennextjs/cloudflare";
-if (process.env.NODE_ENV === "development") initOpenNextCloudflareForDev();
+if (process.env.NODE_ENV === "development") void initOpenNextCloudflareForDev();

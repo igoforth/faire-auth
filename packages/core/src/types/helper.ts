@@ -390,18 +390,16 @@ type ValidJSONObject = {
 // 				: ResponseFormat,
 // > = { _data: T; _status: U; _format: F };
 
-export type ExtractContent<T, Inp extends boolean = false> = T extends Record<
-	string,
-	infer A
->
-	? A extends Record<"schema", infer S>
-		? S extends UnknownZodType
-			? true extends Inp
-				? z.input<S>
-				: z.output<S>
+export type ExtractContent<T, Inp extends boolean = false> =
+	T extends Record<string, infer A>
+		? A extends Record<"schema", infer S>
+			? S extends UnknownZodType
+				? true extends Inp
+					? z.input<S>
+					: z.output<S>
+				: never
 			: never
-		: never
-	: never;
+		: never;
 
 export type ReturnJsonOrTextOrResponse<
 	ContentType,
@@ -706,11 +704,12 @@ export type HonoInit<E extends Env = Env> = HonoOptions & OpenAPIHonoOptions<E>;
 export type CustomIO<
 	TConfig extends AuthRouteConfig,
 	Dir extends "in" | "out",
-> = InferInput<TConfig> extends { [K in Dir]: infer IO }
-	? IO extends object
-		? IO
-		: undefined
-	: undefined;
+> =
+	InferInput<TConfig> extends { [K in Dir]: infer IO }
+		? IO extends object
+			? IO
+			: undefined
+		: undefined;
 
 type AddExtra<C extends AuthRouteConfig, BasePath extends string = ""> = {
 	[K in MergePath<BasePath, ConvertPathType<C["path"]>>]: {

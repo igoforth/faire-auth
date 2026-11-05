@@ -104,7 +104,7 @@ describe("adapter test", async (test) => {
 		],
 	} satisfies FaireAuthOptions;
 	beforeAll(async () => {
-		(await getMigrations(opts)).runMigrations();
+		void (await getMigrations(opts)).runMigrations();
 	});
 	afterEach(async () => {
 		vi.clearAllMocks();
@@ -321,7 +321,7 @@ describe("adapter test", async (test) => {
 		} satisfies FaireAuthOptions;
 
 		// Run migrations for the new database
-		(await getMigrations(testOpts)).runMigrations();
+		void (await getMigrations(testOpts)).runMigrations();
 
 		// Test the actual refreshUserSessions functionality from internal adapter
 		const [testCtx, resOpts] = init(testOpts);

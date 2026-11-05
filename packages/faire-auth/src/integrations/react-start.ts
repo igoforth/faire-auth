@@ -20,14 +20,16 @@ export const reactStartCookies = () => {
 							const { setCookie } = await import("@tanstack/start-server-core");
 							parsed.forEach((value, key) => {
 								if (!key) return;
-								const opts = {
-									sameSite: value.samesite,
-									secure: value.secure,
-									maxAge: value["max-age"],
-									httpOnly: value.httponly,
-									domain: value.domain,
-									path: value.path,
-								} as const;
+								const opts = Object.fromEntries(
+									Object.entries({
+										sameSite: value.samesite,
+										secure: value.secure,
+										maxAge: value["max-age"],
+										httpOnly: value.httponly,
+										domain: value.domain,
+										path: value.path,
+									}).filter(([, v]) => v !== undefined),
+								) as Parameters<typeof setCookie>[2];
 								try {
 									setCookie(key, decodeURIComponent(value.value), opts);
 								} catch (e) {

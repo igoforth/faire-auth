@@ -34,7 +34,7 @@
     "faire-auth"
   ],
   "devDependencies": {
-    "@types/semver": "^7.7.1",
+    "@types/semver": "^7.8.0",
     "tsx": "catalog:",
     "tsdown": "catalog:"
   },
@@ -55,13 +55,13 @@
     "commander": "^12.1.0",
     "dotenv": "^17.2.2",
     "drizzle-orm": "catalog:",
-    "get-tsconfig": "^4.10.1",
-    "jiti": "^2.6.0",
+    "get-tsconfig": "^4.14.3",
+    "jiti": "^2.7.0",
     "open": "^10.2.0",
-    "prettier": "^3.6.2",
+    "prettier": "^3.9.10",
     "prisma": "catalog:",
     "prompts": "^2.4.2",
-    "semver": "^7.7.2",
+    "semver": "^7.8.6",
     "tinyexec": "^0.3.2",
     "yocto-spinner": "^0.2.3",
     "zod": "catalog:"

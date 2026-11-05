@@ -1,5 +1,5 @@
 import { betterFetch } from "@better-fetch/fetch";
-import { jwtVerify } from "jose";
+import { type JWTVerifyResult, jwtVerify } from "jose";
 import { base64Url } from "../datatypes/base64";
 import type { ProviderOptions } from "./oauth-provider";
 import { getOAuth2Tokens } from "./utils";
@@ -118,7 +118,10 @@ export const validateAuthorizationCode = async ({
 	return tokens;
 };
 
-export const validateToken = async (token: string, jwksEndpoint: string) => {
+export const validateToken = async (
+	token: string,
+	jwksEndpoint: string,
+): Promise<JWTVerifyResult> => {
 	const { data, error } = await betterFetch<{
 		keys: {
 			kid: string;

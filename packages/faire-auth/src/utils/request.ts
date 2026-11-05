@@ -14,10 +14,23 @@ export const normaliseHeaders = (
 	return new Headers(result);
 };
 
+export type HeaderSource = HeadersInit | Record<string, string | undefined>;
+
+const toHeaders = (source: HeaderSource): Headers => {
+	if (source instanceof Headers || Array.isArray(source)) {
+		return new Headers(source);
+	}
+	const out = new Headers();
+	for (const [k, v] of Object.entries(source)) {
+		if (v !== undefined) out.set(k, v);
+	}
+	return out;
+};
+
 export const mergeHeaders = (
 	...sources: (
-		| HeadersInit
-		| (() => HeadersInit | Promise<HeadersInit>)
+		| HeaderSource
+		| (() => HeaderSource | Promise<HeaderSource>)
 		| undefined
 	)[]
 ): Headers | (() => Promise<Headers>) => {
@@ -31,8 +44,8 @@ export const mergeHeaders = (
 	if (!anyAsync) {
 		// All synchronous – fold immediately.
 		const out = new Headers();
-		(resolved as HeadersInit[]).forEach((h) =>
-			new Headers(h).forEach((v, k) => out.set(k, v)),
+		(resolved as HeaderSource[]).forEach((h) =>
+			toHeaders(h).forEach((v, k) => out.set(k, v)),
 		);
 		return out;
 	}
@@ -41,7 +54,7 @@ export const mergeHeaders = (
 	return async () => {
 		const out = new Headers();
 		for (const r of resolved) {
-			const h = new Headers(isPromise(r) ? await r : r);
+			const h = toHeaders(isPromise(r) ? await r : r);
 			h.forEach((v, k) => out.set(k, v));
 		}
 		return out;

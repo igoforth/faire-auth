@@ -53,12 +53,10 @@ export interface Logger {
 	) => void;
 }
 
-export type LogHandlerParams = Parameters<NonNullable<Logger["log"]>> extends [
-	LogLevel,
-	...infer Rest,
-]
-	? Rest
-	: never;
+export type LogHandlerParams =
+	Parameters<NonNullable<Logger["log"]>> extends [LogLevel, ...infer Rest]
+		? Rest
+		: never;
 
 const levelColors: Record<LogLevel, string> = {
 	info: TTY_COLORS.fg.blue,

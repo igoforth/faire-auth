@@ -60,12 +60,12 @@ export const createAuthClient =
 		}
 		const routes = { ...pluginsActions, ...resolvedHooks, $fetch, $store };
 
-		type ClientAPI = App extends Hono<any, infer S, infer P>
-			? Client<S, P, Option>
-			: never;
-		type Session = App extends Hono<any, infer S, infer P>
-			? (S[`${P}/get-session`]["$get"]["output"] & { success: true })["data"]
-			: never;
+		type ClientAPI =
+			App extends Hono<any, infer S, infer P> ? Client<S, P, Option> : never;
+		type Session =
+			App extends Hono<any, infer S, infer P>
+				? (S[`${P}/get-session`]["$get"]["output"] & { success: true })["data"]
+				: never;
 		const honoClient = createHonoClient(
 			{ baseURL, createFetchOptions: options.fetchOptions },
 			routes,

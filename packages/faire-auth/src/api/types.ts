@@ -156,24 +156,22 @@ export type InferApp<O extends FaireAuthOptions> = OpenAPIHono<
 >;
 
 // { [KeyType in keyof T]: T[KeyType]; }
-export type InferAPI<
-	A extends AnyHono,
-	HideCallbacks extends boolean = true,
-> = ExtractSchema<A> extends Record<string, infer R>
-	? {
-			[Method in keyof R as R[Method] extends { operationId: infer K }
-				? K extends string
-					? true extends HideCallbacks
-						? R[Method] extends { isAction: false }
-							? never
+export type InferAPI<A extends AnyHono, HideCallbacks extends boolean = true> =
+	ExtractSchema<A> extends Record<string, infer R>
+		? {
+				[Method in keyof R as R[Method] extends { operationId: infer K }
+					? K extends string
+						? true extends HideCallbacks
+							? R[Method] extends { isAction: false }
+								? never
+								: K
 							: K
-						: K
-					: never
-				: never]: R[Method] extends { _api: infer Api } ? Api : never;
-		} extends infer S
-		? UnionToIntersection<S>
-		: never
-	: never;
+						: never
+					: never]: R[Method] extends { _api: infer Api } ? Api : never;
+			} extends infer S
+			? UnionToIntersection<S>
+			: never
+		: never;
 // export type InferAPI<
 // 	A extends AnyHono,
 // 	HideCallbacks extends boolean = true,
@@ -213,40 +211,38 @@ type Session<C, Opts extends ClientOptions> = C extends {
  * that the runtime client returns, including every route, action, hook
  * and the strongly-typed `useSession` atom.
  */
-export type InferClient<
-	A extends AnyHono,
-	Opts extends ClientOptions,
-> = A extends Hono<any, infer S, infer B>
-	? Client<S, B, Opts> extends infer ClientAPI
-		? UnionToIntersection<InferResolvedHooks<Opts>> &
-				ClientAPI &
-				InferActions<Opts> & {
-					useSession: Atom<{
-						data: Session<ClientAPI, Opts> | null;
-						error: BetterFetchError | null;
-						isPending: boolean;
-					}>;
-					$fetch: BetterFetch;
-					$store: {
-						notify: (
-							signal?: LiteralStringUnion<"$sessionSignal"> | undefined,
-						) => void;
-						listen: (
-							signal: LiteralStringUnion<"$sessionSignal">,
-							listener: (
-								value: boolean,
-								oldValue?: boolean | undefined,
-							) => void,
-						) => void;
-						atoms: Record<string, WritableAtom<any>>;
-					};
-					$Infer: { Session: Session<ClientAPI, Opts> };
-					$ERROR_CODES: Prettify<
-						InferErrorCodes<Opts> & typeof BASE_ERROR_CODES
-					>;
-				}
-		: never
-	: never;
+export type InferClient<A extends AnyHono, Opts extends ClientOptions> =
+	A extends Hono<any, infer S, infer B>
+		? Client<S, B, Opts> extends infer ClientAPI
+			? UnionToIntersection<InferResolvedHooks<Opts>> &
+					ClientAPI &
+					InferActions<Opts> & {
+						useSession: Atom<{
+							data: Session<ClientAPI, Opts> | null;
+							error: BetterFetchError | null;
+							isPending: boolean;
+						}>;
+						$fetch: BetterFetch;
+						$store: {
+							notify: (
+								signal?: LiteralStringUnion<"$sessionSignal"> | undefined,
+							) => void;
+							listen: (
+								signal: LiteralStringUnion<"$sessionSignal">,
+								listener: (
+									value: boolean,
+									oldValue?: boolean | undefined,
+								) => void,
+							) => void;
+							atoms: Record<string, WritableAtom<any>>;
+						};
+						$Infer: { Session: Session<ClientAPI, Opts> };
+						$ERROR_CODES: Prettify<
+							InferErrorCodes<Opts> & typeof BASE_ERROR_CODES
+						>;
+					}
+			: never
+		: never;
 
 export type DefaultAPI = APIFromRoutes<Configs>;
 

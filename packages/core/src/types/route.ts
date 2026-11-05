@@ -23,21 +23,22 @@ type StripBrand2CoreD<
 	O extends { session?: any; user?: any; plugins?: any[] | undefined },
 	Depth extends unknown[],
 	MaxDepth extends unknown[],
-> = _Reached<Depth, MaxDepth> extends true
-	? T // hard stop
-	: "output" extends Dir
-		? O extends { dto: { [K in Brand]: infer R } }
-			? R extends (...args: any[]) => Awaitable<infer FnReturn>
-				? StripBrand2BaseD<FnReturn, Dir, O, [...Depth, 0], MaxDepth>
-				: StripBrand2BaseD<T, Dir, O, [...Depth, 0], MaxDepth>
-			: StripBrand2BaseD<
-					AddExtraFields<T, Brand, Dir, O>,
-					Dir,
-					O,
-					[...Depth, 0],
-					MaxDepth
-				>
-		: AddExtraFields<T, Brand, Dir, O>;
+> =
+	_Reached<Depth, MaxDepth> extends true
+		? T // hard stop
+		: "output" extends Dir
+			? O extends { dto: { [K in Brand]: infer R } }
+				? R extends (...args: any[]) => Awaitable<infer FnReturn>
+					? StripBrand2BaseD<FnReturn, Dir, O, [...Depth, 0], MaxDepth>
+					: StripBrand2BaseD<T, Dir, O, [...Depth, 0], MaxDepth>
+				: StripBrand2BaseD<
+						AddExtraFields<T, Brand, Dir, O>,
+						Dir,
+						O,
+						[...Depth, 0],
+						MaxDepth
+					>
+			: AddExtraFields<T, Brand, Dir, O>;
 
 // depth-aware base
 type StripBrand2BaseD<
@@ -46,50 +47,51 @@ type StripBrand2BaseD<
 	O extends { session?: any; user?: any; plugins?: any[] | undefined } = {},
 	Depth extends unknown[] = [],
 	MaxDepth extends unknown[] = _Counter<3>,
-> = _Reached<Depth, MaxDepth> extends true
-	? T
-	: Date extends T
+> =
+	_Reached<Depth, MaxDepth> extends true
 		? T
-		: T extends { [z.$brand]: { [k in infer Brand]: true } }
-			? Brand extends string
-				? StripBrand2CoreD<
-						{
-							[BaseKey in keyof T as BaseKey extends keyof z.$brand
-								? never
-								: BaseKey]: T[BaseKey];
-						},
-						Brand,
-						Dir,
-						O,
-						[...Depth, 0],
-						MaxDepth
-					>
-				: StripBrand2BaseD<
-						{
-							[BaseKey in keyof T as BaseKey extends keyof z.$brand
-								? never
-								: BaseKey]: T[BaseKey];
-						},
-						Dir,
-						O,
-						[...Depth, 0],
-						MaxDepth
-					>
-			: T extends (infer Base)[]
-				? StripBrand2BaseD<Base, Dir, O, [...Depth, 0], MaxDepth>[]
-				: T extends object
-					? {
-							[BaseKey in keyof T as BaseKey extends keyof z.$brand
-								? never
-								: BaseKey]: StripBrand2BaseD<
-								T[BaseKey],
-								Dir,
-								O,
-								[...Depth, 0],
-								MaxDepth
-							>;
-						}
-					: T;
+		: Date extends T
+			? T
+			: T extends { [z.$brand]: { [k in infer Brand]: true } }
+				? Brand extends string
+					? StripBrand2CoreD<
+							{
+								[BaseKey in keyof T as BaseKey extends keyof z.$brand
+									? never
+									: BaseKey]: T[BaseKey];
+							},
+							Brand,
+							Dir,
+							O,
+							[...Depth, 0],
+							MaxDepth
+						>
+					: StripBrand2BaseD<
+							{
+								[BaseKey in keyof T as BaseKey extends keyof z.$brand
+									? never
+									: BaseKey]: T[BaseKey];
+							},
+							Dir,
+							O,
+							[...Depth, 0],
+							MaxDepth
+						>
+				: T extends (infer Base)[]
+					? StripBrand2BaseD<Base, Dir, O, [...Depth, 0], MaxDepth>[]
+					: T extends object
+						? {
+								[BaseKey in keyof T as BaseKey extends keyof z.$brand
+									? never
+									: BaseKey]: StripBrand2BaseD<
+									T[BaseKey],
+									Dir,
+									O,
+									[...Depth, 0],
+									MaxDepth
+								>;
+							}
+						: T;
 
 // public depth-aware wrapper
 type StripBrand2D<

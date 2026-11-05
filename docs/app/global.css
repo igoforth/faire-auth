@@ -2,7 +2,7 @@
 @import "fumadocs-ui/css/black.css";
 @import "fumadocs-ui/css/preset.css";
 @config "../tailwind.config.js";
-@plugin 'tailwindcss-animate';
+@plugin "tailwindcss-animate";
 @custom-variant dark (&:is(.dark *));
 
 :root {
