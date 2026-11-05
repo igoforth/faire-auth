@@ -14,6 +14,7 @@
     ·
     <a href="https://github.com/igoforth/faire-auth/issues">Issues</a>
   </p>
+</p>
 
 [![npm](https://img.shields.io/npm/dm/faire-auth?style=flat&colorA=000000&colorB=000000)](https://npm.chart.dev/faire-auth?primary=neutral&gray=neutral&theme=dark)
 [![npm version](https://img.shields.io/npm/v/faire-auth.svg?style=flat&colorA=000000&colorB=000000)](https://www.npmjs.com/package/faire-auth)
