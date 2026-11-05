@@ -146,6 +146,7 @@
   "devDependencies": {
     "@asteasolutions/zod-to-openapi": "catalog:",
     "@types/bun": "catalog:",
+    "hono": "catalog:",
     "openapi3-ts": "catalog:",
     "publint": "catalog:",
     "tsdown": "catalog:"

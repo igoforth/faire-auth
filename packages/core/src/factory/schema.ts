@@ -153,7 +153,7 @@ export const callbackURLSchema = <T extends boolean = false>(
  * @todo in future can open this to options customization
  */
 export const successCodec = z.codec(
-	z.object({ success: z.literal(true), data: z.any() }),
+	z.object({ success: z.literal(true), data: z.any().optional() }),
 	z.any(),
 	{ decode: (res) => res.data, encode: (data) => ({ success: True, data }) },
 );

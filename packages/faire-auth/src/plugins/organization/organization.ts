@@ -154,10 +154,10 @@ const createHasPermission = <O extends OrganizationOptions>(options: O) => {
 									description: "The permission to check",
 									deprecated: true,
 								}),
-								permissions: z.undefined(),
+								permissions: z.undefined().optional(),
 							}),
 							z.object({
-								permission: z.undefined(),
+								permission: z.undefined().optional(),
 								permissions: z.record(z.string(), z.array(z.string())).openapi({
 									description: "The permission to check",
 								}),

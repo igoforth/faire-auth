@@ -62,8 +62,9 @@
   "devDependencies": {
     "@faire-auth/core": "workspace:*",
     "faire-auth": "workspace:*",
+    "hono": "catalog:",
+    "publint": "catalog:",
     "stripe": "catalog:",
-    "tsdown": "catalog:",
-    "publint": "catalog:"
+    "tsdown": "catalog:"
   }
 }
