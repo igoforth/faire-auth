@@ -19,7 +19,7 @@
   "description": "Stripe plugin for Faire Auth",
   "scripts": {
     "test": "vitest",
-    "build": "tsdown",
+    "build": "tsc -b && tsdown",
     "dev": "tsdown --watch",
     "typecheck": "tsc --project tsconfig.json"
   },

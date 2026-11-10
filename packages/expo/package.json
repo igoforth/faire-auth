@@ -13,7 +13,7 @@
   "homepage": "https://www.faire-auth.com/docs/integrations/expo",
   "scripts": {
     "test": "vitest",
-    "build": "tsdown",
+    "build": "tsc -b && tsdown",
     "dev": "tsdown --watch",
     "typecheck": "tsc --project tsconfig.json"
   },

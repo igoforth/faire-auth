@@ -90,6 +90,9 @@ jobs:
           TURBO_CACHE: remote:rw
         run: pnpm build
 
+      - name: Check declarations kept their types
+        run: scripts/check-dist-types.sh
+
       - name: Typecheck
         env:
           NODE_OPTIONS: --max-old-space-size=6144

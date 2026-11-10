@@ -24,7 +24,7 @@
     "access": "public"
   },
   "scripts": {
-    "build": "tsdown",
+    "build": "tsc -b && tsdown",
     "test": "NODE_OPTIONS='--experimental-sqlite' vitest",
     "bump": "bumpp",
     "prepare": "prisma generate --schema ./src/adapters/prisma-adapter/test/base.prisma",
