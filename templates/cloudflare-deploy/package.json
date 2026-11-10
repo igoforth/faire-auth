@@ -59,8 +59,8 @@
     "@faire-auth/core": "latest",
     "drizzle-kit": "^0.31.4",
     "nanostores": "^1.0.1",
-    "tsdown": "^0.16.0",
-    "typescript": "^5.9.3",
+    "tsdown": "^0.23.7",
+    "typescript": "^7.0.2",
     "wrangler": "^4.46.0"
   }
 }

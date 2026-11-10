@@ -5,5 +5,5 @@ export default defineConfig({
 	minify: true,
 	format: "esm",
 	entry: ["./src/index.ts"],
-	external: ["faire-auth"],
+	deps: { neverBundle: ["faire-auth"] },
 });

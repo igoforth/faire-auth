@@ -87,7 +87,7 @@ describe("types", (test) => {
 			}),
 			() => async (ctx) => {
 				const body = ctx.req.valid("json");
-				expectTypeOf(body).toEqualTypeOf<{ name?: string }>();
+				expectTypeOf(body).toEqualTypeOf<{ name?: string | undefined }>();
 				return ctx.render(body, 200);
 			},
 		);
@@ -140,7 +140,7 @@ describe("types", (test) => {
 			}),
 			() => async (ctx) => {
 				const query = ctx.req.valid("query");
-				expectTypeOf(query).toEqualTypeOf<{ name?: string }>();
+				expectTypeOf(query).toEqualTypeOf<{ name?: string | undefined }>();
 				return ctx.render(query, 200);
 			},
 		);

@@ -4,8 +4,10 @@ export default defineConfig([
 	{
 		entry: ["./src/index.ts"],
 		outDir: ".output",
-		noExternal: [/.*/],
-		external: ["node:*", "@libsql/*", "@libsql/client"],
+		deps: {
+			alwaysBundle: [/.*/],
+			neverBundle: ["node:*", "@libsql/*", "@libsql/client"],
+		},
 		shims: true,
 		clean: true,
 	},

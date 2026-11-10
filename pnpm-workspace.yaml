@@ -22,7 +22,6 @@ catalog:
   '@types/prompts': ^2.4.9
   '@types/react': ^19.3.0
   '@types/react-dom': ^19.3.0
-  '@typescript/native-preview': 7.0.0-dev.20250926.1
   better-sqlite3: ^12.2.0
   cbor-x: ^1.6.9
   class-variance-authority: ^0.7.1
@@ -60,11 +59,11 @@ catalog:
   tailwind-merge: ^3.3.1
   tailwindcss-animate: ^1.0.7
   terser: ^5.51.2
-  tsdown: ^0.16.0
+  tsdown: ^0.23.7
   tsup: ^8.4.0
   tsx: ^4.23.15
   type-fest: ^4.41.0
-  typescript: ^5.9.3
+  typescript: ^7.0.2
   vaul: ^1.1.2
   vitest: ^3.2.4
   zod: ^4.6.7

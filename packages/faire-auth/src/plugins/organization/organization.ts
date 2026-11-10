@@ -240,7 +240,7 @@ export type OrganizationPlugin<O extends OrganizationOptions> = {
 				} & InferOrganization<O, false>;
 	};
 	$ERROR_CODES: typeof ORGANIZATION_ERROR_CODES;
-	options: O;
+	options: NoInfer<O>;
 };
 
 /**
@@ -291,7 +291,7 @@ export function organization<
 				} & InferOrganization<O, false>;
 	};
 	$ERROR_CODES: typeof ORGANIZATION_ERROR_CODES;
-	options: O;
+	options: NoInfer<O>;
 };
 export function organization<
 	O extends OrganizationOptions & {
@@ -324,7 +324,7 @@ export function organization<
 				} & InferOrganization<O, false>;
 	};
 	$ERROR_CODES: typeof ORGANIZATION_ERROR_CODES;
-	options: O;
+	options: NoInfer<O>;
 };
 export function organization<
 	O extends OrganizationOptions & {
@@ -355,7 +355,7 @@ export function organization<
 				} & InferOrganization<O, false>;
 	};
 	$ERROR_CODES: typeof ORGANIZATION_ERROR_CODES;
-	options: O;
+	options: NoInfer<O>;
 };
 export function organization<O extends OrganizationOptions>(
 	options?: O,

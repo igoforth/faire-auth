@@ -63,7 +63,8 @@
     "faire-auth": "workspace:*",
     "publint": "catalog:",
     "react-native": "^0.84.1",
-    "tsdown": "catalog:"
+    "tsdown": "catalog:",
+    "hono": "catalog:"
   },
   "peerDependencies": {
     "@faire-auth/core": "workspace:*",
@@ -72,7 +73,8 @@
     "expo-linking": ">=7.0.0",
     "expo-secure-store": ">=14.0.0",
     "expo-web-browser": ">=14.0.0",
-    "faire-auth": "workspace:*"
+    "faire-auth": "workspace:*",
+    "hono": ">=4.3.6"
   },
   "dependencies": {
     "@better-fetch/fetch": "catalog:",

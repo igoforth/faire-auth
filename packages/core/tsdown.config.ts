@@ -1,10 +1,9 @@
 import { defineConfig } from "tsdown";
 
 export default defineConfig({
-	dts: { build: true, incremental: true },
+	dts: { tsc: { build: true, incremental: true } },
 	format: ["esm", "cjs"],
 	entry: [
-		"./src/index.ts",
 		// "./src/api/index.ts",
 		// "./src/async_hooks/index.ts",
 		// "./src/context/index.ts",
@@ -21,7 +20,7 @@ export default defineConfig({
 		"./src/oauth2/index.ts",
 		"./src/social-providers/index.ts",
 	],
-	external: ["cbor-x"],
+	deps: { neverBundle: ["cbor-x"] },
 	clean: true,
 	nodeProtocol: true,
 	publint: true,
