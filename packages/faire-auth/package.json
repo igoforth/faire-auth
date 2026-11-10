@@ -46,12 +46,10 @@
     },
     "./shared": {
       "import": {
-        "types": "./dist/shared.d.mts",
-        "default": "./dist/shared.mjs"
+        "types": "./dist/shared.d.mts"
       },
       "require": {
-        "types": "./dist/shared.d.cts",
-        "default": "./dist/shared.cjs"
+        "types": "./dist/shared.d.cts"
       }
     },
     "./test": {

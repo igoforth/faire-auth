@@ -86,24 +86,21 @@ export default defineConfig([
 				{
 					// rolldown-plugin-dts bundles the JS (`.ts`) and declaration
 					// (`.d.ts`) variants of a module in the same rolldown graph and
-					// splits them by chunk name suffix at emit time. A static group
-					// name would collapse both into one chunk; a name FUNCTION that
-					// returns distinct names for `.ts` vs `.d.ts` creates two groups
-					// -> two chunks (`shared` JS, `shared.d` declarations), letting
-					// the dts pass produce a real `shared.d.*ts` file.
+					// splits them by chunk name suffix at emit time. Only the
+					// declaration variants are grouped (into `shared.d`); the JS
+					// variants split naturally. Grouping the JS too would pull
+					// server-runtime modules such as `api/factory/endpoint` (and its
+					// `hono/context-storage` import) into a chunk that
+					// `faire-auth/client` loads in the browser.
 					name: (id) =>
-						SHARED_MODULES.test(id)
-							? id.endsWith(".d.ts")
-								? "shared.d"
-								: "shared"
-							: null,
+						SHARED_MODULES.test(id) && id.endsWith(".d.ts") ? "shared.d" : null,
 					// capture regardless of how many entries reference it
 					minShareCount: 1,
 					minSize: 0,
 				},
 				...(splitting.groups ?? []),
 			];
-			// Give the `shared` group a stable (un-hashed) filename while keeping
+			// Give the `shared.d` group a stable (un-hashed) filename while keeping
 			// hashes for every other chunk. tsdown's default chunkFileNames is a
 			// function whose returned template still contains `[name]`/`[hash]`
 			// placeholders for rolldown to substitute; for the shared chunk we
@@ -115,12 +112,11 @@ export default defineConfig([
 					typeof base === "function"
 						? base(chunk)
 						: (base ?? "[name]-[hash].mjs");
-				// Strip the hash for the shared group so its path is stable and
-				// addressable from `exports`. The declaration chunk is named
-				// `shared.d` (rolldown-plugin-dts's fake-js pass converts the
-				// returned JS-style template into the matching `.d.*ts` name);
-				// the JS chunk is named `shared`.
-				if (chunk.name === "shared" || chunk.name === "shared.d") {
+				// Strip the hash for the shared declaration chunk so its path is
+				// stable and addressable from `exports`. rolldown-plugin-dts's
+				// fake-js pass converts the returned JS-style template into the
+				// matching `.d.*ts` name.
+				if (chunk.name === "shared.d") {
 					return template.replace("-[hash]", "");
 				}
 				return template;
