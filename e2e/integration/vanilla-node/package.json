@@ -10,7 +10,7 @@
     "vite": "^7.1.5"
   },
   "dependencies": {
-    "faire-auth": "workspace:*",
-    "better-sqlite3": "^12.2.0"
+    "better-sqlite3": "^12.11.1",
+    "faire-auth": "workspace:*"
   }
 }
