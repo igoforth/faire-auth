@@ -149,7 +149,8 @@
     "hono": "catalog:",
     "openapi3-ts": "catalog:",
     "publint": "catalog:",
-    "tsdown": "catalog:"
+    "tsdown": "catalog:",
+    "zod": "catalog:"
   },
   "dependencies": {
     "@noble/ciphers": "^2.4.0",
@@ -165,6 +166,6 @@
     "jose": "catalog:",
     "kysely": "catalog:",
     "type-fest": "catalog:",
-    "zod": "catalog:"
+    "zod": "^4.1.12"
   }
 }

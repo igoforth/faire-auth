@@ -383,11 +383,11 @@
     "jose": "catalog:",
     "kysely": "catalog:",
     "nanostores": "catalog:",
-    "type-fest": "catalog:",
-    "zod": "catalog:"
+    "type-fest": "catalog:"
   },
   "peerDependencies": {
-    "hono": ">=4.3.6"
+    "hono": ">=4.3.6",
+    "zod": "^4.1.12"
   },
   "peerDependenciesOptional": {
     "@lynx-js/react": "*",
@@ -474,7 +474,8 @@
     "terser": "catalog:",
     "tinybench": "^5.0.1",
     "tsdown": "catalog:",
-    "vue": "^3.5.44"
+    "vue": "^3.5.44",
+    "zod": "catalog:"
   },
   "files": [
     "dist"

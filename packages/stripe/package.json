@@ -50,21 +50,20 @@
       }
     }
   },
-  "dependencies": {
-    "zod": "catalog:"
-  },
-  "peerDependencies": {
-    "@faire-auth/core": "workspace:*",
-    "faire-auth": "workspace:*",
-    "stripe": "^18 || ^19",
-    "hono": ">=4.3.6"
-  },
   "devDependencies": {
     "@faire-auth/core": "workspace:*",
     "faire-auth": "workspace:*",
     "hono": "catalog:",
     "publint": "catalog:",
     "stripe": "catalog:",
-    "tsdown": "catalog:"
+    "tsdown": "catalog:",
+    "zod": "catalog:"
+  },
+  "peerDependencies": {
+    "@faire-auth/core": "workspace:*",
+    "faire-auth": "workspace:*",
+    "stripe": "^18 || ^19",
+    "hono": ">=4.3.6",
+    "zod": "^4.1.12"
   }
 }
