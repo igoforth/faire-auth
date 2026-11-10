@@ -1,6 +1,13 @@
 {
   "name": "@faire-auth/playground",
   "version": "1.0.4",
+  "private": true,
+  "files": [
+    "dist"
+  ],
+  "devDependencies": {
+    "tsdown": "catalog:"
+  },
   "description": "",
   "main": "dist/index.cjs",
   "module": "dist/index.mjs",
@@ -30,11 +37,5 @@
     "faire-auth": "workspace:*",
     "@faire-auth/core": "workspace:*",
     "zod": "catalog:"
-  },
-  "devDependencies": {
-    "tsdown": "catalog:"
-  },
-  "files": [
-    "dist"
-  ]
+  }
 }
